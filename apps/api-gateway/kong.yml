@@ -1,0 +1,160 @@
+# Kong API Gateway Configuration — GABON BIZ
+# Declarative configuration for Kong 3.x
+
+_format_version: '3.0'
+_transform: true
+
+services:
+  # ==============================================
+  # M1 — Guichet Unique Entrepreneur (port 3001)
+  # ==============================================
+  - name: entrepreneur-service
+    url: http://entrepreneur:3001
+    routes:
+      - name: entrepreneur-route
+        paths:
+          - /api/v1/entrepreneur
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M2 — Marchés Publics Numériques (port 3002)
+  # ==============================================
+  - name: marches-publics-service
+    url: http://marches-publics:3002
+    routes:
+      - name: marches-publics-route
+        paths:
+          - /api/v1/marches
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M3 — Innovation Hub (port 3003)
+  # ==============================================
+  - name: innovation-hub-service
+    url: http://innovation-hub:3003
+    routes:
+      - name: innovation-hub-route
+        paths:
+          - /api/v1/innovation
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M4 — Incubateur Digital (port 3004)
+  # ==============================================
+  - name: incubateur-service
+    url: http://incubateur:3004
+    routes:
+      - name: incubateur-route
+        paths:
+          - /api/v1/incubateur
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M5 — Investir au Gabon (port 3005)
+  # ==============================================
+  - name: investir-service
+    url: http://investir:3005
+    routes:
+      - name: investir-route
+        paths:
+          - /api/v1/investir
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M6 — Observatoire Économie Numérique (port 3006)
+  # ==============================================
+  - name: observatoire-service
+    url: http://observatoire:3006
+    routes:
+      - name: observatoire-route
+        paths:
+          - /api/v1/observatoire
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+  # ==============================================
+  # M7 — Filières Sectorielles (port 3007)
+  # ==============================================
+  - name: filieres-service
+    url: http://filieres:3007
+    routes:
+      - name: filieres-route
+        paths:
+          - /api/v1/filieres
+        strip_path: true
+        protocols:
+          - http
+          - https
+
+# ==============================================
+# Global Plugins
+# ==============================================
+plugins:
+  # Rate limiting
+  - name: rate-limiting
+    config:
+      minute: 100
+      policy: local
+      fault_tolerant: true
+      hide_client_headers: false
+
+  # CORS
+  - name: cors
+    config:
+      origins:
+        - http://localhost:3000
+        - https://gabonbiz.ga
+        - https://www.gabonbiz.ga
+      methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      headers:
+        - Accept
+        - Authorization
+        - Content-Type
+        - X-Request-ID
+      exposed_headers:
+        - X-Request-ID
+      credentials: true
+      max_age: 3600
+
+  # Request size limiting
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 10
+      size_unit: megabytes
+
+  # Request transformer — add tracking headers
+  - name: request-transformer
+    config:
+      add:
+        headers:
+          - 'X-Gateway: kong'
+
+  # Prometheus metrics
+  - name: prometheus
+    config:
+      status_code_metrics: true
+      latency_metrics: true
+      upstream_health_metrics: true

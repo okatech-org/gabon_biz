@@ -1,0 +1,16 @@
+{
+  "name": "@gabon-biz/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GABON BIZ - Types, DTOs et utilitaires partagés",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts\" --fix"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

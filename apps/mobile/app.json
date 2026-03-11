@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "GABON BIZ",
+    "slug": "gabon-biz",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "gabonbiz",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#E67E22",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ga.gabonbiz.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "GABON BIZ utilise la caméra pour scanner vos documents.",
+        "NSFaceIDUsageDescription": "GABON BIZ utilise Face ID pour sécuriser votre connexion."
+      }
+    },
+    "android": {
+      "package": "ga.gabonbiz.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E67E22"
+      },
+      "permissions": ["CAMERA", "USE_BIOMETRIC", "USE_FINGERPRINT"]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-router", "expo-camera", "expo-notifications", "expo-secure-store"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

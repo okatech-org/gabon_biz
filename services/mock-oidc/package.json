@@ -1,0 +1,22 @@
+{
+  "name": "@gabon-biz/mock-oidc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GABON BIZ - Mock OIDC Provider simulating GABON ID for development",
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "cors": "^2.8.5",
+    "@gabon-biz/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}

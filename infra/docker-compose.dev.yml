@@ -1,0 +1,114 @@
+# GABON BIZ — Docker Compose (Development)
+# Lance tous les services d'infrastructure pour le développement local
+
+services:
+  # ==============================================
+  # PostgreSQL 16
+  # ==============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: gabon-biz-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: gabon_biz
+      POSTGRES_PASSWORD: gabon_biz_dev
+      POSTGRES_DB: gabon_biz
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gabon_biz']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==============================================
+  # Redis 7
+  # ==============================================
+  redis:
+    image: redis:7-alpine
+    container_name: gabon-biz-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==============================================
+  # RabbitMQ 3.13 (with Management UI)
+  # ==============================================
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: gabon-biz-rabbitmq
+    restart: unless-stopped
+    ports:
+      - '5672:5672' # AMQP
+      - '15672:15672' # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==============================================
+  # Elasticsearch 8
+  # ==============================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+    container_name: gabon-biz-elasticsearch
+    restart: unless-stopped
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:9200/_cluster/health || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ==============================================
+  # Kong API Gateway
+  # ==============================================
+  kong:
+    build:
+      context: ../apps/api-gateway
+      dockerfile: Dockerfile
+    container_name: gabon-biz-kong
+    restart: unless-stopped
+    ports:
+      - '8000:8000' # Proxy
+      - '8001:8001' # Admin API
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_LISTEN: '0.0.0.0:8000'
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_LOG_LEVEL: info
+    healthcheck:
+      test: ['CMD', 'kong', 'health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  elasticsearch_data:

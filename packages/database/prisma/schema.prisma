@@ -1,0 +1,482 @@
+// ============================================
+// GABON BIZ — Schéma Prisma Complet
+// Base de données PostgreSQL 16
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 1. USER (via GABON ID)
+// ============================================
+enum ProfileType {
+  ENTREPRENEUR
+  INVESTOR
+  STARTUP
+  ADMIN
+  PUBLIC
+}
+
+model User {
+  nip               String       @id @db.VarChar(14)
+  profileType       ProfileType  @default(PUBLIC)
+  email             String       @unique
+  phone             String?
+  fullName          String
+  preferredLanguage String       @default("fr")
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  // Relations
+  enterprises       Enterprise[]
+  investorProfile   InvestorProfile?
+  documents         Document[]       @relation("UploadedDocuments")
+  notifications     Notification[]
+  sentMessages      Message[]        @relation("SentMessages")
+  receivedMessages  Message[]        @relation("ReceivedMessages")
+  ratings           Rating[]
+
+  @@index([email])
+  @@index([profileType])
+  @@map("users")
+}
+
+// ============================================
+// 2. ENTERPRISE
+// ============================================
+enum LegalForm {
+  EI
+  SARL
+  SA
+  SAS
+  SNC
+  SCS
+}
+
+enum EnterpriseStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+model Enterprise {
+  id            String           @id @default(uuid())
+  rccm          String           @unique
+  nif           String           @unique
+  ownerNip      String
+  name          String
+  legalForm     LegalForm
+  sectorId      String
+  status        EnterpriseStatus @default(DRAFT)
+  address       Json
+  description   String?          @db.Text
+  employeeCount Int?
+  revenue       Decimal?         @db.Decimal(15, 2)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  owner         User             @relation(fields: [ownerNip], references: [nip])
+  sector        Sector           @relation(fields: [sectorId], references: [id])
+  startup       Startup?
+  submissions   Submission[]
+
+  @@index([ownerNip])
+  @@index([sectorId])
+  @@index([status])
+  @@index([name])
+  @@index([createdAt])
+  @@map("enterprises")
+}
+
+// ============================================
+// 3. TENDER (Marché Public)
+// ============================================
+enum TenderStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  AWARDED
+  CANCELLED
+}
+
+model Tender {
+  id                 String       @id @default(uuid())
+  reference          String       @unique
+  title              String
+  description        String       @db.Text
+  issuingAuthority   String
+  sectorId           String
+  budgetMin          Decimal      @db.Decimal(15, 2)
+  budgetMax          Decimal      @db.Decimal(15, 2)
+  submissionDeadline DateTime
+  openingDate        DateTime?
+  status             TenderStatus @default(DRAFT)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Relations
+  sector             Sector       @relation(fields: [sectorId], references: [id])
+  submissions        Submission[]
+
+  @@index([reference])
+  @@index([sectorId])
+  @@index([status])
+  @@index([submissionDeadline])
+  @@index([issuingAuthority])
+  @@index([createdAt])
+  @@map("tenders")
+}
+
+// ============================================
+// 4. SUBMISSION (Soumission)
+// ============================================
+enum SubmissionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  AWARDED
+  REJECTED
+}
+
+model Submission {
+  id            String           @id @default(uuid())
+  tenderId      String
+  enterpriseId  String
+  submittedAt   DateTime         @default(now())
+  signatureHash String
+  score         Decimal?         @db.Decimal(5, 2)
+  status        SubmissionStatus @default(SUBMITTED)
+  motivation    String?          @db.Text
+
+  // Relations
+  tender        Tender           @relation(fields: [tenderId], references: [id])
+  enterprise    Enterprise       @relation(fields: [enterpriseId], references: [id])
+
+  @@unique([tenderId, enterpriseId])
+  @@index([tenderId])
+  @@index([enterpriseId])
+  @@index([status])
+  @@map("submissions")
+}
+
+// ============================================
+// 5. STARTUP (extends Enterprise)
+// ============================================
+enum FundingStage {
+  PRE_SEED
+  SEED
+  SERIES_A
+  SERIES_B
+  GROWTH
+}
+
+model Startup {
+  id               String        @id @default(uuid())
+  enterpriseId     String        @unique
+  pitch            String        @db.Text
+  teamSize         Int
+  fundingStage     FundingStage  @default(PRE_SEED)
+  metrics          Json          @default("{}")
+  website          String?
+  seekingFunding   Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relations
+  enterprise       Enterprise    @relation(fields: [enterpriseId], references: [id])
+  solutions        Solution[]
+  cohortApplications CohortApplication[]
+
+  @@index([fundingStage])
+  @@index([seekingFunding])
+  @@map("startups")
+}
+
+// ============================================
+// 6. SOLUTION (Innovation Hub)
+// ============================================
+enum PricingModel {
+  FREE
+  FREEMIUM
+  PAID
+  CUSTOM
+}
+
+enum SolutionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Solution {
+  id            String         @id @default(uuid())
+  startupId     String
+  name          String
+  description   String         @db.Text
+  categoryId    String
+  pricingModel  PricingModel   @default(FREE)
+  status        SolutionStatus @default(DRAFT)
+  averageRating Float?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  startup       Startup        @relation(fields: [startupId], references: [id])
+  category      Category       @relation(fields: [categoryId], references: [id])
+  ratings       Rating[]
+
+  @@index([startupId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([pricingModel])
+  @@map("solutions")
+}
+
+// ============================================
+// 7. RATING (Évaluation)
+// ============================================
+model Rating {
+  id         String   @id @default(uuid())
+  solutionId String
+  userNip    String
+  score      Int
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  // Relations
+  solution   Solution @relation(fields: [solutionId], references: [id])
+  user       User     @relation(fields: [userNip], references: [nip])
+
+  @@unique([solutionId, userNip])
+  @@index([solutionId])
+  @@map("ratings")
+}
+
+// ============================================
+// 8. INVESTOR PROFILE
+// ============================================
+enum InvestorType {
+  ANGEL
+  VC
+  CORPORATE
+  INSTITUTIONAL
+  DFI
+}
+
+model InvestorProfile {
+  id          String       @id @default(uuid())
+  userNip     String       @unique
+  type        InvestorType
+  ticketMin   Decimal      @db.Decimal(15, 2)
+  ticketMax   Decimal      @db.Decimal(15, 2)
+  bio         String?      @db.Text
+  languages   String[]
+  focusSectors String[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  user        User         @relation(fields: [userNip], references: [nip])
+
+  @@index([type])
+  @@map("investor_profiles")
+}
+
+// ============================================
+// 9. COHORT (Incubateur)
+// ============================================
+enum CohortStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Cohort {
+  id          String       @id @default(uuid())
+  name        String
+  description String?      @db.Text
+  startDate   DateTime
+  endDate     DateTime
+  maxStartups Int
+  status      CohortStatus @default(OPEN)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  applications CohortApplication[]
+
+  @@index([status])
+  @@map("cohorts")
+}
+
+// ============================================
+// 10. COHORT APPLICATION
+// ============================================
+enum ApplicationStatus {
+  PENDING
+  REVIEW
+  INTERVIEW
+  ACCEPTED
+  REJECTED
+}
+
+model CohortApplication {
+  id        String            @id @default(uuid())
+  cohortId  String
+  startupId String
+  status    ApplicationStatus @default(PENDING)
+  appliedAt DateTime          @default(now())
+  notes     String?           @db.Text
+
+  // Relations
+  cohort    Cohort            @relation(fields: [cohortId], references: [id])
+  startup   Startup           @relation(fields: [startupId], references: [id])
+
+  @@unique([cohortId, startupId])
+  @@index([cohortId])
+  @@index([startupId])
+  @@index([status])
+  @@map("cohort_applications")
+}
+
+// ============================================
+// 11. INDICATOR (Observatoire)
+// ============================================
+enum IndicatorCategory {
+  INFRASTRUCTURE
+  SKILLS
+  INNOVATION
+  POLICY
+  INCLUSION
+}
+
+model Indicator {
+  id          String            @id @default(uuid())
+  name        String
+  source      String
+  category    IndicatorCategory
+  value       Decimal           @db.Decimal(15, 4)
+  unit        String
+  period      String
+  countryCode String            @default("GA") @db.VarChar(3)
+  updatedAt   DateTime          @updatedAt
+  createdAt   DateTime          @default(now())
+
+  @@unique([name, period, countryCode])
+  @@index([category])
+  @@index([period])
+  @@index([countryCode])
+  @@map("indicators")
+}
+
+// ============================================
+// 12. SECTOR
+// ============================================
+model Sector {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  parentId   String?
+  isFiliere  Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+
+  // Relations (self-referencing for hierarchy)
+  parent     Sector?      @relation("SectorHierarchy", fields: [parentId], references: [id])
+  children   Sector[]     @relation("SectorHierarchy")
+  enterprises Enterprise[]
+  tenders    Tender[]
+
+  @@index([parentId])
+  @@index([isFiliere])
+  @@map("sectors")
+}
+
+// ============================================
+// 13. CATEGORY (pour les solutions)
+// ============================================
+model Category {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  slug      String     @unique
+  icon      String?
+  createdAt DateTime   @default(now())
+
+  // Relations
+  solutions Solution[]
+
+  @@map("categories")
+}
+
+// ============================================
+// 14. DOCUMENT
+// ============================================
+model Document {
+  id            String   @id @default(uuid())
+  name          String
+  mimeType      String
+  size          Int
+  storageKey    String
+  entityType    String   // "enterprise" | "tender" | "submission"
+  entityId      String
+  uploadedByNip String
+  createdAt     DateTime @default(now())
+
+  // Relations
+  uploadedBy    User     @relation("UploadedDocuments", fields: [uploadedByNip], references: [nip])
+
+  @@index([entityType, entityId])
+  @@index([uploadedByNip])
+  @@map("documents")
+}
+
+// ============================================
+// 15. NOTIFICATION
+// ============================================
+model Notification {
+  id        String   @id @default(uuid())
+  userNip   String
+  type      String
+  title     String
+  body      String   @db.Text
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userNip], references: [nip])
+
+  @@index([userNip])
+  @@index([read])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// 16. MESSAGE (Messagerie)
+// ============================================
+model Message {
+  id           String    @id @default(uuid())
+  threadId     String
+  senderNip    String
+  recipientNip String
+  content      String    @db.Text
+  readAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  // Relations
+  sender       User      @relation("SentMessages", fields: [senderNip], references: [nip])
+  recipient    User      @relation("ReceivedMessages", fields: [recipientNip], references: [nip])
+
+  @@index([threadId])
+  @@index([senderNip])
+  @@index([recipientNip])
+  @@index([createdAt])
+  @@map("messages")
+}
