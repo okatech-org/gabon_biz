@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "gabon-biz"
+    "default": "digitalium-ga",
+    "production": "gabon-biz"
   }
 }

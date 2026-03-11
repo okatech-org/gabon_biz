@@ -15,6 +15,7 @@
     "dev:api": "pnpm --filter './services/*' --parallel run dev",
     "dev:auth": "pnpm --filter @gabon-biz/mock-oidc dev",
     "dev:full": "concurrently \"pnpm dev:auth\" \"pnpm dev:web\"",
+    "test:kong": "bash apps/api-gateway/test-kong.sh",
     "build": "pnpm -r run build",
     "build:web": "pnpm --filter web build",
     "lint": "pnpm -r run lint",
