@@ -2,6 +2,7 @@
 
 // Auth module
 export * from './auth';
+export * from './services';
 
 // ============================================
 // ENUMS

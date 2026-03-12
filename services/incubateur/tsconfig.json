@@ -6,7 +6,8 @@
     "baseUrl": "./",
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "ES2021"
+    "target": "ES2021",
+    "strictPropertyInitialization": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test"]

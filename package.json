@@ -30,8 +30,8 @@
     "db:seed": "pnpm --filter database prisma db seed",
     "convex:dev": "pnpm --filter web npx convex dev",
     "convex:deploy": "pnpm --filter web npx convex deploy",
-    "deploy:cloudrun": "gcloud builds submit apps/web --tag gcr.io/digitalium-ga/gabon-biz-web && gcloud run deploy gabon-biz-web --image gcr.io/digitalium-ga/gabon-biz-web --platform managed --region europe-west1 --allow-unauthenticated --port 8080",
-    "deploy:firebase": "firebase deploy --only hosting",
+    "deploy:cloudrun": "gcloud builds submit apps/web --tag gcr.io/gabon-biz/gabon-biz-web --project=gabon-biz && gcloud run deploy gabon-biz-web --image gcr.io/gabon-biz/gabon-biz-web --platform managed --region europe-west1 --allow-unauthenticated --port 8080 --project=gabon-biz",
+    "deploy:firebase": "firebase deploy --only hosting --project gabon-biz",
     "docker:dev": "docker compose -f infra/docker-compose.dev.yml up -d",
     "docker:down": "docker compose -f infra/docker-compose.dev.yml down",
     "prepare": "husky"

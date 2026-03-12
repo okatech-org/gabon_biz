@@ -3,12 +3,20 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 
-interface AuthUser {
+export interface AuthUser {
   nip: string;
   fullName: string;
+  name: string;
   email: string;
   phone?: string;
-  profileType: string;
+  profileType: 'ENTREPRENEUR' | 'STARTUP' | 'INVESTOR' | 'ADMIN' | 'PUBLIC' | string;
+  roles?: string[];
+  avatar?: string;
+  organization?: string;
+  title?: string;
+  location?: string;
+  locale?: string;
+  isDemo?: boolean;
 }
 
 interface AuthContextType {

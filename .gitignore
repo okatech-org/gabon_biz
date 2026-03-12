@@ -41,6 +41,9 @@ infra/data/
 npm-debug.log*
 pnpm-debug.log*
 
+# Firebase
+.firebase/
+
 # Temp
 tmp/
 temp/

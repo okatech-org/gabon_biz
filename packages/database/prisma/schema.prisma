@@ -9,7 +9,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ============================================
@@ -115,8 +114,8 @@ model Tender {
   description        String       @db.Text
   issuingAuthority   String
   sectorId           String
-  budgetMin          Decimal      @db.Decimal(15, 2)
-  budgetMax          Decimal      @db.Decimal(15, 2)
+  budgetMin          Decimal?     @db.Decimal(15, 2)
+  budgetMax          Decimal?     @db.Decimal(15, 2)
   submissionDeadline DateTime
   openingDate        DateTime?
   status             TenderStatus @default(DRAFT)
@@ -144,17 +143,21 @@ enum SubmissionStatus {
   UNDER_REVIEW
   AWARDED
   REJECTED
+  WITHDRAWN
 }
 
 model Submission {
   id            String           @id @default(uuid())
   tenderId      String
   enterpriseId  String
-  submittedAt   DateTime         @default(now())
-  signatureHash String
-  score         Decimal?         @db.Decimal(5, 2)
-  status        SubmissionStatus @default(SUBMITTED)
-  motivation    String?          @db.Text
+  submittedAt     DateTime         @default(now())
+  signatureHash   String?
+  proposedAmount  Decimal?         @db.Decimal(15, 2)
+  technicalNote   String?          @db.Text
+  evaluationNote  String?          @db.Text
+  score           Decimal?         @db.Decimal(5, 2)
+  status          SubmissionStatus @default(SUBMITTED)
+  motivation      String?          @db.Text
 
   // Relations
   tender        Tender           @relation(fields: [tenderId], references: [id])

@@ -1,5 +1,6 @@
 // GABON BIZ — Next.js Middleware
 // Protects /dashboard/* routes by checking for valid session cookie
+// Supports both GABON ID tokens and demo JWT tokens (demo: prefix)
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';

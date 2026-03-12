@@ -1,15 +1,180 @@
-# Kong API Gateway Configuration — GABON BIZ
-# Declarative configuration for Kong 3.x
+# ============================================
+# GABON BIZ — Kong API Gateway Configuration
+# Declarative (DB-less) — v3.7+
+# ============================================
+# P0-04: Advanced configuration with:
+#   - JWT authentication
+#   - Upstream health checks
+#   - Rate limiting per consumer
+#   - Request ID tracking
+#   - Logging (file + http)
+#   - Prometheus metrics
+# ============================================
 
-_format_version: '3.0'
+_format_version: "3.0"
 _transform: true
 
+# ============================================
+# CONSUMERS (API clients)
+# ============================================
+consumers:
+  - username: gabon-biz-web
+    custom_id: web-frontend
+    jwt_secrets:
+      - key: gabon-biz-web-key
+        secret: gabon-id-mock-secret-dev-only
+        algorithm: HS256
+
+  - username: gabon-biz-mobile
+    custom_id: mobile-frontend
+    jwt_secrets:
+      - key: gabon-biz-mobile-key
+        secret: gabon-id-mock-secret-dev-only
+        algorithm: HS256
+
+  - username: gabon-biz-admin
+    custom_id: admin-dashboard
+    jwt_secrets:
+      - key: gabon-biz-admin-key
+        secret: gabon-id-mock-secret-dev-only
+        algorithm: HS256
+
+# ============================================
+# UPSTREAMS (with health checks)
+# ============================================
+upstreams:
+  # M1 — Entrepreneur
+  - name: entrepreneur-upstream
+    targets:
+      - target: host.docker.internal:3001
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+      passive:
+        healthy:
+          successes: 5
+        unhealthy:
+          http_failures: 3
+
+  # M2 — Marchés Publics
+  - name: marches-publics-upstream
+    targets:
+      - target: host.docker.internal:3002
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  # M3 — Innovation Hub
+  - name: innovation-hub-upstream
+    targets:
+      - target: host.docker.internal:3003
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  # M4 — Incubateur
+  - name: incubateur-upstream
+    targets:
+      - target: host.docker.internal:3004
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  # M5 — Investir
+  - name: investir-upstream
+    targets:
+      - target: host.docker.internal:3005
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  # M6 — Observatoire
+  - name: observatoire-upstream
+    targets:
+      - target: host.docker.internal:3006
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+  # M7 — Filières
+  - name: filieres-upstream
+    targets:
+      - target: host.docker.internal:3007
+        weight: 100
+    healthchecks:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 10
+          successes: 2
+        unhealthy:
+          interval: 5
+          http_failures: 3
+
+# ============================================
+# SERVICES (linked to upstreams)
+# ============================================
 services:
-  # ==============================================
-  # M1 — Guichet Unique Entrepreneur (port 3001)
-  # ==============================================
+  # -----------------------------------------
+  # M1 — Guichet Unique Entrepreneur (:3001)
+  # -----------------------------------------
   - name: entrepreneur-service
-    url: http://entrepreneur:3001
+    host: entrepreneur-upstream
+    port: 80
+    protocol: http
+    retries: 3
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
     routes:
       - name: entrepreneur-route
         paths:
@@ -18,12 +183,37 @@ services:
         protocols:
           - http
           - https
+        methods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+    plugins:
+      - name: jwt
+        config:
+          uri_param_names:
+            - jwt
+          claims_to_verify:
+            - exp
+      - name: rate-limiting
+        config:
+          minute: 120
+          policy: local
+          fault_tolerant: true
 
-  # ==============================================
-  # M2 — Marchés Publics Numériques (port 3002)
-  # ==============================================
+  # -----------------------------------------
+  # M2 — Marchés Publics Numériques (:3002)
+  # -----------------------------------------
   - name: marches-publics-service
-    url: http://marches-publics:3002
+    host: marches-publics-upstream
+    port: 80
+    protocol: http
+    retries: 3
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
     routes:
       - name: marches-publics-route
         paths:
@@ -32,12 +222,24 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
 
-  # ==============================================
-  # M3 — Innovation Hub (port 3003)
-  # ==============================================
+  # -----------------------------------------
+  # M3 — Innovation Hub / KIMBA 2.0 (:3003)
+  # -----------------------------------------
   - name: innovation-hub-service
-    url: http://innovation-hub:3003
+    host: innovation-hub-upstream
+    port: 80
+    protocol: http
+    retries: 3
     routes:
       - name: innovation-hub-route
         paths:
@@ -46,12 +248,24 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+      - name: rate-limiting
+        config:
+          minute: 150
+          policy: local
 
-  # ==============================================
-  # M4 — Incubateur Digital (port 3004)
-  # ==============================================
+  # -----------------------------------------
+  # M4 — Incubateur Digital / SING 2.0 (:3004)
+  # -----------------------------------------
   - name: incubateur-service
-    url: http://incubateur:3004
+    host: incubateur-upstream
+    port: 80
+    protocol: http
+    retries: 3
     routes:
       - name: incubateur-route
         paths:
@@ -60,12 +274,24 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
 
-  # ==============================================
-  # M5 — Investir au Gabon (port 3005)
-  # ==============================================
+  # -----------------------------------------
+  # M5 — Investir au Gabon (:3005)
+  # -----------------------------------------
   - name: investir-service
-    url: http://investir:3005
+    host: investir-upstream
+    port: 80
+    protocol: http
+    retries: 3
     routes:
       - name: investir-route
         paths:
@@ -74,12 +300,24 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
 
-  # ==============================================
-  # M6 — Observatoire Économie Numérique (port 3006)
-  # ==============================================
+  # -----------------------------------------
+  # M6 — Observatoire Économie Numérique (:3006)
+  # -----------------------------------------
   - name: observatoire-service
-    url: http://observatoire:3006
+    host: observatoire-upstream
+    port: 80
+    protocol: http
+    retries: 3
     routes:
       - name: observatoire-route
         paths:
@@ -88,12 +326,21 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      # Observatoire is mostly public data — no JWT required
+      - name: rate-limiting
+        config:
+          minute: 200
+          policy: local
 
-  # ==============================================
-  # M7 — Filières Sectorielles (port 3007)
-  # ==============================================
+  # -----------------------------------------
+  # M7 — Filières Sectorielles (:3007)
+  # -----------------------------------------
   - name: filieres-service
-    url: http://filieres:3007
+    host: filieres-upstream
+    port: 80
+    protocol: http
+    retries: 3
     routes:
       - name: filieres-route
         paths:
@@ -102,24 +349,36 @@ services:
         protocols:
           - http
           - https
+    plugins:
+      # Filières is mostly public data — no JWT required
+      - name: rate-limiting
+        config:
+          minute: 200
+          policy: local
 
-# ==============================================
-# Global Plugins
-# ==============================================
+  # -----------------------------------------
+  # Health endpoint (global, no auth)
+  # -----------------------------------------
+  - name: gateway-health
+    url: http://127.0.0.1:8001/status
+    routes:
+      - name: gateway-health-route
+        paths:
+          - /api/health
+        strip_path: true
+        protocols:
+          - http
+
+# ============================================
+# GLOBAL PLUGINS
+# ============================================
 plugins:
-  # Rate limiting
-  - name: rate-limiting
-    config:
-      minute: 100
-      policy: local
-      fault_tolerant: true
-      hide_client_headers: false
-
-  # CORS
+  # CORS — Cross-Origin Resource Sharing
   - name: cors
     config:
       origins:
         - http://localhost:3000
+        - http://localhost:8081
         - https://gabonbiz.ga
         - https://www.gabonbiz.ga
       methods:
@@ -134,27 +393,63 @@ plugins:
         - Authorization
         - Content-Type
         - X-Request-ID
+        - X-Consumer-ID
       exposed_headers:
         - X-Request-ID
+        - X-Kong-Upstream-Latency
+        - X-Kong-Proxy-Latency
       credentials: true
       max_age: 3600
 
-  # Request size limiting
+  # Request Size Limiting
   - name: request-size-limiting
     config:
       allowed_payload_size: 10
       size_unit: megabytes
 
-  # Request transformer — add tracking headers
+  # Correlation ID (request tracking)
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid#counter
+      echo_downstream: true
+
+  # Request Transformer — inject gateway headers
   - name: request-transformer
     config:
       add:
         headers:
-          - 'X-Gateway: kong'
+          - "X-Gateway: kong-gabon-biz"
+          - "X-Gateway-Version: 3.7"
 
-  # Prometheus metrics
+  # Response Transformer — remove server headers
+  - name: response-transformer
+    config:
+      remove:
+        headers:
+          - Server
+          - X-Powered-By
+      add:
+        headers:
+          - "X-Served-By: gabon-biz-gateway"
+
+  # IP Restriction (block/allow in production)
+  # Uncomment in production to restrict admin API
+  # - name: ip-restriction
+  #   config:
+  #     allow:
+  #       - 10.0.0.0/8
+
+  # File Log (development — write to /tmp)
+  - name: file-log
+    config:
+      path: /tmp/kong-access.log
+      reopen: true
+
+  # Prometheus (metrics)
   - name: prometheus
     config:
       status_code_metrics: true
       latency_metrics: true
       upstream_health_metrics: true
+      per_consumer: true
