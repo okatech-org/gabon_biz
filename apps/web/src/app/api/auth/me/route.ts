@@ -7,11 +7,11 @@ import { getUserInfo } from '@/lib/auth';
 import { jwtVerify } from 'jose';
 
 const DEMO_SECRET = new TextEncoder().encode(
-  process.env.DEMO_JWT_SECRET || 'gabon-biz-demo-secret-dev-2026'
+  process.env.DEMO_JWT_SECRET || 'gabon-biz-demo-secret-dev-2026',
 );
 
 export async function GET(request: NextRequest) {
-  const sessionValue = request.cookies.get('gabon-biz-session')?.value;
+  const sessionValue = request.cookies.get('__session')?.value;
 
   if (!sessionValue) {
     return NextResponse.json({ user: null }, { status: 401 });

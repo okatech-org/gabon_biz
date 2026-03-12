@@ -6,7 +6,7 @@ import { SignJWT } from 'jose';
 import { getDemoAccountById } from '@/lib/demo-accounts';
 
 const DEMO_SECRET = new TextEncoder().encode(
-  process.env.DEMO_JWT_SECRET || 'gabon-biz-demo-secret-dev-2026'
+  process.env.DEMO_JWT_SECRET || 'gabon-biz-demo-secret-dev-2026',
 );
 
 export async function POST(request: NextRequest) {
@@ -15,18 +15,12 @@ export async function POST(request: NextRequest) {
     const { accountId } = body;
 
     if (!accountId) {
-      return NextResponse.json(
-        { error: 'accountId requis' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'accountId requis' }, { status: 400 });
     }
 
     const account = getDemoAccountById(accountId);
     if (!account) {
-      return NextResponse.json(
-        { error: 'Compte démo introuvable' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Compte démo introuvable' }, { status: 404 });
     }
 
     // Sign a demo JWT with 2h expiration
@@ -57,7 +51,7 @@ export async function POST(request: NextRequest) {
       profile: account.label,
     });
 
-    response.cookies.set('gabon-biz-session', `demo:${token}`, {
+    response.cookies.set('__session', `demo:${token}`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -67,9 +61,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.json(
-      { error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

@@ -1,59 +1,266 @@
 'use client';
 
-// GABON BIZ — Incubateur (M4)
-
 import React from 'react';
-import { PageHeader, StatusBadge, PrimaryButton, formatDate } from '@/components/ui';
+import { motion } from 'framer-motion';
+import {
+  Rocket,
+  FileText,
+  Route,
+  Users,
+  Brain,
+  Banknote,
+  Calendar,
+  Network,
+  Grid3X3,
+  BookOpen,
+  BarChart3,
+  TrendingUp,
+  Video,
+  CheckCircle,
+  Trophy,
+  MessageSquare,
+  ArrowRight,
+} from 'lucide-react';
+import Link from 'next/link';
 
-const MOCK_COHORTS = [
-  { id: '1', name: 'Cohorte Accélération 2026', description: 'Programme de 6 mois pour startups tech early-stage', startDate: '2026-04-01', endDate: '2026-10-01', maxStartups: 15, status: 'OPEN', _count: { applications: 8 } },
-  { id: '2', name: 'GabonTech Bootcamp', description: 'Formation intensive de 3 mois en IA et Data Science', startDate: '2026-01-15', endDate: '2026-04-15', maxStartups: 20, status: 'IN_PROGRESS', _count: { applications: 20 } },
-  { id: '3', name: 'Green Innovation Lab', description: 'Incubation dédiée aux solutions environnementales', startDate: '2025-06-01', endDate: '2025-12-01', maxStartups: 10, status: 'COMPLETED', _count: { applications: 10 } },
+const quickStats = [
+  { label: 'Mon programme', value: 'Cohorte Innovation 4.0', icon: Rocket, status: 'active' },
+  { label: 'Progression', value: '68%', icon: TrendingUp },
+  { label: 'Prochain mentorat', value: 'Lundi 14h', icon: Calendar },
+  { label: 'Financement en cours', value: '5M FCFA', icon: Banknote },
 ];
 
-const COHORT_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  OPEN: { bg: '#d1fae5', text: '#065f46' },
-  IN_PROGRESS: { bg: '#dbeafe', text: '#1e40af' },
-  COMPLETED: { bg: '#f3f4f6', text: '#6b7280' },
-};
+const modules = [
+  {
+    title: 'Candidature',
+    description: "Postuler à un programme d'incubation",
+    icon: FileText,
+    href: '/dashboard/incubateur/candidature',
+    color: '#ec4899',
+    badge: '3 programmes ouverts',
+  },
+  {
+    title: 'Mon Parcours',
+    description: "Suivre ma progression d'incubation",
+    icon: Route,
+    href: '/dashboard/incubateur/mon-parcours',
+    color: '#F43F5E',
+    badge: 'Semaine 8/12',
+  },
+  {
+    title: 'Cohortes',
+    description: 'Toutes les cohortes passées et en cours',
+    icon: Users,
+    href: '/dashboard/incubateur/cohortes',
+    color: '#FB7185',
+    badge: '12 cohortes',
+  },
+  {
+    title: 'Mentorat IA',
+    description: 'Trouver le mentor idéal par matching intelligent',
+    icon: Brain,
+    href: '/dashboard/incubateur/mentoring',
+    color: '#A855F7',
+    badge: '15 mentors',
+  },
+  {
+    title: 'Financement',
+    description: 'Pipeline SING Capital & Okoumé',
+    icon: Banknote,
+    href: '/dashboard/incubateur/financement',
+    color: '#10B981',
+    badge: '509M FCFA levés',
+  },
+  {
+    title: 'Événements',
+    description: 'Hackathons, ateliers, Demo Days',
+    icon: Calendar,
+    href: '/dashboard/incubateur/evenements',
+    color: '#EF4444',
+    badge: '3 à venir',
+  },
+  {
+    title: 'Communauté',
+    description: 'Réseau alumni et networking',
+    icon: Network,
+    href: '/dashboard/incubateur/communaute',
+    color: '#6366F1',
+    badge: '280+ alumni',
+  },
+  {
+    title: 'Portfolio Startups',
+    description: 'Explorer toutes les startups SING',
+    icon: Grid3X3,
+    href: '/dashboard/incubateur/startups',
+    color: '#F59E0B',
+    badge: '28 actives',
+  },
+  {
+    title: 'Programmes',
+    description: 'Catalogue complet des programmes',
+    icon: BookOpen,
+    href: '/dashboard/incubateur/programmes',
+    color: '#3B82F6',
+    badge: '7 programmes',
+  },
+  {
+    title: 'Analytics & Impact',
+    description: "KPIs de l'écosystème",
+    icon: BarChart3,
+    href: '/dashboard/incubateur/analytics',
+    color: '#14B8A6',
+    badge: 'Temps réel',
+  },
+];
 
-export default function IncubateurPage() {
+const recentActivity = [
+  {
+    type: 'mentoring',
+    text: 'Session mentorat avec Dr. Ndong — lundi 14h',
+    time: 'Il y a 2h',
+    icon: Video,
+    color: '#A855F7',
+  },
+  {
+    type: 'milestone',
+    text: "Milestone 'MVP Fonctionnel' validé ✓",
+    time: 'Hier',
+    icon: CheckCircle,
+    color: '#10B981',
+  },
+  {
+    type: 'funding',
+    text: 'Dossier SING Capital soumis — en revue',
+    time: 'Il y a 3j',
+    icon: FileText,
+    color: '#F59E0B',
+  },
+  {
+    type: 'event',
+    text: 'Hackathon Gabon Tech Week — inscription ouverte',
+    time: 'Il y a 5j',
+    icon: Trophy,
+    color: '#EF4444',
+  },
+  {
+    type: 'community',
+    text: 'Nouveau message dans le canal #fintech',
+    time: 'Il y a 1s',
+    icon: MessageSquare,
+    color: '#6366F1',
+  },
+];
+
+export default function IncubateurHubPage() {
   return (
-    <div>
-      <PageHeader title="Incubateur" subtitle="Programmes d'accélération et d'incubation" />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {MOCK_COHORTS.map((c) => (
-          <div key={c.id} style={{
-            background: 'white', borderRadius: 16, padding: '24px 28px',
-            border: '1px solid #f0f0f0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                  <h3 style={{ fontSize: 16, fontWeight: 600, color: '#111827', margin: 0 }}>{c.name}</h3>
-                  <span style={{
-                    padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 600,
-                    background: COHORT_STATUS_COLORS[c.status]?.bg,
-                    color: COHORT_STATUS_COLORS[c.status]?.text,
-                  }}>
-                    {c.status === 'OPEN' ? 'Ouvert' : c.status === 'IN_PROGRESS' ? 'En cours' : 'Terminé'}
-                  </span>
-                </div>
-                <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 12px' }}>{c.description}</p>
-                <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#6b7280' }}>
-                  <span>📅 {formatDate(c.startDate)} → {formatDate(c.endDate)}</span>
-                  <span>👥 {c._count.applications}/{c.maxStartups} candidatures</span>
-                </div>
-              </div>
-              {c.status === 'OPEN' && (
-                <PrimaryButton style={{ background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)' }}>
-                  Postuler
-                </PrimaryButton>
-              )}
-            </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-white">
+            <Rocket size={18} />
           </div>
+          <div>
+            <h1 className="text-2xl font-black text-gray-900 dark:text-white">
+              Incubateur SING 2.0
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Votre espace d&apos;incubation numérique
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {quickStats.map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4"
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <s.icon size={14} className="text-pink-500" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                {s.label}
+              </span>
+            </div>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">{s.value}</p>
+          </motion.div>
         ))}
+      </div>
+
+      {/* Modules Grid */}
+      <div>
+        <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+          Modules
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          {modules.map((m, i) => (
+            <motion.div
+              key={m.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+            >
+              <Link
+                href={m.href}
+                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"
+                  style={{ background: m.color }}
+                >
+                  <m.icon size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-0.5 group-hover:text-pink-500 transition-colors">
+                  {m.title}
+                </h3>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-2 line-clamp-1">
+                  {m.description}
+                </p>
+                <span
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: `${m.color}15`, color: m.color }}
+                >
+                  {m.badge}
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div>
+        <h2 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+          Activité récente
+        </h2>
+        <div className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 divide-y divide-gray-100 dark:divide-white/5">
+          {recentActivity.map((a, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors cursor-pointer"
+            >
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: `${a.color}15` }}
+              >
+                <a.icon size={14} style={{ color: a.color }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-900 dark:text-white truncate">{a.text}</p>
+                <p className="text-[10px] text-gray-400">{a.time}</p>
+              </div>
+              <ArrowRight size={12} className="text-gray-300 dark:text-gray-600 shrink-0" />
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

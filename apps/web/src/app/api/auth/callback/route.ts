@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     // Set httpOnly secure cookies
     const response = NextResponse.redirect(new URL('/dashboard', request.url));
 
-    response.cookies.set('gabon-biz-session', tokens.access_token, {
+    response.cookies.set('__session', tokens.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

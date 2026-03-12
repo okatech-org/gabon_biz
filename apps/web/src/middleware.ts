@@ -13,7 +13,7 @@ const AUTH_PATHS = ['/login'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionToken = request.cookies.get('gabon-biz-session')?.value;
+  const sessionToken = request.cookies.get('__session')?.value;
   const isAuthenticated = !!sessionToken;
 
   // Check if the path is protected
