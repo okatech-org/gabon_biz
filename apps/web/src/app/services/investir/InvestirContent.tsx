@@ -1,262 +1,768 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { TrendingUp, Globe, Scale, Briefcase, Map, Rocket, Phone, ArrowRight, Wallet, ShoppingCart, HeartPulse, Sprout, GraduationCap, Building2, CheckCircle } from 'lucide-react';
-import { ServiceHero } from '@/components/services/ServiceHero';
-import { ServiceFeatures } from '@/components/services/ServiceFeatures';
-import { ServiceTimeline } from '@/components/services/ServiceTimeline';
-import { ServiceStats } from '@/components/services/ServiceStats';
-import { ServiceFAQ } from '@/components/services/ServiceFAQ';
-import { ServiceTestimonials } from '@/components/services/ServiceTestimonials';
-import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
-import { useI18n } from '@/lib/i18n/i18nContext';
+import {
+  BarChart3,
+  Calculator,
+  ArrowDown,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  Globe,
+  TrendingUp,
+  Server,
+  Users,
+  CheckCircle,
+} from 'lucide-react';
+import {
+  HERO_INVESTIR,
+  PARADOXE_META,
+  PARADOXE_GAUGES,
+  MACRO_TABLE,
+  MACRO_SOURCE,
+  MACRO_CHARTS,
+  KEY_FACTS,
+  VERTICALES,
+  CASE_STUDY_POZI,
+  PARCOURS_STEPS,
+  CADRE_JURIDIQUE,
+  ECOSYSTEME_SUPPORT,
+  PARTENARIATS,
+  RISQUES,
+  GABON_DIGITAL_VISION,
+  FAQ_INVESTIR,
+  CTA_FINAL,
+} from '@/lib/mock/investir-data';
+import ParadoxeGauges from '@/components/investir/ParadoxeGauges';
+import MacroTable from '@/components/investir/MacroTable';
+import VerticaleCard from '@/components/investir/VerticaleCard';
+import ROISimulator from '@/components/investir/ROISimulator';
+import InvestorJourneyMap from '@/components/investir/InvestorJourneyMap';
+import TelecomChart from '@/components/investir/TelecomChart';
+import RisqueCard from '@/components/investir/RisqueCard';
 
-const accentColor = '#14b8a6';
+function useCountUp(target: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          const start = performance.now();
+          const tick = (now: number) => {
+            const p = Math.min((now - start) / duration, 1);
+            setCount(Math.round(target * p));
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [target, duration]);
+  return { ref, count };
+}
 
-const NUMERIQUE_VERTICALES = [
-  { icon: Wallet, titre: 'FinTech', desc: 'Mobile money, micro-crédit, néo-banque', color: '#10B981' },
-  { icon: ShoppingCart, titre: 'e-Commerce', desc: 'Marketplace, livraison dernier km', color: '#8B5CF6' },
-  { icon: HeartPulse, titre: 'HealthTech', desc: 'DMPG, télémédecine, e-pharmacie', color: '#EF4444' },
-  { icon: Sprout, titre: 'AgriTech', desc: 'Micro-finance agricole, traçabilité', color: '#22C55E' },
-  { icon: GraduationCap, titre: 'EdTech', desc: 'Formation continue, bootcamps', color: '#F59E0B' },
-  { icon: Building2, titre: 'GovTech', desc: 'E-gov, data centers, cybersécurité', color: '#6366F1' },
-];
+function SectionWrapper({
+  id,
+  theme,
+  children,
+}: {
+  id?: string;
+  theme: 'dark' | 'light' | 'light-gray' | 'gradient';
+  children: React.ReactNode;
+}) {
+  const bg =
+    theme === 'dark'
+      ? 'bg-slate-900'
+      : theme === 'light-gray'
+        ? 'bg-gray-50 dark:bg-gray-950'
+        : theme === 'gradient'
+          ? 'bg-gradient-to-r from-teal-600 via-emerald-500 to-green-600'
+          : 'bg-white dark:bg-gray-950';
+  return (
+    <section id={id} className={`${bg} py-16 md:py-20`}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">{children}</div>
+    </section>
+  );
+}
+
+function SectionBadge({ text, dark = false }: { text: string; dark?: boolean }) {
+  return (
+    <span
+      className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${dark ? 'bg-white/10 text-teal-300' : 'bg-teal-500/10 text-teal-600 dark:text-teal-400'}`}
+    >
+      {text}
+    </span>
+  );
+}
 
 export default function InvestirContent() {
-  const { tr } = useI18n();
+  const [activeSection, setActiveSection] = useState('');
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  // Sticky anchor nav scroll tracking
+  useEffect(() => {
+    const secs = HERO_INVESTIR.anchorNav.map((a) => a.href.replace('#', ''));
+    const handler = () => {
+      for (let i = secs.length - 1; i >= 0; i--) {
+        const el = document.getElementById(secs[i]);
+        if (el && el.getBoundingClientRect().top <= 120) {
+          setActiveSection(secs[i]);
+          return;
+        }
+      }
+      setActiveSection('');
+    };
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
   return (
-    <>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-4">
-        <ServiceBreadcrumb serviceName={tr('svc.name.investir')} accentColor={accentColor} />
+    <div>
+      {/* ═══════════ 1. HERO ═══════════ */}
+      <section className="relative min-h-[90vh] bg-gradient-to-br from-slate-900 via-emerald-950/60 to-slate-900 flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/images/hero-libreville.png')] bg-cover bg-center opacity-20" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-20 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="inline-flex items-center gap-2 text-sm font-bold text-emerald-300 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6">
+              {HERO_INVESTIR.badge.icon} {HERO_INVESTIR.badge.text}
+            </span>
+            {HERO_INVESTIR.title.map((t, i) => (
+              <h1
+                key={i}
+                className={`text-4xl md:text-5xl lg:text-6xl font-black leading-tight bg-gradient-to-r ${t.gradient} bg-clip-text text-transparent`}
+              >
+                {t.text}
+              </h1>
+            ))}
+            <p className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed">
+              {HERO_INVESTIR.subtitle}
+            </p>
+          </motion.div>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-3 mt-8">
+            <a
+              href={HERO_INVESTIR.primaryCTA.href}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-white font-bold text-sm transition-all shadow-lg shadow-teal-500/30"
+            >
+              <ArrowDown size={16} /> {HERO_INVESTIR.primaryCTA.label}
+            </a>
+            <Link
+              href={HERO_INVESTIR.secondaryCTA.href}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-sm transition-all border border-white/10"
+            >
+              <BarChart3 size={16} /> {HERO_INVESTIR.secondaryCTA.label}
+            </Link>
+            <a
+              href={HERO_INVESTIR.tertiaryCTA.href}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/15 text-teal-300 font-bold text-sm backdrop-blur-sm transition-all border border-teal-500/30"
+            >
+              <Calculator size={16} /> {HERO_INVESTIR.tertiaryCTA.label}
+            </a>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+            {HERO_INVESTIR.stats.map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 p-4 text-center"
+                >
+                  <Icon size={16} className="text-teal-400 mx-auto mb-1" />
+                  <p className="text-xl font-black text-white">{s.value}</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">{s.label}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Partner marquee */}
+          <div className="overflow-hidden mt-10">
+            <div className="flex animate-marquee gap-12">
+              {[...HERO_INVESTIR.partners, ...HERO_INVESTIR.partners].map((p, i) => (
+                <span key={i} className="text-xs font-semibold text-gray-500 whitespace-nowrap">
+                  {p}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sticky anchor nav */}
+      <div className="sticky top-16 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200/50 dark:border-white/5">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto py-2">
+          {HERO_INVESTIR.anchorNav.map((a) => (
+            <a
+              key={a.href}
+              href={a.href}
+              className={`text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${activeSection === a.href.replace('#', '') ? 'bg-teal-500 text-white' : 'text-gray-500 hover:text-teal-500 hover:bg-teal-50 dark:hover:bg-teal-500/10'}`}
+            >
+              {a.label}
+            </a>
+          ))}
+        </div>
       </div>
 
-      <ServiceHero
-        badge={tr('svc.investir.badge')}
-        title={tr('svc.name.investir')}
-        subtitle={tr('svc.investir.subtitle')}
-        ctaPrimary={{ label: tr('svc.investir.cta1'), href: "/guide-investisseur" }}
-        ctaSecondary={{ label: tr('svc.investir.cta2'), href: "/contact" }}
-        metrics={[
-          { value: tr('svc.investir.m1.val'), label: tr('svc.investir.m1.label') },
-          { value: tr('svc.investir.m2.val'), label: tr('svc.investir.m2.label') },
-          { value: tr('svc.investir.m3.val'), label: tr('svc.investir.m3.label') }
-        ]}
-        accentColor={accentColor}
-        icon={TrendingUp}
-      />
-
-      <ServiceFeatures
-        accentColor={accentColor}
-        features={[
-          { icon: Map, title: "Zones Économiques Spéciales", description: "Implantation facilitée dans la ZES de Nkok. Avantages fiscaux et douaniers uniques." },
-          { icon: Scale, title: "Cadre légal sécurisé", description: "Charte des investissements garantissant la liberté d'entreprendre et le libre transfert des capitaux." },
-          { icon: Globe, title: "Positionnement stratégique", description: "Plateforme logistique majeure en Afrique centrale." },
-          { icon: Briefcase, title: "Guichet de l'investisseur", description: "Accompagnement personnalisé par l'ANPI pour agréments, visas et autorisations." },
-          { icon: Rocket, title: "Secteurs prioritaires", description: "Agro-industrie, bois, mines, numérique, tourisme et transformation locale." },
-          { icon: Phone, title: "Ligne dédiée internationale", description: "Assistance multilingue pour les IDE." }
-        ]}
-      />
-
-      <ServiceTimeline
-        accentColor={accentColor}
-        steps={[
-          { number: 1, title: "Exploration et analyse", description: "Consultez la cartographie des opportunités et le guide de l'investisseur." },
-          { number: 2, title: "Déclaration d'intention", description: "Soumettez votre dossier d'investissement pour une étude de préfaisabilité." },
-          { number: 3, title: "Agréments et Installation", description: "Obtenez rapidement vos agréments investisseurs via notre circuit court." },
-          { number: 4, title: "Déploiement et suivi", description: "Suivi aftercare pour la pérennité de vos activités au Gabon." }
-        ]}
-      />
-
-      <section className="py-24 bg-gray-50 dark:bg-gray-900/50">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center mb-24">
-          <div className="bg-gray-200 dark:bg-gray-800 rounded-3xl aspect-4/3 flex items-center justify-center p-8">
-            <span className="text-gray-400">Image illustrative</span>
-          </div>
-          <div>
-            <h3 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{tr('svc.investir.sec1.title')}</h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-              {tr('svc.investir.sec1.desc')}
-            </p>
-            <ul className="space-y-4">
-              <li className="flex gap-3 text-gray-700 dark:text-gray-300"><div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold shrink-0" style={{ backgroundColor: accentColor }}>✓</div>{tr('svc.investir.sec1.check1')}</li>
-              <li className="flex gap-3 text-gray-700 dark:text-gray-300"><div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold shrink-0" style={{ backgroundColor: accentColor }}>✓</div>{tr('svc.investir.sec1.check2')}</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-          <div className="order-2 md:order-1">
-            <h3 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{tr('svc.investir.sec2.title')}</h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-              {tr('svc.investir.sec2.desc')}
-            </p>
-            <ul className="space-y-4">
-              <li className="flex gap-3 text-gray-700 dark:text-gray-300"><div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold shrink-0" style={{ backgroundColor: accentColor }}>✓</div>{tr('svc.investir.sec2.check1')}</li>
-              <li className="flex gap-3 text-gray-700 dark:text-gray-300"><div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold shrink-0" style={{ backgroundColor: accentColor }}>✓</div>{tr('svc.investir.sec2.check2')}</li>
-            </ul>
-          </div>
-          <div className="order-1 md:order-2 bg-gray-200 dark:bg-gray-800 rounded-3xl aspect-4/3 flex items-center justify-center p-8">
-            <span className="text-gray-400">Image illustrative</span>
-          </div>
-        </div>
-      </section>
-
-      {/* NEW — L'Économie Numérique : La Verticale Prioritaire */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 text-sm font-semibold mb-4">
-              🚀 Verticale Prioritaire
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              L&apos;Économie Numérique : 6 Verticales de Croissance
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              135% de pénétration mobile, mais seulement 33% de comptes numériques actifs.
-              Ce gap représente la plus grande opportunité d&apos;investissement en Afrique Centrale.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {NUMERIQUE_VERTICALES.map((v, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: v.color + '15' }}>
-                  <v.icon size={24} className="text-current" style={{ color: v.color }} />
+      {/* ═══════════ 2. PARADOXE ═══════════ */}
+      <SectionWrapper id="paradoxe" theme="dark">
+        <SectionBadge text={PARADOXE_META.badge} dark />
+        <h2 className="text-2xl md:text-3xl font-black text-white mb-2">{PARADOXE_META.title}</h2>
+        <p className="text-sm text-gray-400 mb-8 max-w-2xl">{PARADOXE_META.description}</p>
+        <div className="grid md:grid-cols-2 gap-8">
+          <ParadoxeGauges gauges={PARADOXE_GAUGES} />
+          <div className="space-y-6">
+            {/* Gap Viz */}
+            <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
+              <h3 className="text-sm font-bold text-white mb-4">{PARADOXE_META.gap.title}</h3>
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <p
+                    className="text-3xl font-black"
+                    style={{ color: PARADOXE_META.gap.left.color }}
+                  >
+                    {PARADOXE_META.gap.left.value}
+                  </p>
+                  <p className="text-xs text-gray-400">{PARADOXE_META.gap.left.label}</p>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{v.titre}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{v.desc}</p>
+                <div className="text-center px-4">
+                  <p
+                    className="text-2xl font-black"
+                    style={{ color: PARADOXE_META.gap.gapValue.color }}
+                  >
+                    {PARADOXE_META.gap.gapValue.value}
+                  </p>
+                  <p className="text-[10px] text-gray-500">{PARADOXE_META.gap.gapValue.label}</p>
+                </div>
+                <div className="text-center">
+                  <p
+                    className="text-3xl font-black"
+                    style={{ color: PARADOXE_META.gap.right.color }}
+                  >
+                    {PARADOXE_META.gap.right.value}
+                  </p>
+                  <p className="text-xs text-gray-400">{PARADOXE_META.gap.right.label}</p>
+                </div>
               </div>
+            </div>
+            {/* Callout */}
+            <div className="bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-2xl border border-teal-500/20 p-6">
+              <p className="text-sm text-gray-300 italic leading-relaxed">
+                &ldquo;{PARADOXE_META.callout.stat}&rdquo;
+              </p>
+              <p className="text-base font-black text-teal-400 mt-3">
+                {PARADOXE_META.callout.conclusion}
+              </p>
+            </div>
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 3. MACRO ═══════════ */}
+      <SectionWrapper id="macro" theme="light">
+        <SectionBadge text="📈 Données Macroéconomiques" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          Fondamentaux Macroéconomiques
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Stabilité monétaire (FCFA/Euro), inflation maîtrisée, excédent courant.
+        </p>
+        <MacroTable data={MACRO_TABLE} source={MACRO_SOURCE} />
+        {/* Mini charts */}
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
+          {[MACRO_CHARTS.gdpGrowth, MACRO_CHARTS.inflation].map((chart) => {
+            const max = Math.max(...chart.data.map((d) => Math.abs(d.v))) * 1.3;
+            return (
+              <div key={chart.title} className="bg-gray-50 dark:bg-white/3 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-3">
+                  {chart.title}
+                </h3>
+                <div className="flex items-end gap-2 h-24">
+                  {chart.data.map((d, i) => (
+                    <div key={d.y} className="flex-1 flex flex-col items-center gap-1">
+                      <span className="text-[9px] font-bold text-gray-600 dark:text-gray-300">
+                        {d.v}
+                      </span>
+                      <motion.div
+                        initial={{ height: 0 }}
+                        whileInView={{ height: `${(Math.abs(d.v) / max) * 100}%` }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.08 }}
+                        className={`w-full rounded-t-md ${d.v >= 0 ? 'bg-gradient-to-t from-teal-500 to-emerald-400' : 'bg-red-400'}`}
+                        style={{ minHeight: 4 }}
+                      />
+                      <span className="text-[8px] text-gray-400">{d.y}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* Key Facts */}
+        <div className="grid md:grid-cols-4 gap-3 mt-8">
+          {KEY_FACTS.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="flex items-start gap-3 p-4 bg-teal-50 dark:bg-teal-500/5 rounded-xl border border-teal-200/40 dark:border-teal-500/10"
+              >
+                <Icon size={16} className="text-teal-500 mt-0.5 shrink-0" />
+                <p className="text-xs text-gray-700 dark:text-gray-300">{f.fact}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 4. VERTICALES ═══════════ */}
+      <SectionWrapper id="verticales" theme="light-gray">
+        <SectionBadge text="🚀 Verticales de Croissance" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          6 Verticales d&apos;Investissement
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Chaque verticale représente un marché sous-pénétré avec des startups pionnières.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {VERTICALES.map((v, i) => (
+            <VerticaleCard key={v.id} verticale={v} index={i} />
+          ))}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 5. POZI ═══════════ */}
+      <SectionWrapper id="pozi" theme="light">
+        <SectionBadge text={CASE_STUDY_POZI.badge} />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-6">
+          {CASE_STUDY_POZI.title}
+        </h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Timeline */}
+          <div className="space-y-4">
+            {CASE_STUDY_POZI.timeline.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex gap-4"
+              >
+                <div className="w-20 shrink-0">
+                  <span className="text-xs font-black text-teal-500">{t.year}</span>
+                </div>
+                <div className="flex-1 pb-4 border-l-2 border-teal-200 dark:border-teal-800 pl-4">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{t.event}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* NEW — Success Story POZI */}
-      <section className="py-24 bg-gray-50 dark:bg-gray-900/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 text-sm font-semibold mb-6">
-                ✅ Success Story
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                POZI : Le Premier Deal VC Étranger du Gabon
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-                En octobre 2025, la startup gabonaise POZI (télématique & gestion de flotte IA) a clôturé
-                un tour Seed de <strong>€650 000</strong>, mené par Saviu Ventures avec Emsy Capital en co-investisseur.
-              </p>
-              <ul className="space-y-3 mb-6">
-                {[
-                  '2 500+ véhicules connectés au Gabon',
-                  'Clients B2B : transporteurs nationaux et multinationales',
-                  'Expansion prévue en Côte d\'Ivoire — objectif 35 000 véhicules / 10 marchés en 2030',
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                    <CheckCircle size={18} className="text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                &ldquo;Première levée VC étrangère au Gabon. La preuve que l&apos;écosystème est prêt.&rdquo;
-              </p>
+          {/* Metrics + VC Context */}
+          <div className="space-y-4">
+            <div className="bg-gray-50 dark:bg-white/3 rounded-2xl p-5 grid grid-cols-2 gap-3">
+              {Object.entries(CASE_STUDY_POZI.metriques).map(([k, v]) => (
+                <div key={k}>
+                  <p className="text-[10px] text-gray-400 uppercase">
+                    {k.replace(/([A-Z])/g, ' $1')}
+                  </p>
+                  <p className="text-xs font-bold text-gray-900 dark:text-white">{v}</p>
+                </div>
+              ))}
             </div>
-            <div className="bg-linear-to-br from-teal-500 to-emerald-600 rounded-3xl p-10 text-white">
-              <h3 className="text-xl font-bold mb-6">Métriques du deal</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Montant', value: '€650K' },
-                  { label: 'Lead Investor', value: 'Saviu Ventures' },
-                  { label: 'Co-Investor', value: 'Emsy Capital' },
-                  { label: 'Secteur', value: 'LogisTech / IA' },
-                  { label: 'Véhicules', value: '2 500+' },
-                  { label: 'Ambition 2030', value: '35K véhicules' },
-                ].map((m, i) => (
-                  <div key={i} className="p-3 bg-white/10 rounded-xl border border-white/10">
-                    <div className="text-white/70 text-xs mb-1">{m.label}</div>
-                    <div className="font-bold text-sm">{m.value}</div>
+            <div className="bg-teal-50 dark:bg-teal-500/5 rounded-2xl border border-teal-200/40 dark:border-teal-500/10 p-5">
+              <h3 className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-3">
+                {CASE_STUDY_POZI.vcContext.title}
+              </h3>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {CASE_STUDY_POZI.vcContext.stats.map((s) => (
+                  <div key={s.label} className="text-center">
+                    <p className="text-sm font-black text-teal-600 dark:text-teal-300">{s.value}</p>
+                    <p className="text-[10px] text-gray-500">{s.label}</p>
                   </div>
                 ))}
               </div>
+              <p className="text-xs text-teal-700 dark:text-teal-300 italic">
+                {CASE_STUDY_POZI.vcContext.narrative}
+              </p>
             </div>
           </div>
         </div>
-      </section>
+      </SectionWrapper>
 
-      {/* NEW — Écosystème de Support Investisseur */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-6 text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Écosystème de Support Investisseur
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Un réseau institutionnel structuré pour sécuriser et accélérer votre investissement
-          </p>
+      {/* ═══════════ 6. SIMULATEUR ROI ═══════════ */}
+      <SectionWrapper id="simulateur" theme="dark">
+        <SectionBadge text="🧮 Outil Interactif" dark />
+        <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
+          Simulez Votre Retour sur Investissement
+        </h2>
+        <p className="text-sm text-gray-400 mb-8">
+          Estimez le potentiel de votre investissement dans l&apos;économie numérique gabonaise en 3
+          étapes.
+        </p>
+        <div className="max-w-xl mx-auto">
+          <ROISimulator />
         </div>
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: '🏛️', titre: 'ANPI-Gabon', desc: 'Guichet Numérique — création entreprise 100% en ligne' },
-            { icon: '🚀', titre: 'SING SA', desc: '1er incubateur 100% numérique CEMAC — 38 startups' },
-            { icon: '💡', titre: 'CGI / SADA', desc: 'Centre d\'Innovation (UIT) — formations internationales' },
-            { icon: '🏦', titre: 'FONAP', desc: 'Prêts bonifiés et co-financement projets innovants' },
-          ].map((item, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-2">{item.titre}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
+      </SectionWrapper>
+
+      {/* ═══════════ 7. PARCOURS ═══════════ */}
+      <SectionWrapper id="parcours" theme="light">
+        <SectionBadge text="🗺️ Votre Parcours" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          Comment Investir au Gabon en 6 Étapes
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          De la découverte au déploiement : un accompagnement structuré et digitalisé.
+        </p>
+        <div className="max-w-2xl mx-auto">
+          <InvestorJourneyMap />
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 8. CADRE JURIDIQUE ═══════════ */}
+      <SectionWrapper id="juridique" theme="light-gray">
+        <SectionBadge text="⚖️ Cadre Juridique" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          Un Cadre Juridique Favorable à l&apos;Investissement
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Code des Investissements, ANPI, ZIS de Nkok, exonérations fiscales.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {CADRE_JURIDIQUE.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <motion.div
+                key={c.titre}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+              >
+                <Icon size={18} className="text-teal-500 mb-3" />
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">{c.titre}</h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {c.description}
+                </p>
+                {c.lien && (
+                  <a
+                    href={c.lien.href}
+                    target={c.lien.external ? '_blank' : undefined}
+                    rel={c.lien.external ? 'noopener noreferrer' : undefined}
+                    className="inline-flex items-center gap-1 text-xs text-teal-500 font-semibold mt-2 hover:underline"
+                  >
+                    <ExternalLink size={10} /> {c.lien.label}
+                  </a>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 9. ÉCOSYSTÈME ═══════════ */}
+      <SectionWrapper id="ecosysteme" theme="light">
+        <SectionBadge text="🤝 Écosystème" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          Écosystème de Support Investisseur
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Un réseau institutionnel structuré pour sécuriser et accélérer votre investissement.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ECOSYSTEME_SUPPORT.map((inst, i) => {
+            const Icon = inst.icon;
+            return (
+              <motion.div
+                key={inst.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white mb-3"
+                  style={{ background: inst.color }}
+                >
+                  <Icon size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">{inst.name}</h3>
+                <p className="text-[10px] text-gray-500 mb-2">{inst.role}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{inst.description}</p>
+                {inst.link && (
+                  <a
+                    href={inst.link}
+                    className="text-xs text-teal-500 font-semibold mt-2 inline-block hover:underline"
+                  >
+                    En savoir plus →
+                  </a>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 10. PARTENARIATS ═══════════ */}
+      <SectionWrapper id="partenariats" theme="light-gray">
+        <SectionBadge text="🌍 Social Proof" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-6">
+          Partenariats Internationaux Actifs
+        </h2>
+        <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-white/8">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 dark:bg-white/3">
+                {['Partenaire', 'Programme', 'Montant', 'Impact', 'Type'].map((h) => (
+                  <th
+                    key={h}
+                    className="text-left text-xs font-bold text-gray-900 dark:text-white px-4 py-3 uppercase tracking-wider"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+              {PARTENARIATS.map((p, i) => (
+                <motion.tr
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  className="hover:bg-gray-50/50 dark:hover:bg-white/2"
+                >
+                  <td className="px-4 py-3 font-bold text-gray-900 dark:text-white text-xs">
+                    {p.partenaire}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-400">
+                    {p.programme}
+                  </td>
+                  <td className="px-4 py-3 text-xs font-semibold text-teal-500">{p.montant}</td>
+                  <td className="px-4 py-3 text-xs text-gray-600 dark:text-gray-400">{p.impact}</td>
+                  <td className="px-4 py-3">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/6 text-gray-600 dark:text-gray-300">
+                      {p.type}
+                    </span>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 11. TELECOM ═══════════ */}
+      <SectionWrapper id="telecom" theme="dark">
+        <SectionBadge text="📡 ARCEP Q3 2025" dark />
+        <h2 className="text-2xl md:text-3xl font-black text-white mb-6">
+          Un Marché Télécom Structuré et Lucratif
+        </h2>
+        <TelecomChart />
+      </SectionWrapper>
+
+      {/* ═══════════ 12. RISQUES ═══════════ */}
+      <SectionWrapper id="risques" theme="light-gray">
+        <SectionBadge text="⚠️ Analyse de Risques" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-2">
+          Risques & Stratégies d&apos;Atténuation
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Transparence totale — chaque risque est accompagné de sa stratégie de mitigation.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {RISQUES.map((r, i) => (
+            <RisqueCard key={r.risque} risque={r} index={i} />
+          ))}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 13. GABON DIGITAL 2030 ═══════════ */}
+      <SectionWrapper id="gabon-digital" theme="dark">
+        <SectionBadge text={GABON_DIGITAL_VISION.badge} dark />
+        <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
+          {GABON_DIGITAL_VISION.title}
+        </h2>
+        <p className="text-sm text-gray-400 mb-8">{GABON_DIGITAL_VISION.subtitle}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+          {GABON_DIGITAL_VISION.keyFigures.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <motion.div
+                key={f.label}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white/5 rounded-xl border border-white/10 p-4 text-center"
+              >
+                <Icon size={16} className="text-teal-400 mx-auto mb-1" />
+                <p className="text-xl font-black text-white">
+                  {f.value}
+                  <span className="text-sm text-gray-400 ml-1">{f.suffix || ''}</span>
+                </p>
+                <p className="text-[10px] text-gray-400 mt-1">{f.label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+        {/* Timeline */}
+        <div className="space-y-3 mb-8">
+          {GABON_DIGITAL_VISION.deploymentTimeline.map((d, i) => (
+            <motion.div
+              key={d.year}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className={`flex items-center gap-4 p-3 rounded-xl ${d.status === 'completed' ? 'bg-teal-500/10 border border-teal-500/20' : d.status === 'in_progress' ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-white/5 border border-white/5'}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${d.status === 'completed' ? 'bg-teal-500' : d.status === 'in_progress' ? 'bg-amber-500' : 'bg-gray-600'}`}
+              >
+                {d.status === 'completed' ? (
+                  <CheckCircle size={14} className="text-white" />
+                ) : (
+                  <span className="text-xs font-bold text-white">{d.year.slice(2)}</span>
+                )}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">{d.year}</p>
+                <p className="text-xs text-gray-400">{d.milestone}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        {/* Projects grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+          {GABON_DIGITAL_VISION.projects.map((p) => (
+            <div
+              key={p}
+              className="text-xs text-gray-400 p-2 bg-white/3 rounded-lg border border-white/5"
+            >
+              {p}
             </div>
           ))}
         </div>
-      </section>
+        <p className="text-sm text-gray-400 italic leading-relaxed max-w-3xl">
+          {GABON_DIGITAL_VISION.narrative}
+        </p>
+      </SectionWrapper>
 
-      {/* NEW — CTA vers page investir-numerique */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="rounded-3xl bg-linear-to-r from-teal-600 via-emerald-500 to-green-600 p-10 md:p-14 text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl" />
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">
-                Rapport complet : Investir dans l&apos;Économie Numérique du Gabon
-              </h2>
-              <p className="text-white/80 mb-8 max-w-2xl mx-auto">
-                Données macroéconomiques BAD, marchés télécom ARCEP, 6 verticales sectorielles, deal flow et cas d&apos;étude POZI — tout en un.
-              </p>
-              <Link href="/investir-numerique" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-teal-700 rounded-2xl font-bold text-base hover:bg-gray-100 transition-all shadow-xl no-underline">
-                Accéder au rapport <ArrowRight size={18} />
-              </Link>
+      {/* ═══════════ 14. FAQ ═══════════ */}
+      <SectionWrapper id="faq" theme="light">
+        <SectionBadge text="❓ Questions Fréquentes" />
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-6">
+          Foire aux Questions
+        </h2>
+        <div className="max-w-3xl mx-auto space-y-2">
+          {FAQ_INVESTIR.map((f, i) => (
+            <div
+              key={i}
+              className="bg-gray-50 dark:bg-white/3 rounded-xl border border-gray-200/40 dark:border-white/5 overflow-hidden"
+            >
+              <button
+                onClick={() => setFaqOpen(faqOpen === i ? null : i)}
+                className="w-full flex items-center justify-between p-4 text-left"
+              >
+                <span className="text-sm font-bold text-gray-900 dark:text-white pr-4">{f.q}</span>
+                {faqOpen === i ? (
+                  <ChevronUp size={16} className="text-teal-500 shrink-0" />
+                ) : (
+                  <ChevronDown size={16} className="text-gray-400 shrink-0" />
+                )}
+              </button>
+              <AnimatePresence>
+                {faqOpen === i && (
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: 'auto' }}
+                    exit={{ height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="text-sm text-gray-600 dark:text-gray-400 px-4 pb-4 leading-relaxed">
+                      {f.a}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+          ))}
+        </div>
+      </SectionWrapper>
+
+      {/* ═══════════ 15. CTA FINAL ═══════════ */}
+      <SectionWrapper theme="gradient">
+        <div className="text-center py-8">
+          <h2 className="text-2xl md:text-3xl font-black text-white mb-3">{CTA_FINAL.title}</h2>
+          <p className="text-sm text-white/80 mb-8 max-w-xl mx-auto">{CTA_FINAL.subtitle}</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {CTA_FINAL.actions.map((a) => {
+              const Icon = a.icon;
+              return a.variant === 'primary' ? (
+                <Link
+                  key={a.label}
+                  href={a.href}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-teal-600 font-bold text-sm hover:bg-white/90 transition-all shadow-lg"
+                >
+                  <Icon size={16} /> {a.label}
+                </Link>
+              ) : (
+                <a
+                  key={a.label}
+                  href={a.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-white/30 text-white font-bold text-sm hover:bg-white/10 transition-all"
+                >
+                  <Icon size={16} /> {a.label}
+                </a>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </SectionWrapper>
 
-      <ServiceStats
-        accentColor={accentColor}
-        stats={[
-          { value: tr('svc.investir.m1.val'), label: "Pôles de compétitivité" },
-          { value: "11%", label: "Croissance des IDE (2025)" },
-          { value: "3M+", label: "Marché consommateurs (CEMAC)" }
-        ]}
-      />
-
-      <ServiceFAQ
-        accentColor={accentColor}
-        questions={[
-          { question: "Qu'est-ce que l'agrément investisseur ?", answer: "Un statut officiel octroyé par l'ANPI pour bénéficier des avantages de la Charte." },
-          { question: "Un étranger peut-il détenir 100% de son entreprise ?", answer: "Oui, sauf dans les secteurs stratégiques régulés." },
-          { question: "Comment rapatrier ses bénéfices ?", answer: "Bénéfices et capitaux librement transférables conformément aux règles CEMAC/BEAC." },
-          { question: "Quels avantages en ZES ?", answer: "Exonération d'IS et TVA, rapatriement 100%, infrastructures premium, douane intégrée." },
-          { question: "Quel accompagnement offre GABON BIZ ?", answer: "Démarches préliminaires en ligne et mise en relation avec l'ANPI-GABON." }
-        ]}
-      />
-
-      <ServiceTestimonials
-        accentColor={accentColor}
-        testimonials={[
-          { quote: "Le guichet unique nous a permis d'installer notre usine en un temps record.", author: "Rajiv Sharma", role: "Directeur des Opérations", company: "ZES Nkok" },
-          { quote: "La transparence et les incitations fiscales sont réelles et appliquées.", author: "Claire Dupont", role: "Investisseur International", company: "Paris" }
-        ]}
-      />
-    </>
+      {/* Marquee CSS */}
+      <style jsx global>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
+    </div>
   );
 }
