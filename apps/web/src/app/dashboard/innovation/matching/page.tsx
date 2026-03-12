@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Brain, Search, Loader2 } from 'lucide-react';
@@ -13,7 +13,7 @@ const URGENCES = ['Immédiat', '< 3 mois', '< 6 mois'] as const;
 
 type Step = 'input' | 'loading' | 'results';
 
-export default function MatchingPage() {
+function MatchingContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
@@ -174,5 +174,13 @@ export default function MatchingPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MatchingPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[40vh]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" /></div>}>
+      <MatchingContent />
+    </Suspense>
   );
 }
