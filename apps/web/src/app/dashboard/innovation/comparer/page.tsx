@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { PageHeader } from '@/components/ui';
 import CompareTable from '@/components/innovation/CompareTable';
 import { getSolutionById } from '@/lib/mock/innovation-data';
 
-export default function ComparerPage() {
+function ComparerContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const idsParam = searchParams.get('ids') || '';
@@ -31,5 +31,13 @@ export default function ComparerPage() {
 
       <CompareTable solutions={solutions} onRemove={handleRemove} />
     </div>
+  );
+}
+
+export default function ComparerPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[40vh]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" /></div>}>
+      <ComparerContent />
+    </Suspense>
   );
 }
