@@ -43,11 +43,20 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Entrepreneur',
-    description: "Créateur et gérant d'entreprise. Accède au guichet unique, aux marchés publics et à la soumission d'offres.",
+    description:
+      "Créateur et gérant d'entreprise. Accède au guichet unique, aux marchés publics et à la soumission d'offres.",
     icon: '🏢',
     accentColor: '#009e49',
-    accessibleModules: ['/dashboard', '/dashboard/entreprises', '/dashboard/marches', '/dashboard/soumissions', '/dashboard/filieres', '/dashboard/annuaire'],
-    scenarioDescription: "Ange est fondateur de Mbadinga Technologies, une SARL spécialisée dans les solutions digitales à Libreville. Il a 3 entreprises enregistrées, 2 soumissions actives aux marchés publics.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/entreprises',
+      '/dashboard/marches',
+      '/dashboard/soumissions',
+      '/dashboard/filieres',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      'Ange est fondateur de Mbadinga Technologies, une SARL spécialisée dans les solutions digitales à Libreville. Il a 3 entreprises enregistrées, 2 soumissions actives aux marchés publics.',
   },
   // 2 — STARTUP
   {
@@ -66,11 +75,20 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Startup / Fondateur',
-    description: "Fondatrice de startup tech. Publie des solutions sur l'Innovation Hub, participe à l'incubateur et cherche des financements.",
+    description:
+      "Fondatrice de startup tech. Publie des solutions sur l'Innovation Hub, participe à l'incubateur et cherche des financements.",
     icon: '🚀',
     accentColor: '#8b5cf6',
-    accessibleModules: ['/dashboard', '/dashboard/entreprises', '/dashboard/innovation', '/dashboard/incubateur', '/dashboard/investir', '/dashboard/annuaire'],
-    scenarioDescription: "Sara a fondé TechPay Solutions, une startup FinTech incubée dans la cohorte SING 2.0. Elle a publié 2 solutions sur l'Innovation Hub et recherche un financement Seed de 150M FCFA.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/entreprises',
+      '/dashboard/innovation',
+      '/dashboard/incubateur',
+      '/dashboard/investir',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      "Sara a fondé TechPay Solutions, une startup FinTech incubée dans la cohorte SING 2.0. Elle a publié 2 solutions sur l'Innovation Hub et recherche un financement Seed de 150M FCFA.",
   },
   // 3 — INVESTISSEUR VC
   {
@@ -89,16 +107,26 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Investisseur VC',
-    description: "Managing Partner d'un fonds VC spécialisé Afrique Centrale. Explore le deal flow, analyse les métriques macro et suit les startups à fort potentiel.",
+    description:
+      "Managing Partner d'un fonds VC spécialisé Afrique Centrale. Explore le deal flow, analyse les métriques macro et suit les startups à fort potentiel.",
     icon: '💰',
     accentColor: '#14b8a6',
     accessibleModules: [
-      '/dashboard', '/dashboard/innovation', '/dashboard/incubateur',
-      '/dashboard/investir', '/dashboard/investir/opportunites',
-      '/dashboard/investir/macro', '/dashboard/investir/due-diligence',
-      '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/annuaire',
+      '/dashboard',
+      '/dashboard/innovation',
+      '/dashboard/incubateur',
+      '/dashboard/investir',
+      '/dashboard/investir/opportunites',
+      '/dashboard/investir/macro',
+      '/dashboard/investir/due-diligence',
+      '/dashboard/investir/simulateur',
+      '/dashboard/investir/veille',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/annuaire',
     ],
-    scenarioDescription: "Jean-Paul dirige Ndong Capital Partners, un fonds VC de €5M dédié à l'Afrique centrale. Il a investi dans 3 startups au Cameroun et cherche activement des deals au Gabon depuis la réussite du tour POZI/Saviu. Il utilise GABON BIZ pour identifier les startups, analyser les données macro et préparer ses comités d'investissement.",
+    scenarioDescription:
+      "Jean-Paul dirige Ndong Capital Partners, un fonds VC de €5M dédié à l'Afrique centrale. Il a investi dans 3 startups au Cameroun et cherche activement des deals au Gabon depuis la réussite du tour POZI/Saviu. Il utilise GABON BIZ pour identifier les startups, analyser les données macro et préparer ses comités d'investissement.",
   },
   // 4 — AGENT DGMP
   {
@@ -117,11 +145,19 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Agent DGMP',
-    description: "Agent des Marchés Publics. Publie les appels d'offres, évalue les soumissions, attribue les marchés.",
+    description:
+      "Agent des Marchés Publics. Publie les appels d'offres, évalue les soumissions, attribue les marchés.",
     icon: '📋',
     accentColor: '#3b82f6',
-    accessibleModules: ['/dashboard', '/dashboard/marches', '/dashboard/soumissions', '/dashboard/filieres', '/dashboard/annuaire'],
-    scenarioDescription: "Patrick est responsable de la dématérialisation des marchés publics à la DGMP. Il a 4 marchés en cours de publication et 25 soumissions à évaluer.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/marches',
+      '/dashboard/soumissions',
+      '/dashboard/filieres',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      'Patrick est responsable de la dématérialisation des marchés publics à la DGMP. Il a 4 marchés en cours de publication et 25 soumissions à évaluer.',
   },
   // 5 — MENTOR
   {
@@ -140,11 +176,19 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Mentor / Expert',
-    description: "Mentore dans le programme d'incubation. Accompagne les startups, organise des sessions de mentorat et évalue les candidatures.",
+    description:
+      "Mentore dans le programme d'incubation. Accompagne les startups, organise des sessions de mentorat et évalue les candidatures.",
     icon: '🎓',
     accentColor: '#ec4899',
-    accessibleModules: ['/dashboard', '/dashboard/incubateur', '/dashboard/innovation', '/dashboard/observatoire', '/dashboard/annuaire'],
-    scenarioDescription: "Dr. Nguema est professeure en entrepreneuriat et mentore certifiée du programme SING 2.0. Elle accompagne 3 startups dans la cohorte actuelle.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/incubateur',
+      '/dashboard/innovation',
+      '/dashboard/observatoire',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      'Dr. Nguema est professeure en entrepreneuriat et mentore certifiée du programme SING 2.0. Elle accompagne 3 startups dans la cohorte actuelle.',
   },
   // 6 — ADMIN MENUDI
   {
@@ -163,15 +207,24 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Administrateur MENUDI',
-    description: "Administratrice de la plateforme. Accès total : gestion des entreprises, marchés, cohortes, indicateurs et configuration système.",
+    description:
+      'Administratrice de la plateforme. Accès total : gestion des entreprises, marchés, cohortes, indicateurs et configuration système.',
     icon: '🛡️',
     accentColor: '#ef4444',
     accessibleModules: [
-      '/dashboard', '/dashboard/entreprises', '/dashboard/marches', '/dashboard/soumissions',
-      '/dashboard/innovation', '/dashboard/incubateur', '/dashboard/investir',
-      '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/cgi',
+      '/dashboard',
+      '/dashboard/entreprises',
+      '/dashboard/marches',
+      '/dashboard/soumissions',
+      '/dashboard/innovation',
+      '/dashboard/incubateur',
+      '/dashboard/investir',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/cgi',
     ],
-    scenarioDescription: "Marie-Claire supervise l'ensemble de la plateforme GABON BIZ. Accès super-admin à tous les modules et statistiques globales.",
+    scenarioDescription:
+      "Marie-Claire supervise l'ensemble de la plateforme GABON BIZ. Accès super-admin à tous les modules et statistiques globales.",
   },
   // 7 — ANALYSTE OBSERVATOIRE
   {
@@ -190,11 +243,19 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Analyste Observatoire',
-    description: "Analyste de données économiques numériques. Consulte et met à jour les indicateurs, génère des rapports et gère l'API Open Data.",
+    description:
+      "Analyste de données économiques numériques. Consulte et met à jour les indicateurs, génère des rapports et gère l'API Open Data.",
     icon: '📊',
     accentColor: '#f59e0b',
-    accessibleModules: ['/dashboard', '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/investir', '/dashboard/annuaire'],
-    scenarioDescription: "Hervé travaille à l'ANINF et alimente l'Observatoire de l'Économie Numérique. Il suit 42 indicateurs clés et génère des rapports trimestriels.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/investir',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      "Hervé travaille à l'ANINF et alimente l'Observatoire de l'Économie Numérique. Il suit 42 indicateurs clés et génère des rapports trimestriels.",
   },
   // 8 — CITOYEN
   {
@@ -213,11 +274,20 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Citoyen / Public',
-    description: "Simple citoyen qui consulte l'annuaire des entreprises, les marchés publics ouverts et les statistiques nationales.",
+    description:
+      "Simple citoyen qui consulte l'annuaire des entreprises, les marchés publics ouverts et les statistiques nationales.",
     icon: '👤',
     accentColor: '#6b7280',
-    accessibleModules: ['/dashboard', '/dashboard/entreprises', '/dashboard/marches', '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/annuaire'],
-    scenarioDescription: "Fatima est une citoyenne de Port-Gentil qui utilise GABON BIZ pour vérifier l'existence légale d'entreprises et consulter les marchés publics ouverts.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/entreprises',
+      '/dashboard/marches',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      "Fatima est une citoyenne de Port-Gentil qui utilise GABON BIZ pour vérifier l'existence légale d'entreprises et consulter les marchés publics ouverts.",
   },
   // 9 — PARTENAIRE INTERNATIONAL (DFI)
   {
@@ -237,15 +307,25 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Partenaire International',
-    description: "Représentant d'un bailleur de fonds international. Accède aux données pays, au deal flow et aux rapports de l'observatoire.",
+    description:
+      "Représentant d'un bailleur de fonds international. Accède aux données pays, au deal flow et aux rapports de l'observatoire.",
     icon: '🌍',
     accentColor: '#0ea5e9',
     accessibleModules: [
-      '/dashboard', '/dashboard/investir', '/dashboard/investir/opportunites',
-      '/dashboard/investir/macro', '/dashboard/investir/due-diligence',
-      '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/innovation', '/dashboard/annuaire',
+      '/dashboard',
+      '/dashboard/investir',
+      '/dashboard/investir/opportunites',
+      '/dashboard/investir/macro',
+      '/dashboard/investir/due-diligence',
+      '/dashboard/investir/simulateur',
+      '/dashboard/investir/veille',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/innovation',
+      '/dashboard/annuaire',
     ],
-    scenarioDescription: "Li Wei représente un DFI asiatique explorant le marché gabonais suite aux visites de la délégation émiratie et du MoU Huawei-CEMAC. Il suit les programmes Gabon Digital et SADA pour identifier des co-investissements en infrastructure et GovTech.",
+    scenarioDescription:
+      'Li Wei représente un DFI asiatique explorant le marché gabonais suite aux visites de la délégation émiratie et du MoU Huawei-CEMAC. Il suit les programmes Gabon Digital et SADA pour identifier des co-investissements en infrastructure et GovTech.',
   },
   // 10 — AUTORITÉ CONTRACTANTE
   {
@@ -264,11 +344,18 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Autorité Contractante',
-    description: "Entité publique émettrice de marchés. Crée et publie des appels d'offres, reçoit et évalue les soumissions.",
+    description:
+      "Entité publique émettrice de marchés. Crée et publie des appels d'offres, reçoit et évalue les soumissions.",
     icon: '🏛️',
     accentColor: '#7c3aed',
-    accessibleModules: ['/dashboard', '/dashboard/marches', '/dashboard/soumissions', '/dashboard/annuaire'],
-    scenarioDescription: "Jean-Sylvain est directeur des marchés à l'ANINF. Il rédige et publie des appels d'offres pour les projets d'infrastructure numérique.",
+    accessibleModules: [
+      '/dashboard',
+      '/dashboard/marches',
+      '/dashboard/soumissions',
+      '/dashboard/annuaire',
+    ],
+    scenarioDescription:
+      "Jean-Sylvain est directeur des marchés à l'ANINF. Il rédige et publie des appels d'offres pour les projets d'infrastructure numérique.",
   },
   // 11 — ADMIN SYSTÈME
   {
@@ -287,15 +374,25 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Admin Système',
-    description: "Responsable de la maintenance et de l'administration technique. Accès complet à tous les modules, logs, configuration et supervision de l'infrastructure.",
+    description:
+      "Responsable de la maintenance et de l'administration technique. Accès complet à tous les modules, logs, configuration et supervision de l'infrastructure.",
     icon: '⚙️',
     accentColor: '#334155',
     accessibleModules: [
-      '/dashboard', '/dashboard/entreprises', '/dashboard/marches', '/dashboard/soumissions',
-      '/dashboard/innovation', '/dashboard/incubateur', '/dashboard/investir',
-      '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/admin', '/dashboard/cgi',
+      '/dashboard',
+      '/dashboard/entreprises',
+      '/dashboard/marches',
+      '/dashboard/soumissions',
+      '/dashboard/innovation',
+      '/dashboard/incubateur',
+      '/dashboard/investir',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/admin',
+      '/dashboard/cgi',
     ],
-    scenarioDescription: "Rodrigue est l'administrateur système de GABON BIZ. Il supervise l'infrastructure, gère les deployments, monitore la performance et assure la maintenance applicative. Accès root à l'ensemble du système.",
+    scenarioDescription:
+      "Rodrigue est l'administrateur système de GABON BIZ. Il supervise l'infrastructure, gère les deployments, monitore la performance et assure la maintenance applicative. Accès root à l'ensemble du système.",
   },
   // 12 — DIRECTEUR CGI
   {
@@ -314,14 +411,21 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
       isDemo: true,
     },
     label: 'Directeur CGI',
-    description: "Directeur du Centre Gabonais de l'Innovation. Pilote les 4 pôles (Acculturation, Certification, FabLab, MediaLab), gère le programme SADA et les partenariats internationaux.",
+    description:
+      "Directeur du Centre Gabonais de l'Innovation. Pilote les 4 pôles (Acculturation, Certification, FabLab, MediaLab), gère le programme SADA et les partenariats internationaux.",
     icon: '🏛️',
     accentColor: '#F59E0B',
     accessibleModules: [
-      '/dashboard', '/dashboard/cgi', '/dashboard/innovation', '/dashboard/incubateur',
-      '/dashboard/observatoire', '/dashboard/filieres', '/dashboard/annuaire',
+      '/dashboard',
+      '/dashboard/cgi',
+      '/dashboard/innovation',
+      '/dashboard/incubateur',
+      '/dashboard/observatoire',
+      '/dashboard/filieres',
+      '/dashboard/annuaire',
     ],
-    scenarioDescription: "Dr. Franck-Éric Oyane Ndong dirige le CGI depuis son inauguration en 2024. Il supervise 3 420 personnes formées, 64 projets FabLab, le programme SADA et les partenariats avec l'UIT, Smart Africa et l'UNESCO.",
+    scenarioDescription:
+      "Dr. Franck-Éric Oyane Ndong dirige le CGI depuis son inauguration en 2024. Il supervise 3 420 personnes formées, 64 projets FabLab, le programme SADA et les partenariats avec l'UIT, Smart Africa et l'UNESCO.",
   },
 ];
 

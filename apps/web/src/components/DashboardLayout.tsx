@@ -24,7 +24,9 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { path: '/dashboard/marches', icon: '📋', label: 'Marchés Publics' },
   { path: '/dashboard/soumissions', icon: '📨', label: 'Mes Soumissions' },
   {
-    path: '/dashboard/innovation', icon: '💡', label: 'Innovation Hub',
+    path: '/dashboard/innovation',
+    icon: '💡',
+    label: 'Innovation Hub',
     children: [
       { path: '/dashboard/innovation/defis', label: "Défis d'Innovation" },
       { path: '/dashboard/innovation/startups', label: 'Startups' },
@@ -35,11 +37,15 @@ const ALL_NAV_ITEMS: NavItem[] = [
   },
   { path: '/dashboard/incubateur', icon: '🎓', label: 'Incubateur' },
   {
-    path: '/dashboard/investir', icon: '💰', label: 'Investir',
+    path: '/dashboard/investir',
+    icon: '💰',
+    label: 'Investir',
     children: [
       { path: '/dashboard/investir/opportunites', label: 'Opportunités Sectorielles' },
       { path: '/dashboard/investir/macro', label: 'Dashboard Macro' },
       { path: '/dashboard/investir/due-diligence', label: 'Due Diligence Pays' },
+      { path: '/dashboard/investir/simulateur', label: 'Simulateur ROI' },
+      { path: '/dashboard/investir/veille', label: 'Veille & Alertes' },
     ],
   },
   { path: '/dashboard/observatoire', icon: '📊', label: 'Observatoire' },
@@ -49,6 +55,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
+  { path: '/dashboard/admin', icon: '🖥️', label: 'Admin Système' },
   { path: '/dashboard/admin/entreprises', icon: '⚙️', label: 'Gestion Entreprises' },
   { path: '/dashboard/admin/marches', icon: '📊', label: 'Gestion Marchés' },
 ];
@@ -60,14 +67,14 @@ function getNavItemsForUser(user: ReturnType<typeof useAuth>['user']): NavItem[]
   if (user.isDemo) {
     const account = getDemoAccountByNip(user.nip);
     if (account) {
-      return ALL_NAV_ITEMS.filter((item) =>
-        account.accessibleModules.includes(item.path)
-      ).map((item) => ({
-        ...item,
-        children: item.children?.filter((child) =>
-          account.accessibleModules.includes(child.path)
-        ),
-      }));
+      return ALL_NAV_ITEMS.filter((item) => account.accessibleModules.includes(item.path)).map(
+        (item) => ({
+          ...item,
+          children: item.children?.filter((child) =>
+            account.accessibleModules.includes(child.path),
+          ),
+        }),
+      );
     }
   }
 
@@ -78,7 +85,7 @@ function getNavItemsForUser(user: ReturnType<typeof useAuth>['user']): NavItem[]
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const isAdmin = user?.roles?.includes('ADMIN');
+  const isAdmin = user?.roles?.includes('ADMIN') || user?.roles?.includes('SYSADMIN');
   const navItems = getNavItemsForUser(user);
 
   return (
@@ -100,7 +107,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Nav */}
         <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto">
           {navItems.map((item) => {
-            const active = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path));
+            const active =
+              pathname === item.path ||
+              (item.path !== '/dashboard' && pathname.startsWith(item.path));
             const hasChildren = item.children && item.children.length > 0;
             const showChildren = hasChildren && active;
             return (
@@ -108,31 +117,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link
                   href={item.path}
                   className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm no-underline transition-all duration-150
-                    ${active
-                      ? 'font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50'
-                      : 'font-normal text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ${
+                      active
+                        ? 'font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50'
+                        : 'font-normal text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                 >
                   <span className="text-lg">{item.icon}</span>
                   {item.label}
                 </Link>
-                {showChildren && item.children!.map((child) => {
-                  const childActive = pathname === child.path;
-                  return (
-                    <Link
-                      key={child.path}
-                      href={child.path}
-                      className={`flex items-center gap-2 pl-12 pr-3.5 py-2 rounded-lg text-xs no-underline transition-all duration-150 ml-1
-                        ${childActive
-                          ? 'font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40'
-                          : 'font-normal text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700'
+                {showChildren &&
+                  item.children!.map((child) => {
+                    const childActive = pathname === child.path;
+                    return (
+                      <Link
+                        key={child.path}
+                        href={child.path}
+                        className={`flex items-center gap-2 pl-12 pr-3.5 py-2 rounded-lg text-xs no-underline transition-all duration-150 ml-1
+                        ${
+                          childActive
+                            ? 'font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40'
+                            : 'font-normal text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-700'
                         }`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60 shrink-0" />
-                      {child.label}
-                    </Link>
-                  );
-                })}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60 shrink-0" />
+                        {child.label}
+                      </Link>
+                    );
+                  })}
               </div>
             );
           })}
@@ -149,9 +161,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     key={item.path}
                     href={item.path}
                     className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm no-underline transition-all
-                      ${active
-                        ? 'font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50'
-                        : 'font-normal text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ${
+                        active
+                          ? 'font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50'
+                          : 'font-normal text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                       }`}
                   >
                     <span className="text-lg">{item.icon}</span>
@@ -169,7 +182,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
             style={{
               background: user?.isDemo
-                ? (getDemoAccountByNip(user.nip)?.accentColor || '#009e49')
+                ? getDemoAccountByNip(user.nip)?.accentColor || '#009e49'
                 : 'linear-gradient(135deg, #009e49, #3cba54)',
             }}
           >
@@ -195,9 +208,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main */}
-      <main className="flex-1 ml-[260px] p-8 lg:p-10">
-        {children}
-      </main>
+      <main className="flex-1 ml-[260px] p-8 lg:p-10">{children}</main>
     </div>
   );
 }

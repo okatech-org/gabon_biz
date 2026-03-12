@@ -1,26 +1,74 @@
 'use client';
 
-// GABON BIZ — Shared UI Components
-// StatusBadge, StatsCard, DataTable, PageHeader, EmptyState
+// GABON BIZ — Shared UI Components (Tailwind + Dark Mode)
+// StatusBadge, StatsCard, PageHeader, EmptyState, PrimaryButton, FilterBar
 
 import React from 'react';
 
 // ============================================
 // STATUS BADGE
 // ============================================
-const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  DRAFT: { bg: '#f3f4f6', text: '#6b7280', dot: '#9ca3af' },
-  PENDING: { bg: '#fef3c7', text: '#92400e', dot: '#f59e0b' },
-  ACTIVE: { bg: '#d1fae5', text: '#065f46', dot: '#10b981' },
-  PUBLISHED: { bg: '#dbeafe', text: '#1e40af', dot: '#3b82f6' },
-  CLOSED: { bg: '#fecaca', text: '#991b1b', dot: '#ef4444' },
-  AWARDED: { bg: '#d1fae5', text: '#065f46', dot: '#10b981' },
-  CANCELLED: { bg: '#f3f4f6', text: '#6b7280', dot: '#9ca3af' },
-  SUSPENDED: { bg: '#fecaca', text: '#991b1b', dot: '#ef4444' },
-  SUBMITTED: { bg: '#dbeafe', text: '#1e40af', dot: '#3b82f6' },
-  UNDER_REVIEW: { bg: '#fef3c7', text: '#92400e', dot: '#f59e0b' },
-  REJECTED: { bg: '#fecaca', text: '#991b1b', dot: '#ef4444' },
-  WITHDRAWN: { bg: '#f3f4f6', text: '#6b7280', dot: '#9ca3af' },
+const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string }> = {
+  DRAFT: {
+    bg: 'bg-gray-100 dark:bg-gray-800',
+    text: 'text-gray-600 dark:text-gray-400',
+    dot: 'bg-gray-400',
+  },
+  PENDING: {
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    text: 'text-amber-700 dark:text-amber-400',
+    dot: 'bg-amber-500',
+  },
+  ACTIVE: {
+    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    text: 'text-emerald-700 dark:text-emerald-400',
+    dot: 'bg-emerald-500',
+  },
+  PUBLISHED: {
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    text: 'text-blue-700 dark:text-blue-400',
+    dot: 'bg-blue-500',
+  },
+  CLOSED: {
+    bg: 'bg-red-50 dark:bg-red-950/40',
+    text: 'text-red-700 dark:text-red-400',
+    dot: 'bg-red-500',
+  },
+  AWARDED: {
+    bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    text: 'text-emerald-700 dark:text-emerald-400',
+    dot: 'bg-emerald-500',
+  },
+  CANCELLED: {
+    bg: 'bg-gray-100 dark:bg-gray-800',
+    text: 'text-gray-600 dark:text-gray-400',
+    dot: 'bg-gray-400',
+  },
+  SUSPENDED: {
+    bg: 'bg-red-50 dark:bg-red-950/40',
+    text: 'text-red-700 dark:text-red-400',
+    dot: 'bg-red-500',
+  },
+  SUBMITTED: {
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    text: 'text-blue-700 dark:text-blue-400',
+    dot: 'bg-blue-500',
+  },
+  UNDER_REVIEW: {
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    text: 'text-amber-700 dark:text-amber-400',
+    dot: 'bg-amber-500',
+  },
+  REJECTED: {
+    bg: 'bg-red-50 dark:bg-red-950/40',
+    text: 'text-red-700 dark:text-red-400',
+    dot: 'bg-red-500',
+  },
+  WITHDRAWN: {
+    bg: 'bg-gray-100 dark:bg-gray-800',
+    text: 'text-gray-600 dark:text-gray-400',
+    dot: 'bg-gray-400',
+  },
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -39,18 +87,14 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: { status: string }) {
-  const colors = STATUS_COLORS[status] || STATUS_COLORS.DRAFT;
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.DRAFT;
   const label = STATUS_LABELS[status] || status;
 
   return (
     <span
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600,
-        backgroundColor: colors.bg, color: colors.text,
-      }}
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text}`}
     >
-      <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: colors.dot }} />
+      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       {label}
     </span>
   );
@@ -59,29 +103,29 @@ export function StatusBadge({ status }: { status: string }) {
 // ============================================
 // STATS CARD
 // ============================================
-export function StatsCard({ title, value, icon, color = '#009e49' }: {
+export function StatsCard({
+  title,
+  value,
+  icon,
+  color = '#009e49',
+}: {
   title: string;
   value: string | number;
   icon: string;
   color?: string;
 }) {
   return (
-    <div style={{
-      background: 'white', borderRadius: 16, padding: '24px 28px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
-      border: '1px solid #f0f0f0',
-      display: 'flex', flexDirection: 'column', gap: 8,
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>{title}</span>
-        <span style={{
-          fontSize: 20, width: 40, height: 40, borderRadius: 12,
-          background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col gap-2 transition-shadow hover:shadow-md">
+      <div className="flex justify-between items-center">
+        <span className="text-[13px] text-gray-500 dark:text-gray-400 font-medium">{title}</span>
+        <span
+          className="text-xl w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: `${color}15` }}
+        >
           {icon}
         </span>
       </div>
-      <span style={{ fontSize: 28, fontWeight: 700, color: '#111827', letterSpacing: -0.5 }}>
+      <span className="text-2xl sm:text-[28px] font-bold text-gray-900 dark:text-white tracking-tight">
         {typeof value === 'number' ? value.toLocaleString('fr-FR') : value}
       </span>
     </div>
@@ -91,26 +135,22 @@ export function StatsCard({ title, value, icon, color = '#009e49' }: {
 // ============================================
 // PAGE HEADER
 // ============================================
-export function PageHeader({ title, subtitle, action }: {
+export function PageHeader({
+  title,
+  subtitle,
+  action,
+}: {
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
 }) {
   return (
-    <div style={{
-      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-      marginBottom: 32,
-    }}>
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-8">
       <div>
-        <h1 style={{
-          fontSize: 28, fontWeight: 700, color: '#111827', marginBottom: 4,
-          letterSpacing: -0.3,
-        }}>
+        <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 dark:text-white mb-1 tracking-tight">
           {title}
         </h1>
-        {subtitle && (
-          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{subtitle}</p>
-        )}
+        {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 m-0">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -120,22 +160,22 @@ export function PageHeader({ title, subtitle, action }: {
 // ============================================
 // EMPTY STATE
 // ============================================
-export function EmptyState({ icon, title, description, action }: {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+}: {
   icon: string;
   title: string;
   description: string;
   action?: React.ReactNode;
 }) {
   return (
-    <div style={{
-      textAlign: 'center', padding: '60px 20px',
-      background: '#fafafa', borderRadius: 16, border: '2px dashed #e5e7eb',
-    }}>
-      <span style={{ fontSize: 48 }}>{icon}</span>
-      <h3 style={{ fontSize: 18, fontWeight: 600, color: '#374151', marginTop: 16, marginBottom: 8 }}>
-        {title}
-      </h3>
-      <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 20 }}>{description}</p>
+    <div className="text-center py-16 px-5 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+      <span className="text-5xl block">{icon}</span>
+      <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mt-4 mb-2">{title}</h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">{description}</p>
       {action}
     </div>
   );
@@ -144,26 +184,144 @@ export function EmptyState({ icon, title, description, action }: {
 // ============================================
 // PRIMARY BUTTON
 // ============================================
-export function PrimaryButton({ children, onClick, href, style: customStyle }: {
+export function PrimaryButton({
+  children,
+  onClick,
+  href,
+  style: customStyle,
+  className: extraClass,
+}: {
   children: React.ReactNode;
   onClick?: () => void;
   href?: string;
   style?: React.CSSProperties;
+  className?: string;
 }) {
-  const baseStyle: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 8,
-    padding: '12px 24px', borderRadius: 12, fontSize: 14, fontWeight: 600,
-    background: 'linear-gradient(135deg, #009e49 0%, #3cba54 100%)',
-    color: 'white', border: 'none', cursor: 'pointer',
-    textDecoration: 'none', transition: 'all 0.2s ease',
-    boxShadow: '0 2px 8px rgba(0,158,73,0.3)',
-    ...customStyle,
-  };
+  const cls = `inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold
+    bg-gradient-to-br from-emerald-600 to-emerald-500 dark:from-emerald-500 dark:to-emerald-600
+    text-white border-0 cursor-pointer no-underline shadow-md shadow-emerald-600/20
+    hover:shadow-lg hover:shadow-emerald-600/30 hover:-translate-y-0.5
+    active:translate-y-0 transition-all duration-200 ${extraClass || ''}`;
 
   if (href) {
-    return <a href={href} style={baseStyle}>{children}</a>;
+    return (
+      <a href={href} className={cls} style={customStyle}>
+        {children}
+      </a>
+    );
   }
-  return <button onClick={onClick} style={baseStyle}>{children}</button>;
+  return (
+    <button onClick={onClick} className={cls} style={customStyle}>
+      {children}
+    </button>
+  );
+}
+
+// ============================================
+// FILTER BAR (reusable filter pills)
+// ============================================
+export function FilterBar({
+  options,
+  active,
+  onChange,
+  accentColor,
+}: {
+  options: { value: string; label: string }[];
+  active: string;
+  onChange: (value: string) => void;
+  accentColor?: string;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Filtres">
+      {options.map((opt) => {
+        const isActive = active === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            role="tab"
+            aria-selected={isActive}
+            className={`px-4 py-2 rounded-lg text-[13px] font-medium border cursor-pointer transition-all duration-200
+              focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500
+              ${
+                isActive
+                  ? 'text-white border-transparent shadow-sm'
+                  : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+              }`}
+            style={
+              isActive
+                ? { background: accentColor || '#009e49', borderColor: accentColor || '#009e49' }
+                : undefined
+            }
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================
+// DATA TABLE WRAPPER (consistent styling)
+// ============================================
+export function DataTableWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">{children}</table>
+      </div>
+    </div>
+  );
+}
+
+export function TableHead({ children }: { children: React.ReactNode }) {
+  return (
+    <thead>
+      <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/50">
+        {children}
+      </tr>
+    </thead>
+  );
+}
+
+export function Th({
+  children,
+  align = 'left',
+}: {
+  children: React.ReactNode;
+  align?: 'left' | 'right' | 'center';
+}) {
+  return (
+    <th
+      className={`px-5 py-3.5 font-semibold text-xs uppercase text-gray-500 dark:text-gray-400 tracking-wide text-${align}`}
+    >
+      {children}
+    </th>
+  );
+}
+
+export function Td({
+  children,
+  align = 'left',
+  className: extra,
+}: {
+  children: React.ReactNode;
+  align?: 'left' | 'right' | 'center';
+  className?: string;
+}) {
+  return <td className={`px-5 py-4 text-${align} ${extra || ''}`}>{children}</td>;
+}
+
+export function Tr({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
+  return (
+    <tr
+      onClick={onClick}
+      className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50/60 dark:hover:bg-gray-800/30 transition-colors cursor-pointer"
+    >
+      {children}
+    </tr>
+  );
 }
 
 // ============================================
@@ -184,6 +342,8 @@ export function formatCFA(amount: number | null | undefined): string {
 export function formatDate(date: string | Date | null | undefined): string {
   if (!date) return '—';
   return new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit', month: 'long', year: 'numeric',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
   }).format(new Date(date));
 }
