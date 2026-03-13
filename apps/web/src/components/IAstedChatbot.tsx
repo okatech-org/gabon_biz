@@ -213,7 +213,8 @@ export function IAstedChatbot() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasGreetedRef = useRef(false);
   const [voiceOnly, setVoiceOnly] = useState(false); // Autonomous voice mode (no chat window)
-  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressStartRef = useRef<number>(0);
 
   // ─── Draggable FAB state ───
   const fabRef = useRef<HTMLButtonElement>(null);
@@ -427,8 +428,8 @@ export function IAstedChatbot() {
     }
   };
 
-  // ─── VOICE-ONLY MODE: single click = speak greeting + listen (no chat window) ───
-  const startVoiceOnly = () => {
+  // ─── VOICE-ONLY MODE: tap = speak greeting + listen (no chat window) ───
+  const startVoiceOnly = async () => {
     setVoiceOnly(true);
     // Speak greeting then start listening
     const lastGreeting = sessionStorage.getItem(SESSION_GREETING_KEY);
@@ -447,20 +448,20 @@ export function IAstedChatbot() {
       period: getTimePeriod(),
     }));
     // Speak greeting, then auto-start voice recognition
-    speak(greetingText, () => {
-      voice.connect();
-    });
+    await speak(greetingText);
+    voice.connect();
   };
 
-  // ─── CHAT MODE: double click = open chat window (text mode) ───
-  const openChat = () => {
+  // ─── CHAT MODE: long-press = open chat window (text mode) ───
+  const openChat = async () => {
     setIsOpen(true);
     setVoiceOnly(false);
     if (!hasGreetedRef.current && voiceEnabled) {
       hasGreetedRef.current = true;
-      setTimeout(() => {
+      setTimeout(async () => {
         setIsSpeaking(true);
-        speak(getVocalGreeting(), () => setIsSpeaking(false));
+        await speak(getVocalGreeting());
+        setIsSpeaking(false);
       }, 300);
     }
   };
@@ -479,6 +480,14 @@ export function IAstedChatbot() {
       setVoiceOnly(false);
     }
   }, [voiceOnly, voice.voiceState]);
+
+  // ─── Listen for 'iasted:open' custom event (from Portail IA button) ───
+  useEffect(() => {
+    const handleOpen = () => openChat();
+    window.addEventListener('iasted:open', handleOpen);
+    return () => window.removeEventListener('iasted:open', handleOpen);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const markdownComponents: any = {
@@ -747,7 +756,7 @@ export function IAstedChatbot() {
 
       {/* ═══════════════════════════════════════════ */}
       {/* BOUTON FLOTTANT (FAB) — DRAGGABLE          */}
-      {/* 1 clic = voix autonome, 2 clics = chat     */}
+      {/* Tap = voix autonome, Appui long = chat     */}
       {/* ═══════════════════════════════════════════ */}
       {!isOpen && (
         <button
@@ -763,6 +772,15 @@ export function IAstedChatbot() {
             };
             hasDraggedRef.current = false;
             isDraggingRef.current = false;
+            pressStartRef.current = Date.now();
+
+            // Long-press detection: vibrate at 400ms to signal chat mode
+            longPressTimerRef.current = setTimeout(() => {
+              if (!hasDraggedRef.current) {
+                // Haptic feedback if available
+                navigator?.vibrate?.(30);
+              }
+            }, 400);
           }}
           onPointerMove={(e) => {
             if (!dragStartRef.current) return;
@@ -771,6 +789,7 @@ export function IAstedChatbot() {
             if (!isDraggingRef.current && Math.abs(dx) + Math.abs(dy) < 5) return;
             isDraggingRef.current = true;
             hasDraggedRef.current = true;
+            if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
             e.preventDefault();
             const fabSize = fabRef.current?.offsetWidth || 84;
             const newX = Math.max(0, Math.min(window.innerWidth - fabSize, dragStartRef.current.sx + dx));
@@ -781,6 +800,7 @@ export function IAstedChatbot() {
             (e.target as HTMLElement).releasePointerCapture(e.pointerId);
             isDraggingRef.current = false;
             dragStartRef.current = null;
+            if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
             if (hasDraggedRef.current) return; // Was a drag, not a click
 
             // If in voice-only mode, clicking stops voice
@@ -791,16 +811,12 @@ export function IAstedChatbot() {
               return;
             }
 
-            // Double-click detection: 300ms window
-            if (clickTimerRef.current) {
-              clearTimeout(clickTimerRef.current);
-              clickTimerRef.current = null;
-              openChat(); // Double-click → open chat
+            // Long-press (>400ms) = chat, Short tap (<400ms) = voice
+            const pressDuration = Date.now() - pressStartRef.current;
+            if (pressDuration > 400) {
+              openChat(); // Long press → open chat
             } else {
-              clickTimerRef.current = setTimeout(() => {
-                clickTimerRef.current = null;
-                startVoiceOnly(); // Single click → voice only
-              }, 300);
+              startVoiceOnly(); // Short tap → voice only
             }
           }}
           className={`fixed z-50 flex items-center justify-center shadow-xl text-white touch-none select-none ${
@@ -839,7 +855,7 @@ export function IAstedChatbot() {
                 ? 'iasted-pulse 1s ease-in-out infinite'
                 : undefined,
           }}
-          aria-label={voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : '1 clic = parler, 2 clics = chat'}
+          aria-label={voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : 'Tap = parler, Appui long = chat'}
         >
           {voiceOnly ? (
             voice.voiceState === 'listening' ? (
