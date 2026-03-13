@@ -157,7 +157,7 @@ export default function MarchesPage() {
       {isDGMP && (
         <Link
           href="/dashboard/marches/autorite"
-          className="flex items-center justify-between p-4 mb-5 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/60 dark:border-violet-800/40 no-underline hover:shadow-md transition-all duration-200"
+          className="flex items-center justify-between p-4 mb-5 rounded-xl bg-linear-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/60 dark:border-violet-800/40 no-underline hover:shadow-md transition-all duration-200"
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏛️</span>

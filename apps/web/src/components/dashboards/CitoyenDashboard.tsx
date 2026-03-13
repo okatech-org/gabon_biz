@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -109,6 +110,12 @@ const USEFUL_LINKS = [
 
 export default function CitoyenDashboard({ user }: { user: { name?: string; location?: string } }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearch = () => {
+    const q = searchQuery.trim();
+    router.push(q ? `/dashboard/annuaire?q=${encodeURIComponent(q)}` : '/dashboard/annuaire');
+  };
 
   return (
     <div className="space-y-6">
@@ -194,15 +201,16 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
               placeholder="Nom d'entreprise, RCCM, NIF..."
               aria-label="Rechercher une entreprise par nom, RCCM ou NIF"
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
-          <Link
-            href="/dashboard/annuaire"
+          <button
+            onClick={handleSearch}
             aria-label="Rechercher dans l'annuaire des entreprises"
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold no-underline transition-colors shrink-0"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors shrink-0 cursor-pointer border-none"
           >
             Rechercher <ArrowRight size={14} />
-          </Link>
+          </button>
         </div>
         <p className="text-[11px] text-gray-400 mt-2">
           Vérifiez l&apos;existence légale d&apos;une entreprise dans le registre national

@@ -1,136 +1,127 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Star, Award } from 'lucide-react';
-import type { StartupProfile } from '@/lib/mock/incubateur-types';
-import { STAGE_CONFIG } from '@/lib/mock/incubateur-data';
+import { ExternalLink, Star, Users, Zap, CheckCircle } from 'lucide-react';
+import type { StartupSING } from '@/lib/mock/incubateur-types';
+import { SECTEUR_CONFIG, PROGRAMMES_REELS } from '@/lib/mock/incubateur-data';
 
-const SECTOR_COLORS: Record<string, string> = {
-  fintech: '#10B981',
-  govtech: '#6366F1',
-  healthtech: '#EF4444',
-  ecommerce: '#EC4899',
-  agritech: '#22C55E',
-  musictech: '#F59E0B',
-  insurtech: '#0EA5E9',
-  mobilite: '#3B82F6',
-  edtech: '#8B5CF6',
-};
+/** Convert a hex color to a soft pastel background + muted text version */
+function softColor(hex: string): { bg: string; text: string } {
+  return { bg: `${hex}12`, text: `${hex}cc` };
+}
 
 export default function StartupProfileCard({
   startup,
   index = 0,
 }: {
-  startup: StartupProfile;
+  startup: StartupSING;
   index?: number;
 }) {
-  const sectorColor = SECTOR_COLORS[startup.sector] || '#6b7280';
-  const stageConf = STAGE_CONFIG[startup.stage];
-  const initials =
-    startup.name.replace(/[^A-Z]/g, '').slice(0, 2) || startup.name.slice(0, 2).toUpperCase();
-  const metricEntries = Object.entries(startup.metrics).slice(0, 3);
+  const secteurConf = SECTEUR_CONFIG[startup.secteur] || { label: startup.secteurRaw, color: '#6b7280' };
+  const programme = PROGRAMMES_REELS.find(p => p.id === startup.programmeId);
+  const initials = startup.nom.replace(/[^A-Z]/g, '').slice(0, 2) || startup.nom.slice(0, 2).toUpperCase();
+  const soft = softColor(secteurConf.color);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      onClick={() => { window.location.href = `/dashboard/incubateur/startups/${startup.id}`; }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: index * 0.06, type: 'spring', stiffness: 100 }}
-      className={`group relative bg-white dark:bg-white/5 rounded-2xl border overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30 hover:-translate-y-1 ${
-        startup.featured
-          ? 'border-amber-400/50 ring-1 ring-amber-400/20'
-          : startup.status === 'LEGACY'
-            ? 'border-violet-400/50 ring-1 ring-violet-400/20'
-            : 'border-gray-200/60 dark:border-white/8'
-      }`}
+      transition={{ delay: Math.min(index * 0.03, 0.4), type: 'spring', stiffness: 120 }}
+      className="group relative block rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 cursor-pointer
+        bg-white border-gray-200/70 hover:shadow-md hover:shadow-gray-200/40
+        dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:shadow-lg dark:hover:shadow-black/20 dark:hover:border-gray-600/60"
     >
-      {/* Top accent bar */}
-      <div className="h-1 w-full" style={{ background: sectorColor }} />
-
-      <div className="p-5">
-        {/* Header: Logo + Name */}
-        <div className="flex items-start gap-3 mb-3">
+      <div className="p-3 sm:p-5">
+        {/* Header: Initials + Name */}
+        <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
           <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0"
-            style={{ background: sectorColor }}
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0"
+            style={{ background: soft.bg, color: soft.text }}
           >
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                {startup.name}
+            <div className="flex items-center gap-1">
+              <h3 className="text-xs sm:text-sm font-semibold truncate text-gray-900 dark:text-gray-100">
+                {startup.nom}
               </h3>
-              {startup.featured && (
-                <Star size={14} className="text-amber-400 fill-amber-400 shrink-0" />
-              )}
-              {startup.status === 'LEGACY' && (
-                <Award size={14} className="text-violet-400 shrink-0" />
+              {startup.tier === 'TOP' && (
+                <Star size={11} className="text-amber-400/80 fill-amber-400/80 shrink-0" />
               )}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{startup.tagline}</p>
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500 truncate mt-0.5">
+              {programme?.name || startup.programmeRaw}
+            </p>
           </div>
         </div>
 
-        {/* Badges */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        {/* Badges — soft tinted versions of the real colors */}
+        <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-3">
           <span
-            className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-white"
-            style={{ background: sectorColor }}
+            className="text-[9px] sm:text-[10px] font-medium px-1.5 sm:px-2 py-0.5 rounded-full"
+            style={{ background: soft.bg, color: soft.text }}
           >
-            {startup.sector.charAt(0).toUpperCase() + startup.sector.slice(1)}
+            {secteurConf.label}
           </span>
-          {stageConf && (
-            <span
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: `${stageConf.color}18`, color: stageConf.color }}
-            >
-              {stageConf.label}
+          {startup.tier === 'TOP' && (
+            <span className="text-[9px] sm:text-[10px] font-medium px-1.5 sm:px-2 py-0.5 rounded-full
+              bg-amber-50 text-amber-600/80 dark:bg-amber-900/15 dark:text-amber-400/80">
+              Top
             </span>
           )}
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/8 text-gray-500 dark:text-gray-400">
-            {startup.year}
-          </span>
-        </div>
-
-        {/* Description */}
-        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3 leading-relaxed">
-          {startup.description}
-        </p>
-
-        {/* Metrics */}
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          {metricEntries.map(([key, val]) => (
-            <div key={key} className="text-center bg-gray-50 dark:bg-white/3 rounded-lg p-1.5">
-              <div className="text-xs font-bold text-gray-900 dark:text-white">{val}</div>
-              <div className="text-[9px] text-gray-500 dark:text-gray-400 truncate capitalize">
-                {key.replace(/_/g, ' ')}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1 mb-3">
-          {startup.tags.slice(0, 3).map((t) => (
-            <span
-              key={t}
-              className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/6 text-gray-500 dark:text-gray-400"
-            >
-              {t}
+          {startup.tier === 'ACTIVE' && (
+            <span className="text-[9px] sm:text-[10px] font-medium px-1.5 sm:px-2 py-0.5 rounded-full
+              bg-emerald-50 text-emerald-600/70 dark:bg-emerald-900/15 dark:text-emerald-400/70">
+              Actif
             </span>
-          ))}
+          )}
+          {startup.maturite === 'M' && (
+            <span className="text-[9px] sm:text-[10px] font-medium px-1.5 sm:px-2 py-0.5 rounded-full
+              bg-blue-50 text-blue-500/70 dark:bg-blue-900/15 dark:text-blue-400/70">
+              Mature
+            </span>
+          )}
+        </div>
+
+        {/* Metrics row */}
+        <div className="grid grid-cols-3 gap-1 sm:gap-1.5 mb-2 sm:mb-3">
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+              <Users size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
+              <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.emplois}</span>
+            </div>
+            <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Emplois</div>
+          </div>
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+              <Zap size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
+              <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.actif ? 'Oui' : 'Non'}</span>
+            </div>
+            <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Actif</div>
+          </div>
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+              <CheckCircle size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
+              <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.formalisation ? 'Oui' : 'Non'}</span>
+            </div>
+            <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Formalisé</div>
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-white/5">
-          <span className="text-[10px] text-gray-400">{startup.programme}</span>
-          {startup.website && (
+        <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t border-gray-100 dark:border-gray-800">
+          <span className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-600 truncate mr-1 sm:mr-2">
+            #{startup.num} · {startup.dateDemarrage || '—'}
+          </span>
+          {startup.siteWeb && (
             <a
-              href={startup.website}
+              href={startup.siteWeb}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-pink-500 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              className="text-gray-300 hover:text-gray-500 dark:text-gray-600 dark:hover:text-gray-400 transition-colors"
             >
               <ExternalLink size={12} />
             </a>

@@ -9,7 +9,7 @@ export default function CommunautePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white">
           <Network size={18} />
         </div>
         <div>
@@ -38,7 +38,7 @@ export default function CommunautePage() {
       </div>
 
       {/* Alumni Spotlight */}
-      <div className="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 text-white">
+      <div className="bg-linear-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 text-white">
         <p className="text-xs font-bold uppercase tracking-wider text-white/60 mb-2">
           Alumni Spotlight
         </p>

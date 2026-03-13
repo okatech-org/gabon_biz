@@ -1,46 +1,45 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Grid3X3, Search, List } from 'lucide-react';
+import { Grid3X3, Search } from 'lucide-react';
 import StartupProfileCard from '@/components/incubateur/StartupProfileCard';
-import { STARTUPS_PORTFOLIO } from '@/lib/mock/incubateur-startups';
+import { ALL_STARTUPS_SING } from '@/lib/mock/incubateur-startups';
 import { PORTFOLIO_FILTERS } from '@/lib/mock/incubateur-data';
 
 export default function StartupsPage() {
   const [query, setQuery] = useState('');
   const [sector, setSector] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+  const [tier, setTier] = useState('all');
+  const [sortBy, setSortBy] = useState('score');
 
   const filtered = useMemo(() => {
-    let list = [...STARTUPS_PORTFOLIO];
-    if (sector !== 'all') list = list.filter((s) => s.sector === sector);
+    let list = [...ALL_STARTUPS_SING];
+    if (sector !== 'all') list = list.filter((s) => s.secteur === sector);
+    if (tier !== 'all') list = list.filter((s) => s.tier === tier);
     if (query)
       list = list.filter(
         (s) =>
-          s.name.toLowerCase().includes(query.toLowerCase()) ||
-          s.tagline.toLowerCase().includes(query.toLowerCase()),
+          s.nom.toLowerCase().includes(query.toLowerCase()) ||
+          s.programmeRaw.toLowerCase().includes(query.toLowerCase()) ||
+          s.secteurRaw.toLowerCase().includes(query.toLowerCase()),
       );
-    if (sortBy === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
-    else if (sortBy === 'year') list.sort((a, b) => b.year - a.year);
-    else if (sortBy === 'funding')
-      list.sort(
-        (a, b) =>
-          parseInt(b.fundingRaised.replace(/\D/g, '') || '0') -
-          parseInt(a.fundingRaised.replace(/\D/g, '') || '0'),
-      );
+    if (sortBy === 'score') list.sort((a, b) => b.score - a.score);
+    else if (sortBy === 'emplois') list.sort((a, b) => b.emplois - a.emplois);
+    else if (sortBy === 'nom') list.sort((a, b) => a.nom.localeCompare(b.nom));
+    else if (sortBy === 'num') list.sort((a, b) => a.num - b.num);
     return list;
-  }, [query, sector, sortBy]);
+  }, [query, sector, tier, sortBy]);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white">
           <Grid3X3 size={18} />
         </div>
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-white">Portfolio Startups</h1>
+          <h1 className="text-xl font-black text-gray-900 dark:text-white">Portfolio Startups SING</h1>
           <p className="text-sm text-gray-500">
-            {STARTUPS_PORTFOLIO.length} startups incubées par la SING
+            {ALL_STARTUPS_SING.length} startups incubées · {ALL_STARTUPS_SING.filter(s => s.actif).length} actives · {ALL_STARTUPS_SING.reduce((sum, s) => sum + s.emplois, 0)} emplois
           </p>
         </div>
       </div>
@@ -52,7 +51,7 @@ export default function StartupsPage() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher une startup..."
+            placeholder="Rechercher une startup, programme, secteur..."
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-sm text-gray-900 dark:text-white"
           />
         </div>
@@ -61,10 +60,29 @@ export default function StartupsPage() {
           onChange={(e) => setSortBy(e.target.value)}
           className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-sm text-gray-900 dark:text-white"
         >
-          <option value="name">Tri: Nom</option>
-          <option value="year">Tri: Année</option>
-          <option value="funding">Tri: Levée de fonds</option>
+          <option value="score">Tri: Score</option>
+          <option value="emplois">Tri: Emplois</option>
+          <option value="nom">Tri: Nom A→Z</option>
+          <option value="num">Tri: N° PDF</option>
         </select>
+      </div>
+
+      {/* Tier filters */}
+      <div className="flex flex-wrap gap-2">
+        {[
+          { label: `Tous (${ALL_STARTUPS_SING.length})`, value: 'all' },
+          { label: `⭐ Top (${ALL_STARTUPS_SING.filter(s => s.tier === 'TOP').length})`, value: 'TOP' },
+          { label: `✓ Actifs (${ALL_STARTUPS_SING.filter(s => s.tier === 'ACTIVE').length})`, value: 'ACTIVE' },
+          { label: `○ Inactifs (${ALL_STARTUPS_SING.filter(s => s.tier === 'INACTIVE').length})`, value: 'INACTIVE' },
+        ].map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setTier(f.value)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all ${tier === f.value ? 'bg-pink-500 text-white' : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10'}`}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {/* Sector filters */}

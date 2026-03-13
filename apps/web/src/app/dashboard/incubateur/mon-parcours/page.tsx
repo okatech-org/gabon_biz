@@ -43,7 +43,7 @@ export default function MonParcoursPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white">
           <Route size={18} />
         </div>
         <div>
@@ -67,7 +67,7 @@ export default function MonParcoursPage() {
             initial={{ width: 0 }}
             animate={{ width: `${currentProgramme.progressPercent}%` }}
             transition={{ duration: 1.5 }}
-            className="h-full rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-600"
+            className="h-full rounded-full bg-linear-to-r from-pink-500 to-fuchsia-600"
           />
         </div>
         <div className="flex justify-between text-xs text-gray-400 mt-2">

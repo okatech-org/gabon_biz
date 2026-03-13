@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar, Footer } from '@/app/page';
 import { ServiceCTA } from '@/components/services/ServiceCTA';
-import { ServiceNavCards } from '@/components/services/ServiceNavCards';
+
 
 export default function ServicesLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,7 +21,6 @@ export default function ServicesLayout({ children }: { children: React.ReactNode
       </main>
       
       <ServiceCTA />
-      <ServiceNavCards currentSlug={currentSlug} />
       
       <Footer />
     </div>

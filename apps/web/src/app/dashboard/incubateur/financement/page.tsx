@@ -11,7 +11,7 @@ export default function FinancementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white">
           <Banknote size={18} />
         </div>
         <div>
@@ -80,7 +80,7 @@ export default function FinancementPage() {
           {FINANCEMENT_PIPELINE.columns.map((col) => (
             <div
               key={col.id}
-              className="min-w-[200px] flex-shrink-0 bg-gray-50 dark:bg-white/3 rounded-xl p-3"
+              className="min-w-[200px] shrink-0 bg-gray-50 dark:bg-white/3 rounded-xl p-3"
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold text-gray-900 dark:text-white">{col.label}</h3>

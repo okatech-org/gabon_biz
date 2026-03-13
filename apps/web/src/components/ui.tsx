@@ -198,7 +198,7 @@ export function PrimaryButton({
   className?: string;
 }) {
   const cls = `inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold
-    bg-gradient-to-br from-emerald-600 to-emerald-500 dark:from-emerald-500 dark:to-emerald-600
+    bg-linear-to-br from-emerald-600 to-emerald-500 dark:from-emerald-500 dark:to-emerald-600
     text-white border-0 cursor-pointer no-underline shadow-md shadow-emerald-600/20
     hover:shadow-lg hover:shadow-emerald-600/30 hover:-translate-y-0.5
     active:translate-y-0 transition-all duration-200 ${extraClass || ''}`;
@@ -294,7 +294,7 @@ export function Th({
 }) {
   return (
     <th
-      className={`px-5 py-3.5 font-semibold text-xs uppercase text-gray-500 dark:text-gray-400 tracking-wide text-${align}`}
+      className={`px-3 sm:px-5 py-3.5 font-semibold text-xs uppercase text-gray-500 dark:text-gray-400 tracking-wide text-${align}`}
     >
       {children}
     </th>
@@ -310,7 +310,7 @@ export function Td({
   align?: 'left' | 'right' | 'center';
   className?: string;
 }) {
-  return <td className={`px-5 py-4 text-${align} ${extra || ''}`}>{children}</td>;
+  return <td className={`px-3 sm:px-5 py-4 text-${align} ${extra || ''}`}>{children}</td>;
 }
 
 export function Tr({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {

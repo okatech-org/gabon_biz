@@ -6,8 +6,7 @@ import { ServiceHero } from '@/components/services/ServiceHero';
 import { ServiceFeatures } from '@/components/services/ServiceFeatures';
 import { ServiceTimeline } from '@/components/services/ServiceTimeline';
 import { ServiceStats } from '@/components/services/ServiceStats';
-import { ServiceFAQ } from '@/components/services/ServiceFAQ';
-import { ServiceTestimonials } from '@/components/services/ServiceTestimonials';
+
 import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
 import { useI18n } from '@/lib/i18n/i18nContext';
 
@@ -47,24 +46,10 @@ export default function CGIContent() {
     { value: tr('svc.cgi.s8v'), label: tr('svc.cgi.s8l') },
   ];
 
-  const faqs = [
-    { question: tr('svc.cgi.faq1q'), answer: tr('svc.cgi.faq1a') },
-    { question: tr('svc.cgi.faq2q'), answer: tr('svc.cgi.faq2a') },
-    { question: tr('svc.cgi.faq3q'), answer: tr('svc.cgi.faq3a') },
-    { question: tr('svc.cgi.faq4q'), answer: tr('svc.cgi.faq4a') },
-    { question: tr('svc.cgi.faq5q'), answer: tr('svc.cgi.faq5a') },
-    { question: tr('svc.cgi.faq6q'), answer: tr('svc.cgi.faq6a') },
-  ];
-
-  const testimonials = [
-    { quote: tr('svc.cgi.t1_quote'), author: 'Éric Mbeng Nkoghe', role: tr('svc.cgi.t1_role'), company: '' },
-    { quote: tr('svc.cgi.t2_quote'), author: 'Laetitia Koumba Nzé', role: tr('svc.cgi.t2_role'), company: '' },
-    { quote: tr('svc.cgi.t3_quote'), author: 'Jean-Michel Obiang', role: tr('svc.cgi.t3_role'), company: '' },
-  ];
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-36 sm:pt-28 pb-4">
         <ServiceBreadcrumb serviceName={tr('svc.cgi.breadcrumb')} accentColor={accentColor} />
       </div>
 
@@ -102,23 +87,23 @@ export default function CGIContent() {
       />
 
       {/* Poles Detail Section */}
-      <section className="py-24 bg-gray-50 dark:bg-gray-900/50">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">{tr('svc.cgi.poles')}</h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">{tr('svc.cgi.poles')}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {features.map((feature, i) => {
               const Icon = FEATURE_ICONS[i] || Lightbulb;
               return (
-                <div key={i} className="p-8 rounded-3xl bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-shadow">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: `${accentColor}20` }}>
-                    <Icon size={28} style={{ color: accentColor }} />
+                <div key={i} className="p-5 rounded-2xl bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-shadow">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${accentColor}20` }}>
+                    <Icon size={22} style={{ color: accentColor }} />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">{feature.description}</p>
-                  <ul className="space-y-2">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug">{feature.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-3">{feature.description}</p>
+                  <ul className="space-y-1.5">
                     {feature.highlights.map((h) => (
-                      <li key={h} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0" style={{ backgroundColor: accentColor }}>✓</div>
+                      <li key={h} className="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                        <div className="w-4 h-4 rounded-full flex items-center justify-center text-white font-bold text-[9px] shrink-0" style={{ backgroundColor: accentColor }}>✓</div>
                         {h}
                       </li>
                     ))}
@@ -221,15 +206,6 @@ export default function CGIContent() {
         stats={stats}
       />
 
-      <ServiceFAQ
-        accentColor={accentColor}
-        questions={faqs}
-      />
-
-      <ServiceTestimonials
-        accentColor={accentColor}
-        testimonials={testimonials}
-      />
     </>
   );
 }

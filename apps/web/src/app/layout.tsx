@@ -4,6 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme-provider';
 import { I18nProvider } from '@/lib/i18n/i18nContext';
+import { IAstedChatbot } from '@/components/IAstedChatbot';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -56,6 +57,7 @@ export default function RootLayout({
             <AuthProvider>{children}</AuthProvider>
           </ThemeProvider>
         </I18nProvider>
+        <IAstedChatbot />
       </body>
     </html>
   );

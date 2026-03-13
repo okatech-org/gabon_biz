@@ -61,7 +61,7 @@ const styles: Record<string, React.CSSProperties> = {
   card: {
     background: 'white',
     borderRadius: '20px',
-    padding: '48px 40px',
+    padding: '32px 20px',
     maxWidth: '440px',
     width: '100%',
     boxShadow: '0 25px 50px rgba(0,0,0,0.25)',

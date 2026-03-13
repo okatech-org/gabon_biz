@@ -28,12 +28,12 @@ const fadeUp: Variants = {
 export function ServiceFeatures({ features, accentColor }: ServiceFeaturesProps) {
   return (
     <section 
-      className="py-24 bg-gray-50 dark:bg-gray-900/30"
+      className="py-12 sm:py-24 bg-gray-50 dark:bg-gray-900/30"
       style={{ '--accent': accentColor } as React.CSSProperties}
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6">
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 lg:gap-6"
           variants={stagger}
           initial="hidden"
           whileInView="visible"
@@ -46,18 +46,18 @@ export function ServiceFeatures({ features, accentColor }: ServiceFeaturesProps)
                 key={i} 
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-accent"
+                className="bg-white dark:bg-gray-800 p-3 sm:p-5 lg:p-8 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-accent"
               >
                 <div 
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-6"
+                  className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-4 lg:mb-6"
                   style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)' }}
                 >
-                  <Icon size={28} style={{ color: 'var(--accent)' }} />
+                  <Icon className="w-4 h-4 sm:w-6 sm:h-6 lg:w-7 lg:h-7" style={{ color: 'var(--accent)' }} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-xs sm:text-base lg:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3 leading-tight">
                   {f.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="text-[10px] sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 leading-snug sm:leading-relaxed hidden sm:block">
                   {f.description}
                 </p>
               </motion.div>

@@ -17,6 +17,8 @@ import {
 import { useI18n } from '@/lib/i18n/i18nContext';
 import { Navbar } from '@/app/page';
 
+import CompactHero from '@/components/services/CompactHero';
+
 const MODULE_SHORT_NAMES: Record<string, string> = {
   '/dashboard/entreprises': 'Guichet',
   '/dashboard/marches': 'Marchés',
@@ -362,82 +364,27 @@ export default function DemoPageContent() {
       <Navbar />
 
       {/* ═══════ HERO ═══════ */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Background image like homepage */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero-libreville.png"
-            alt="Libreville"
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority
-          />
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/50 to-gray-50 dark:to-gray-950" />
-          {/* Additional artistic gradient */}
+      <CompactHero
+        badge="Mode Démonstration"
+        badgeIcon={<Sparkles size={14} className="text-amber-400" />}
+        title={<>Explorez GABON BIZ{' '}<span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300">en action.</span></>}
+        subtitle={<>Choisissez un profil ci-dessous pour naviguer la plateforme avec des données réalistes. <strong className="text-white/90">Aucun compte requis.</strong></>}
+        backgroundClasses="bg-linear-to-br from-gray-900 via-emerald-950/60 to-gray-900"
+        overlays={<>
+          <div className="absolute inset-0">
+            <Image src="/images/hero-libreville.png" alt="Libreville" fill className="object-cover opacity-15" sizes="100vw" priority />
+          </div>
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.15),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(245,158,11,0.10),transparent_50%)]" />
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6 py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold backdrop-blur-md bg-white/10 border border-white/20 text-white/90 mb-8"
-            >
-              <Sparkles size={16} className="text-amber-400" />
-              Mode Démonstration
-            </motion.div>
-
-            {/* Title — same style as homepage */}
-            <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] xl:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
-              Explorez GABON BIZ{' '}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300">
-                en action.
-              </span>
-            </h1>
-
-            <p className="text-base md:text-lg lg:text-xl text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed">
-              Choisissez un profil ci-dessous pour naviguer la plateforme avec des données réalistes. <strong className="text-white/90">Aucun compte requis.</strong>
-            </p>
-
-            {/* Security info — glassmorphic */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl backdrop-blur-xl bg-white/8 border border-white/12 text-sm text-white/80"
-            >
-              <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
-              <span>Données fictives · Aucune action réelle · Session de 2h</span>
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="mt-12 flex flex-col items-center gap-2"
-          >
-            <span className="text-white/40 text-xs font-medium uppercase tracking-widest">Choisir un profil</span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            >
-              <ChevronDown size={24} className="text-white/30" />
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+        </>}
+        accentColor="#10b981"
+        stats={[
+          { value: DEMO_ACCOUNTS.length, label: 'Profils disponibles', icon: <Users size={18} className="text-emerald-400" /> },
+          { value: '2h', label: 'Durée de session', icon: <ShieldCheck size={18} className="text-emerald-400" /> },
+          { value: '11', label: 'Modules accessibles', icon: <Grid3x3 size={18} className="text-emerald-400" /> },
+          { value: '100%', label: 'Données fictives', icon: <Sparkles size={18} className="text-amber-400" /> },
+        ]}
+      />
 
       {/* ═══════ PROFILE CARDS GRID ═══════ */}
       <section className="relative px-6 py-20 -mt-8">

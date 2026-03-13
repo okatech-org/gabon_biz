@@ -13,6 +13,10 @@ import MentorDashboard from '@/components/dashboards/MentorDashboard';
 import AdminDashboard from '@/components/dashboards/AdminDashboard';
 import AnalysteDashboard from '@/components/dashboards/AnalysteDashboard';
 import CitoyenDashboard from '@/components/dashboards/CitoyenDashboard';
+import EntrepreneurDashboard from '@/components/dashboards/EntrepreneurDashboard';
+import StartupDashboard from '@/components/dashboards/StartupDashboard';
+import InvestisseurDashboard from '@/components/dashboards/InvestisseurDashboard';
+import DGMPDashboard from '@/components/dashboards/DGMPDashboard';
 
 // Map of profile IDs to their dedicated dashboard components
 const PROFILE_DASHBOARDS: Record<
@@ -23,6 +27,10 @@ const PROFILE_DASHBOARDS: Record<
   'demo-admin': AdminDashboard,
   'demo-analyste': AnalysteDashboard,
   'demo-citoyen': CitoyenDashboard,
+  'demo-entrepreneur': EntrepreneurDashboard,
+  'demo-startup': StartupDashboard,
+  'demo-investisseur': InvestisseurDashboard,
+  'demo-dgmp': DGMPDashboard,
 };
 
 // ─── Demo stats per profile ───
@@ -70,6 +78,18 @@ function getDemoStats(nip: string) {
       { icon: '🔍', title: 'En évaluation', value: 2, color: '#f59e0b' },
       { icon: '💰', title: 'Budget engagé', value: '8.5 Mds', color: '#009e49' },
     ],
+    'demo-sysadmin': [
+      { icon: '🟢', title: 'Uptime', value: '99.94%', color: '#10b981' },
+      { icon: '📡', title: 'Requêtes / 24h', value: '145K', color: '#3b82f6' },
+      { icon: '⚠️', title: 'Erreurs 5xx', value: 3, color: '#ef4444' },
+      { icon: '🚀', title: 'Déploiements', value: 12, color: '#8b5cf6' },
+    ],
+    'demo-cgi': [
+      { icon: '🎓', title: 'Personnes formées', value: '3 420', color: '#f59e0b' },
+      { icon: '🛠️', title: 'Projets FabLab', value: 64, color: '#8b5cf6' },
+      { icon: '📈', title: 'Taux insertion', value: '78%', color: '#10b981' },
+      { icon: '🤝', title: 'Partenaires', value: 12, color: '#0ea5e9' },
+    ],
   };
 
   return {
@@ -95,6 +115,8 @@ function getAlertForProfile(profileId: string): { text: string; color: string } 
     },
     'demo-partenaire': { text: 'Nouveau rapport IDES Q4 2025 disponible', color: '#0ea5e9' },
     'demo-autorite': { text: 'Date limite AO-2026-001 dans 3 jours', color: '#7c3aed' },
+    'demo-sysadmin': { text: 'Alerte CPU Cloud Run — pic 87% à 14h32', color: '#ef4444' },
+    'demo-cgi': { text: 'Cohorte INITIA #4 — démarrage dans 5 jours, 89/120 inscrits', color: '#f59e0b' },
   };
   return alerts[profileId] || null;
 }
@@ -154,6 +176,26 @@ const QUICK_ACTIONS: Record<
     },
     { icon: '🏭', label: 'Voir les filières', href: '/dashboard/filieres', color: '#009e49' },
   ],
+  'demo-partenaire': [
+    { icon: '📊', label: 'Country Risk Overview', href: '/dashboard/investir', color: '#0ea5e9' },
+    { icon: '📄', label: 'Rapport IDES Q4', href: '/dashboard/investir', color: '#3b82f6' },
+    { icon: '🤝', label: 'Co-investissements', href: '/dashboard/investir', color: '#14b8a6' },
+  ],
+  'demo-autorite': [
+    { icon: '📋', label: 'Créer un appel d\'offres', href: '/dashboard/marches/autorite', color: '#7c3aed' },
+    { icon: '📨', label: 'Soumissions reçues', href: '/dashboard/marches/autorite', color: '#3b82f6' },
+    { icon: '📒', label: 'Annuaire entreprises', href: '/dashboard/annuaire', color: '#009e49' },
+  ],
+  'demo-sysadmin': [
+    { icon: '🖥️', label: 'Console Admin', href: '/dashboard/admin', color: '#334155' },
+    { icon: '📊', label: 'Monitoring services', href: '/dashboard/admin', color: '#3b82f6' },
+    { icon: '🚀', label: 'Voir les déploiements', href: '/dashboard/admin', color: '#10b981' },
+  ],
+  'demo-cgi': [
+    { icon: '💡', label: 'Pilotage CGI', href: '/dashboard/cgi', color: '#f59e0b' },
+    { icon: '🎓', label: 'Cohortes SADA', href: '/dashboard/cgi', color: '#8b5cf6' },
+    { icon: '📊', label: 'Observatoire', href: '/dashboard/observatoire', color: '#3b82f6' },
+  ],
 };
 
 // ─── Recent activity per profile ───
@@ -189,6 +231,26 @@ const RECENT_ACTIVITY: Record<string, { icon: string; text: string; time: string
     { icon: '📋', text: 'AO-004 Plateforme e-santé — brouillon créé', time: 'Il y a 1h' },
     { icon: '✅', text: 'Évaluation terminée : AfricaTech Consulting — 75/100', time: 'Il y a 4h' },
     { icon: '📨', text: '2 nouvelles soumissions reçues pour AO-002', time: 'Hier' },
+  ],
+  'demo-partenaire': [
+    { icon: '📄', text: 'Rapport IDES Q4 2025 téléchargé', time: 'Il y a 30min' },
+    { icon: '🤝', text: 'Co-investissement Gabon Digital 2030 — pipeline mis à jour', time: 'Il y a 2h' },
+    { icon: '📊', text: 'Score Doing Business actualisé : #132 (+12 places)', time: 'Hier' },
+  ],
+  'demo-autorite': [
+    { icon: '📋', text: 'AO-001 Réseau intranet — 8 soumissions reçues', time: 'Il y a 1h' },
+    { icon: '✅', text: 'GabonTech Consulting évalué — Score 91/100', time: 'Il y a 3h' },
+    { icon: '📝', text: 'Brouillon AO-004 WiFi ZES sauvegardé', time: 'Hier' },
+  ],
+  'demo-sysadmin': [
+    { icon: '🚀', text: 'Déploiement v2.4.1 réussi — Cloud Run europe-west1', time: 'Il y a 45min' },
+    { icon: '⚠️', text: 'Redis — pic latence 45ms (résolu automatiquement)', time: 'Il y a 2h' },
+    { icon: '🔧', text: 'Feature flag "Matching IA" activé en production', time: 'Hier' },
+  ],
+  'demo-cgi': [
+    { icon: '🎓', text: 'Cohorte INITIA #4 — 89 inscrits, ouverture dans 5 jours', time: 'Il y a 1h' },
+    { icon: '🛠️', text: 'FabLab Moanda — 3 nouveaux prototypes validés', time: 'Il y a 4h' },
+    { icon: '🤝', text: 'Smart Africa — convention signée pour 2026', time: 'Hier' },
   ],
 };
 
@@ -274,6 +336,24 @@ const ALL_MODULES_MAP: Record<
     title: 'Filières',
     desc: 'Cartographie sectorielle',
     color: '#009e49',
+  },
+  '/dashboard/admin': {
+    icon: '🖥️',
+    title: 'Admin Système',
+    desc: 'Infrastructure, logs et déploiements',
+    color: '#334155',
+  },
+  '/dashboard/cgi': {
+    icon: '💡',
+    title: "Centre d'Innovation",
+    desc: '4 pôles, SADA et partenariats',
+    color: '#f59e0b',
+  },
+  '/dashboard/annuaire': {
+    icon: '📒',
+    title: 'Annuaire',
+    desc: 'Entreprises du Gabon',
+    color: '#6b7280',
   },
 };
 

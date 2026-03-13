@@ -15,7 +15,6 @@ import {
   Video,
   Clock,
   FileCheck,
-  TrendingUp,
   MessageSquare,
   ClipboardCheck,
   BookOpen,
@@ -368,6 +367,9 @@ export default function MentorDashboard({
                   <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                     Statut
                   </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -400,6 +402,19 @@ export default function MentorDashboard({
                       >
                         {ev.status}
                       </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {ev.status === 'À évaluer' ? (
+                        <Link
+                          href="/dashboard/incubateur"
+                          className="text-[11px] font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-500/10 px-3 py-1 rounded-lg no-underline hover:bg-pink-100 dark:hover:bg-pink-500/20 transition-colors"
+                          aria-label={`Évaluer ${ev.candidat}`}
+                        >
+                          Évaluer
+                        </Link>
+                      ) : (
+                        <span className="text-emerald-500">✓</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -436,6 +451,15 @@ export default function MentorDashboard({
                     </>
                   )}
                 </div>
+                {ev.status === 'À évaluer' && (
+                  <Link
+                    href="/dashboard/incubateur"
+                    className="mt-2 inline-flex text-[11px] font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-500/10 px-3 py-1 rounded-lg no-underline hover:bg-pink-100 transition-colors"
+                    aria-label={`Évaluer ${ev.candidat}`}
+                  >
+                    Évaluer →
+                  </Link>
+                )}
               </div>
             ))}
           </div>

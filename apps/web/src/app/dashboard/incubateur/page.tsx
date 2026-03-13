@@ -157,7 +157,7 @@ export default function IncubateurHubPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-white">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-white">
             <Rocket size={18} />
           </div>
           <div>

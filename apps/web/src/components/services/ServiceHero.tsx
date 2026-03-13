@@ -16,14 +16,18 @@ interface ServiceHeroProps {
   icon: any;
 }
 
-const fadeUp: any = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.08, ease: 'easeOut' as const },
+  }),
 };
 
-const stagger: any = {
+const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } }
+  visible: { transition: { staggerChildren: 0.06 } },
 };
 
 export function ServiceHero({
@@ -31,87 +35,118 @@ export function ServiceHero({
 }: ServiceHeroProps) {
   return (
     <section 
-      className="relative pt-32 pb-20 overflow-hidden"
+      className="relative overflow-hidden"
       style={{ '--accent': accentColor } as React.CSSProperties}
     >
+      {/* Background gradient */}
       <div 
-        className="absolute inset-0 opacity-10 dark:opacity-5"
+        className="absolute inset-0 opacity-[0.07] dark:opacity-[0.04]"
         style={{ 
-          background: `linear-gradient(to bottom, var(--accent), transparent)`
+          background: `linear-gradient(135deg, var(--accent), transparent 70%)`
         }} 
       />
-      
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div 
-          className="flex items-center gap-3 px-4 py-2 rounded-full w-fit mb-8 shadow-sm border"
-          style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 15%, transparent)', borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)' }}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-        >
-          <Icon size={18} style={{ color: 'var(--accent)' }} />
-          <span className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
-            {badge}
-          </span>
-        </motion.div>
 
-        <motion.h1 
-          className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent"
-          style={{ backgroundImage: `linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 70%, black))` }}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-        >
-          {title}
-        </motion.h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 py-8 sm:py-16 pt-4 sm:pt-10">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 sm:gap-10">
 
-        <motion.p 
-          className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mb-10 leading-relaxed font-light"
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-        >
-          {subtitle}
-        </motion.p>
-
-        <motion.div 
-          className="flex flex-col sm:flex-row gap-4 mb-16"
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-        >
-          <Link 
-            href={ctaPrimary.href}
-            className="px-8 py-4 rounded-xl text-white font-semibold text-center transition-all shadow-lg hover:shadow-xl hover:opacity-90 flex items-center justify-center"
-            style={{ backgroundColor: 'var(--accent)', boxShadow: `0 10px 25px -5px color-mix(in srgb, var(--accent) 40%, transparent)` }}
-          >
-            {ctaPrimary.label}
-          </Link>
-          <Link 
-            href={ctaSecondary.href}
-            className="px-8 py-4 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 font-semibold text-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center"
-          >
-            {ctaSecondary.label}
-          </Link>
-        </motion.div>
-
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 border-t border-gray-200 dark:border-gray-800"
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-        >
-          {metrics.map((m, i) => (
-            <motion.div key={i} variants={fadeUp} className="flex flex-col gap-1">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                {m.value}
-              </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                {m.label}
+          {/* ── LEFT: Text content ── */}
+          <div className="flex-1 max-w-2xl">
+            {/* Badge */}
+            <motion.div 
+              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full w-fit mb-4 sm:mb-6 shadow-sm border"
+              style={{ 
+                backgroundColor: `color-mix(in srgb, var(--accent) 10%, transparent)`, 
+                borderColor: `color-mix(in srgb, var(--accent) 25%, transparent)` 
+              }}
+              variants={fadeUp}
+              custom={0}
+              initial="hidden"
+              animate="visible"
+            >
+              <Icon size={18} style={{ color: 'var(--accent)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+                {badge}
               </span>
             </motion.div>
-          ))}
-        </motion.div>
+
+            {/* Title */}
+            <motion.h1 
+              className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-3 sm:mb-4 bg-clip-text text-transparent"
+              style={{ backgroundImage: `linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 65%, black))` }}
+              variants={fadeUp}
+              custom={1}
+              initial="hidden"
+              animate="visible"
+            >
+              {title}
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p 
+              className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-xl mb-5 sm:mb-8 leading-relaxed font-light"
+              variants={fadeUp}
+              custom={2}
+              initial="hidden"
+              animate="visible"
+            >
+              {subtitle}
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div 
+              className="flex flex-wrap gap-3"
+              variants={fadeUp}
+              custom={3}
+              initial="hidden"
+              animate="visible"
+            >
+              <Link 
+                href={ctaPrimary.href}
+                className="px-7 py-3 rounded-xl text-white font-semibold text-sm text-center transition-all shadow-lg hover:shadow-xl hover:opacity-90 flex items-center justify-center no-underline"
+                style={{ backgroundColor: 'var(--accent)', boxShadow: `0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent)` }}
+              >
+                {ctaPrimary.label}
+              </Link>
+              <Link 
+                href={ctaSecondary.href}
+                className="px-7 py-3 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 font-semibold text-sm text-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center no-underline"
+              >
+                {ctaSecondary.label}
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* ── RIGHT: Metrics grid 2×2 ── */}
+          {metrics && metrics.length > 0 && (
+            <motion.div 
+              className="grid grid-cols-3 gap-2 sm:gap-3 lg:w-[340px] shrink-0"
+              variants={stagger}
+              initial="hidden"
+              animate="visible"
+            >
+              {metrics.map((m, i) => (
+                <motion.div 
+                  key={i} 
+                  variants={fadeUp} 
+                  custom={i + 3}
+                  className="rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center border transition-colors"
+                  style={{
+                    backgroundColor: `color-mix(in srgb, var(--accent) 5%, transparent)`,
+                    borderColor: `color-mix(in srgb, var(--accent) 12%, transparent)`,
+                  }}
+                >
+                  <span className="text-lg sm:text-2xl font-extrabold text-gray-900 dark:text-white block">
+                    {m.value}
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5 sm:mt-1 block leading-tight">
+                    {m.label}
+                  </span>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+        </div>
       </div>
     </section>
   );

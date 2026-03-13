@@ -1,4 +1,94 @@
-import type { LucideIcon } from 'lucide-react';
+// ═══════════════════════════════════════════════════════════════════════════
+// TYPES — SING Réels (218 startups, 17 programmes, 18 secteurs)
+// Source: "Fichier startups SING - MEN.pdf" (SING SA / MENUDI)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// === SECTEURS NORMALISÉS (55 bruts → 18) ===
+
+export type SecteurNormalise =
+  | 'SANTE'
+  | 'TRANSPORT'
+  | 'AGRICULTURE'
+  | 'COMMERCE'
+  | 'EDTECH'
+  | 'FINTECH'
+  | 'COMMUNICATION'
+  | 'EVENEMENTIEL'
+  | 'ENVIRONNEMENT'
+  | 'TECH_IT'
+  | 'TOURISME'
+  | 'GOUVERNANCE'
+  | 'INDUSTRIE'
+  | 'ART_CULTURE'
+  | 'IMMOBILIER'
+  | 'RESTAURATION'
+  | 'SECURITE'
+  | 'CONSEIL';
+
+// === PROGRAMMES RÉELS ===
+
+export type ProgrammeId =
+  | 'techclinic'
+  | 'cohorte-innovation-4-fef'
+  | 'cohorte-innovation-4'
+  | 'agrifutur'
+  | 'welp'
+  | 'entreprendre-feminin'
+  | 'e-startup-challenge'
+  | 'moov-startup-challenge'
+  | 'entrepreneur-impact'
+  | 'e-sante'
+  | 'pantheres'
+  | 'mentorat-1000'
+  | 'hackathon-sport'
+  | 'prodece'
+  | 'hackathon-airtel'
+  | 'pepiniere-pme'
+  | 'smartgog';
+
+// === MATURITÉ / TIER ===
+
+export type MaturiteLevel = 'I' | 'M'; // I = Immature, M = Mature
+export type StartupTier = 'TOP' | 'ACTIVE' | 'INACTIVE';
+
+// === STARTUP SING (données réelles) ===
+
+export interface StartupSING {
+  id: string;
+  num: number;
+  nom: string;
+  programmeId: ProgrammeId;
+  programmeRaw: string;
+  secteurRaw: string;
+  secteur: SecteurNormalise;
+  siteWeb: string | null;
+  actif: boolean;
+  dateDemarrage: string | null;
+  formalisation: boolean;
+  maturite: MaturiteLevel;
+  emplois: number;
+  tier: StartupTier;
+  score: number;
+}
+
+// === PROGRAMME RÉEL ===
+
+export interface ProgrammeReel {
+  id: ProgrammeId;
+  name: string;
+  rawName: string;
+  pilier: 'Pivot 4.0' | 'SING Capital' | 'SING Conseil' | 'SING Logiciels' | 'Partenaire';
+  totalStartups: number;
+  startupsActives: number;
+  startupsMatures: number;
+  startupsFormalisees: number;
+  totalEmplois: number;
+  color: string;
+  icon: string;
+  description: string;
+}
+
+// === TYPES LEGACY (utilisés par pages dashboard non-modifiées) ===
 
 export type ProgrammeStatus = 'OPEN' | 'COMING_SOON' | 'IN_PROGRESS' | 'COMPLETED';
 export type StartupStage = 'PRE_SEED' | 'SEED' | 'SERIES_A' | 'GROWTH';

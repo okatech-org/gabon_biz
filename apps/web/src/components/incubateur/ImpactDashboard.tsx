@@ -45,16 +45,16 @@ function CountUp({
     : count.toFixed(2);
 
   return (
-    <div ref={ref} className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">
+    <div ref={ref} className="text-xs sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">
       {display}
-      <span className="text-lg">{suffix}</span>
+      <span className="text-[9px] sm:text-lg">{suffix}</span>
     </div>
   );
 }
 
 export default function ImpactDashboard() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div className="grid grid-cols-5 gap-2 sm:gap-4">
       {IMPACT_METRICS.map((m, i) => (
         <motion.div
           key={m.label}
@@ -62,16 +62,16 @@ export default function ImpactDashboard() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: i * 0.08 }}
-          className="text-center bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-md transition-all"
+          className="text-center bg-white dark:bg-white/5 rounded-xl sm:rounded-2xl border border-gray-200/60 dark:border-white/8 p-2 sm:p-4 hover:shadow-md transition-all"
         >
           <div
-            className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center"
+            className="w-6 h-6 sm:w-10 sm:h-10 rounded-full mx-auto mb-1 sm:mb-2 flex items-center justify-center"
             style={{ background: `${m.color}15` }}
           >
-            <div className="w-5 h-5 rounded-full" style={{ background: m.color }} />
+            <div className="w-3 h-3 sm:w-5 sm:h-5 rounded-full" style={{ background: m.color }} />
           </div>
           <CountUp target={m.value} suffix={m.suffix} />
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1 leading-tight">
+          <p className="text-[7px] sm:text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 leading-tight">
             {m.label}
           </p>
         </motion.div>

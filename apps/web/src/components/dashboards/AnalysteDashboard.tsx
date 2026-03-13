@@ -156,11 +156,34 @@ export default function AnalysteDashboard({
   user: { name?: string; title?: string; organization?: string };
 }) {
   const [categoryFilter, setCategoryFilter] = useState('Tous');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [downloadingReport, setDownloadingReport] = useState<number | null>(null);
   const categories = ['Tous', ...new Set(KEY_INDICATORS.map((i) => i.category))];
   const filteredIndicators =
     categoryFilter === 'Tous'
       ? KEY_INDICATORS
       : KEY_INDICATORS.filter((i) => i.category === categoryFilter);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 1500);
+  };
+
+  const handleDownload = (index: number, title: string) => {
+    setDownloadingReport(index);
+    // Simulated download — in production, this would fetch from the API
+    setTimeout(() => {
+      setDownloadingReport(null);
+      // Create a mock download
+      const blob = new Blob([`Rapport: ${title}\nDate: ${new Date().toLocaleDateString('fr-FR')}\n\nContenu du rapport...`], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title.replace(/\s+/g, '_')}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 800);
+  };
 
   return (
     <div className="space-y-6">
@@ -466,13 +489,22 @@ export default function AnalysteDashboard({
                   {report.status}
                 </span>
                 <button
+                  onClick={() => handleDownload(i, report.title)}
+                  disabled={downloadingReport === i}
                   aria-label={`Télécharger ${report.title}`}
-                  className="bg-transparent border-none cursor-pointer p-1"
+                  className="bg-transparent border-none cursor-pointer p-1 disabled:opacity-50"
                 >
-                  <Download
-                    size={14}
-                    className="text-gray-300 dark:text-gray-600 hover:text-gray-500 transition-colors"
-                  />
+                  {downloadingReport === i ? (
+                    <RefreshCw
+                      size={14}
+                      className="text-amber-500 animate-spin"
+                    />
+                  ) : (
+                    <Download
+                      size={14}
+                      className="text-gray-300 dark:text-gray-600 hover:text-gray-500 transition-colors"
+                    />
+                  )}
                 </button>
               </motion.div>
             ))}
@@ -520,10 +552,13 @@ export default function AnalysteDashboard({
               ))}
             </div>
             <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
               aria-label="Rafraîchir les données API Open Data"
-              className="w-full text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/15 transition-colors cursor-pointer border-none"
+              className="w-full text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/15 transition-colors cursor-pointer border-none disabled:opacity-60"
             >
-              <RefreshCw size={12} /> Rafraîchir les données
+              <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
+              {isRefreshing ? 'Rafraîchissement...' : 'Rafraîchir les données'}
             </button>
           </div>
         </section>

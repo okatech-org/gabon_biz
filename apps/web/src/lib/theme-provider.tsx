@@ -87,6 +87,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within a ThemeProvider');
+  // Return safe defaults when outside ThemeProvider (e.g., during SSR/prerender)
+  if (!ctx) {
+    return {
+      theme: 'light' as const,
+      resolvedTheme: 'light' as const,
+      setTheme: () => {},
+      toggleTheme: () => {},
+    };
+  }
   return ctx;
 }

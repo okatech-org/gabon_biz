@@ -19,7 +19,6 @@ import {
   Clock,
   Calendar,
   Building2,
-  Filter,
 } from 'lucide-react';
 import { PageHeader, StatusBadge, formatCFA, formatDate } from '@/components/ui';
 
@@ -142,6 +141,68 @@ export default function AutoriteContractantePage() {
   const [showForm, setShowForm] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
+  // ── Controlled form state ──
+  const [formData, setFormData] = useState({
+    title: '',
+    sector: '',
+    budget: '',
+    deadline: '',
+    description: '',
+  });
+  const [formFeedback, setFormFeedback] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const updateField = (field: string, value: string) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+  const resetForm = () => {
+    setFormData({ title: '', sector: '', budget: '', deadline: '', description: '' });
+    setFormFeedback(null);
+  };
+
+  const handleSaveDraft = async () => {
+    if (!formData.title.trim()) {
+      setFormFeedback({ type: 'error', text: 'Le titre du marché est requis.' });
+      return;
+    }
+    setSaving(true);
+    setFormFeedback(null);
+    // Simulate backend save
+    await new Promise((r) => setTimeout(r, 800));
+    setSaving(false);
+    setFormFeedback({ type: 'success', text: 'Brouillon sauvegardé avec succès.' });
+    setTimeout(() => setFormFeedback(null), 4000);
+  };
+
+  const handlePublish = async () => {
+    if (!formData.title.trim() || !formData.sector || !formData.budget || !formData.deadline) {
+      setFormFeedback({
+        type: 'error',
+        text: 'Veuillez remplir tous les champs obligatoires (titre, secteur, budget, date limite).',
+      });
+      return;
+    }
+    if (!confirm('Êtes-vous sûr de vouloir publier cet appel d\'offres ? Cette action est irréversible.')) {
+      return;
+    }
+    setSaving(true);
+    setFormFeedback(null);
+    await new Promise((r) => setTimeout(r, 1200));
+    setSaving(false);
+    setFormFeedback({
+      type: 'success',
+      text: `AO publié avec succès — Réf. ANINF-2026-AO-${String(MY_TENDERS.length + 1).padStart(3, '0')}`,
+    });
+    resetForm();
+    setTimeout(() => {
+      setFormFeedback(null);
+      setShowForm(false);
+    }, 3000);
+  };
+
   const filteredTenders =
     statusFilter === 'ALL' ? MY_TENDERS : MY_TENDERS.filter((t) => t.status === statusFilter);
 
@@ -157,7 +218,7 @@ export default function AutoriteContractantePage() {
           subtitle={`ANINF — Autorité Contractante · ${MY_TENDERS.length} marchés · ${formatCFA(totalBudget)} budget total`}
         />
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { setShowForm(!showForm); setFormFeedback(null); }}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-lg hover:shadow-violet-200 dark:hover:shadow-violet-900/30 transition-all shrink-0"
           aria-expanded={showForm}
           aria-controls="ao-form"
@@ -225,6 +286,21 @@ export default function AutoriteContractantePage() {
                 <ClipboardList size={18} className="text-violet-500" />
                 Nouvel Appel d&apos;Offres
               </h3>
+
+              {/* Feedback banner */}
+              {formFeedback && (
+                <div
+                  className={`rounded-xl px-4 py-2.5 mb-4 text-sm font-medium flex items-center gap-2 ${
+                    formFeedback.type === 'success'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                      : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  }`}
+                >
+                  {formFeedback.type === 'success' ? <CheckCircle2 size={14} /> : '⚠️'}
+                  {formFeedback.text}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label
@@ -236,6 +312,8 @@ export default function AutoriteContractantePage() {
                   <input
                     id="ao-title"
                     type="text"
+                    value={formData.title}
+                    onChange={(e) => updateField('title', e.target.value)}
                     placeholder="Ex: Modernisation du système informatique"
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
@@ -250,6 +328,8 @@ export default function AutoriteContractantePage() {
                   </label>
                   <select
                     id="ao-sector"
+                    value={formData.sector}
+                    onChange={(e) => updateField('sector', e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 transition-colors"
                     required
                   >
@@ -271,6 +351,8 @@ export default function AutoriteContractantePage() {
                   <input
                     id="ao-budget"
                     type="number"
+                    value={formData.budget}
+                    onChange={(e) => updateField('budget', e.target.value)}
                     placeholder="1 500 000 000"
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
@@ -287,6 +369,8 @@ export default function AutoriteContractantePage() {
                   <input
                     id="ao-deadline"
                     type="date"
+                    value={formData.deadline}
+                    onChange={(e) => updateField('deadline', e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
                   />
@@ -301,17 +385,27 @@ export default function AutoriteContractantePage() {
                   <textarea
                     id="ao-desc"
                     rows={3}
+                    value={formData.description}
+                    onChange={(e) => updateField('description', e.target.value)}
                     placeholder="Décrivez les exigences techniques et administratives..."
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 resize-y transition-colors"
                   />
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 mt-5">
-                <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium border-none cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                  <FileText size={14} /> Sauvegarder brouillon
+                <button
+                  onClick={handleSaveDraft}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-medium border-none cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FileText size={14} /> {saving ? 'Sauvegarde...' : 'Sauvegarder brouillon'}
                 </button>
-                <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-lg transition-all">
-                  <Send size={14} /> Publier l&apos;appel d&apos;offres
+                <button
+                  onClick={handlePublish}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={14} /> {saving ? 'Publication...' : 'Publier l\'appel d\'offres'}
                 </button>
               </div>
             </div>

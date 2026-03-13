@@ -5,6 +5,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   ShieldCheck,
@@ -56,6 +57,7 @@ const SYSTEM_ALERTS = [
     type: 'warning',
     text: '15 entreprises en attente de validation',
     action: 'Valider',
+    href: '/dashboard/entreprises',
     color: '#ef4444',
     icon: AlertTriangle,
   },
@@ -63,6 +65,7 @@ const SYSTEM_ALERTS = [
     type: 'info',
     text: 'Nouvelle cohorte SING 2.0 — 12 candidatures reçues',
     action: 'Examiner',
+    href: '/dashboard/incubateur',
     color: '#3b82f6',
     icon: GraduationCap,
   },
@@ -70,6 +73,7 @@ const SYSTEM_ALERTS = [
     type: 'warning',
     text: '3 marchés publics expirent dans 5 jours',
     action: 'Voir',
+    href: '/dashboard/marches',
     color: '#f59e0b',
     icon: Clock,
   },
@@ -77,6 +81,7 @@ const SYSTEM_ALERTS = [
     type: 'success',
     text: 'Rapport Observatoire Q1 2026 prêt pour publication',
     action: 'Publier',
+    href: '/dashboard/observatoire',
     color: '#10b981',
     icon: CheckCircle2,
   },
@@ -208,6 +213,8 @@ export default function AdminDashboard({
 }: {
   user: { name?: string; title?: string; organization?: string };
 }) {
+  const router = useRouter();
+
   return (
     <div className="space-y-6">
       {/* ═══════ HERO ═══════ */}
@@ -306,8 +313,9 @@ export default function AdminDashboard({
                 {alert.text}
               </p>
               <button
+                onClick={() => router.push(alert.href)}
                 aria-label={`${alert.action}: ${alert.text}`}
-                className="text-xs font-bold px-3 sm:px-4 py-2 rounded-lg text-white shrink-0 hover:opacity-90 transition-opacity cursor-pointer"
+                className="text-xs font-bold px-3 sm:px-4 py-2 rounded-lg text-white shrink-0 hover:opacity-90 transition-opacity cursor-pointer border-none"
                 style={{ background: alert.color }}
               >
                 {alert.action}
@@ -424,7 +432,7 @@ export default function AdminDashboard({
                     initial={{ width: 0 }}
                     animate={{ width: `${g.pct}%` }}
                     transition={{ duration: 0.8, delay: i * 0.1 }}
-                    className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-400"
+                    className="h-full rounded-full bg-linear-to-r from-red-500 to-red-400"
                   />
                 </div>
               </motion.div>

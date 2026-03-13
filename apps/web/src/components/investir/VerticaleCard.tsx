@@ -117,7 +117,7 @@ export default function VerticaleCard({
         </div>
 
         {/* Hover reveal — strategy */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
+        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform bg-linear-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
           <p className="text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-1">
             Stratégie d&apos;entrée
           </p>

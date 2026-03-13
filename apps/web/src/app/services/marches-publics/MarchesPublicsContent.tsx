@@ -6,8 +6,7 @@ import { ServiceHero } from '@/components/services/ServiceHero';
 import { ServiceFeatures } from '@/components/services/ServiceFeatures';
 import { ServiceTimeline } from '@/components/services/ServiceTimeline';
 import { ServiceStats } from '@/components/services/ServiceStats';
-import { ServiceFAQ } from '@/components/services/ServiceFAQ';
-import { ServiceTestimonials } from '@/components/services/ServiceTestimonials';
+
 import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
 import { useI18n } from '@/lib/i18n/i18nContext';
 
@@ -17,7 +16,7 @@ export default function MarchesPublicsContent() {
   const { tr } = useI18n();
   return (
     <>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-36 sm:pt-28 pb-4">
         <ServiceBreadcrumb serviceName={tr('svc.name.marches')} accentColor={accentColor} />
       </div>
 
@@ -101,24 +100,6 @@ export default function MarchesPublicsContent() {
         ]}
       />
 
-      <ServiceFAQ
-        accentColor={accentColor}
-        questions={[
-          { question: tr('svc.marches.faq1.q'), answer: tr('svc.marches.faq1.a') },
-          { question: tr('svc.marches.faq2.q'), answer: tr('svc.marches.faq2.a') },
-          { question: tr('svc.marches.faq3.q'), answer: tr('svc.marches.faq3.a') },
-          { question: tr('svc.marches.faq4.q'), answer: tr('svc.marches.faq4.a') },
-          { question: tr('svc.marches.faq5.q'), answer: tr('svc.marches.faq5.a') }
-        ]}
-      />
-
-      <ServiceTestimonials
-        accentColor={accentColor}
-        testimonials={[
-          { quote: tr('svc.marches.testi1.quote'), author: tr('svc.marches.testi1.author'), role: tr('svc.marches.testi1.role'), company: tr('svc.marches.testi1.company') },
-          { quote: tr('svc.marches.testi2.quote'), author: tr('svc.marches.testi2.author'), role: tr('svc.marches.testi2.role'), company: tr('svc.marches.testi2.company') }
-        ]}
-      />
     </>
   );
 }

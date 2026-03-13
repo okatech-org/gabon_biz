@@ -35,7 +35,7 @@ export default function DueDiligencePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white">
           <FileSearch size={18} />
         </div>
         <div>
@@ -47,7 +47,7 @@ export default function DueDiligencePage() {
       </div>
 
       {/* Global confidence score */}
-      <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white">
+      <div className="bg-linear-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-white/60 uppercase tracking-wider">

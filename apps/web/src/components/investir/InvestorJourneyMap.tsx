@@ -8,7 +8,7 @@ export default function InvestorJourneyMap() {
   return (
     <div className="relative">
       {/* Vertical line */}
-      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-teal-500 via-emerald-500 to-green-500 opacity-30" />
+      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-linear-to-b from-teal-500 via-emerald-500 to-green-500 opacity-30" />
 
       <div className="space-y-6">
         {PARCOURS_STEPS.map((s, i) => {
@@ -23,8 +23,8 @@ export default function InvestorJourneyMap() {
               className="flex gap-5 group"
             >
               {/* Number circle */}
-              <div className="relative z-10 flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform">
+              <div className="relative z-10 shrink-0">
+                <div className="w-12 h-12 rounded-full bg-linear-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform">
                   <Icon size={18} />
                 </div>
               </div>

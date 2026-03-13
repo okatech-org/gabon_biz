@@ -13,7 +13,7 @@ import {
   CheckCircle,
   Rocket,
 } from 'lucide-react';
-import { PROGRAMMES_SING } from '@/lib/mock/incubateur-data';
+import { PROGRAMMES_REELS } from '@/lib/mock/incubateur-data';
 
 const STEPS = [
   { title: 'Choisir un programme', icon: BookOpen },
@@ -23,7 +23,7 @@ const STEPS = [
   { title: 'Pitch & Documents', icon: Presentation },
 ];
 
-const openProgrammes = PROGRAMMES_SING.filter((p) => p.status === 'OPEN');
+const openProgrammes = PROGRAMMES_REELS;
 
 export default function CandidaturePage() {
   const [step, setStep] = useState(0);
@@ -64,7 +64,7 @@ export default function CandidaturePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-white">
           <Rocket size={18} />
         </div>
         <div>
@@ -133,9 +133,9 @@ export default function CandidaturePage() {
                   </div>
                   <p className="text-xs text-gray-500 line-clamp-2 mb-2">{p.description}</p>
                   <div className="flex gap-3 text-[10px] text-gray-400">
-                    <span>{p.duration}</span>
-                    <span>{p.cost}</span>
-                    {p.places.remaining !== null && <span>{p.places.remaining} places</span>}
+                    <span>{p.totalStartups} startups</span>
+                    <span>{p.totalEmplois} emplois</span>
+                    <span>{p.pilier}</span>
                   </div>
                 </button>
               ))}

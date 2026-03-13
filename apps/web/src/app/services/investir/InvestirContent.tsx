@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
   BarChart3,
@@ -33,7 +33,6 @@ import {
   PARTENARIATS,
   RISQUES,
   GABON_DIGITAL_VISION,
-  FAQ_INVESTIR,
   CTA_FINAL,
 } from '@/lib/mock/investir-data';
 import ParadoxeGauges from '@/components/investir/ParadoxeGauges';
@@ -43,6 +42,8 @@ import ROISimulator from '@/components/investir/ROISimulator';
 import InvestorJourneyMap from '@/components/investir/InvestorJourneyMap';
 import TelecomChart from '@/components/investir/TelecomChart';
 import RisqueCard from '@/components/investir/RisqueCard';
+
+import CompactHero from '@/components/services/CompactHero';
 
 function useCountUp(target: number, duration = 2000) {
   const [count, setCount] = useState(0);
@@ -86,7 +87,7 @@ function SectionWrapper({
       : theme === 'light-gray'
         ? 'bg-gray-50 dark:bg-gray-950'
         : theme === 'gradient'
-          ? 'bg-gradient-to-r from-teal-600 via-emerald-500 to-green-600'
+          ? 'bg-linear-to-r from-teal-600 via-emerald-500 to-green-600'
           : 'bg-white dark:bg-gray-950';
   return (
     <section id={id} className={`${bg} py-16 md:py-20`}>
@@ -107,7 +108,7 @@ function SectionBadge({ text, dark = false }: { text: string; dark?: boolean }) 
 
 export default function InvestirContent() {
   const [activeSection, setActiveSection] = useState('');
-  const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
 
   // Sticky anchor nav scroll tracking
   useEffect(() => {
@@ -129,84 +130,33 @@ export default function InvestirContent() {
   return (
     <div>
       {/* ═══════════ 1. HERO ═══════════ */}
-      <section className="relative min-h-[90vh] bg-gradient-to-br from-slate-900 via-emerald-950/60 to-slate-900 flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/hero-libreville.png')] bg-cover bg-center opacity-20" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-20 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="inline-flex items-center gap-2 text-sm font-bold text-emerald-300 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6">
-              {HERO_INVESTIR.badge.icon} {HERO_INVESTIR.badge.text}
-            </span>
-            {HERO_INVESTIR.title.map((t, i) => (
-              <h1
-                key={i}
-                className={`text-4xl md:text-5xl lg:text-6xl font-black leading-tight bg-gradient-to-r ${t.gradient} bg-clip-text text-transparent`}
-              >
-                {t.text}
-              </h1>
+      <CompactHero
+        badge={`${HERO_INVESTIR.badge.icon} ${HERO_INVESTIR.badge.text}`}
+        title={<>{HERO_INVESTIR.title.map((t, i) => <span key={i} className={`bg-linear-to-r ${t.gradient} bg-clip-text text-transparent block`}>{t.text}</span>)}</>}
+        subtitle={HERO_INVESTIR.subtitle}
+        backgroundClasses="bg-linear-to-br from-slate-900 via-emerald-950/60 to-slate-900"
+        overlays={
+          <div className="absolute inset-0 bg-[url('/images/hero-libreville.png')] bg-cover bg-center opacity-15" />
+        }
+        accentColor="#14b8a6"
+        ctaPrimary={{ label: HERO_INVESTIR.primaryCTA.label, href: HERO_INVESTIR.primaryCTA.href }}
+        ctaSecondary={{ label: HERO_INVESTIR.secondaryCTA.label, href: HERO_INVESTIR.secondaryCTA.href }}
+        stats={HERO_INVESTIR.stats.map(s => {
+          const Icon = s.icon;
+          return { value: s.value, label: s.label, icon: <Icon size={18} className="text-teal-400" /> };
+        })}
+      >
+        {/* Partner marquee */}
+        <div className="overflow-hidden mt-2">
+          <div className="flex animate-marquee gap-12">
+            {[...HERO_INVESTIR.partners, ...HERO_INVESTIR.partners].map((p, i) => (
+              <span key={i} className="text-xs font-semibold text-gray-500 whitespace-nowrap">
+                {p}
+              </span>
             ))}
-            <p className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed">
-              {HERO_INVESTIR.subtitle}
-            </p>
-          </motion.div>
-
-          {/* CTAs */}
-          <div className="flex flex-wrap gap-3 mt-8">
-            <a
-              href={HERO_INVESTIR.primaryCTA.href}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-white font-bold text-sm transition-all shadow-lg shadow-teal-500/30"
-            >
-              <ArrowDown size={16} /> {HERO_INVESTIR.primaryCTA.label}
-            </a>
-            <Link
-              href={HERO_INVESTIR.secondaryCTA.href}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-sm transition-all border border-white/10"
-            >
-              <BarChart3 size={16} /> {HERO_INVESTIR.secondaryCTA.label}
-            </Link>
-            <a
-              href={HERO_INVESTIR.tertiaryCTA.href}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/15 text-teal-300 font-bold text-sm backdrop-blur-sm transition-all border border-teal-500/30"
-            >
-              <Calculator size={16} /> {HERO_INVESTIR.tertiaryCTA.label}
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
-            {HERO_INVESTIR.stats.map((s, i) => {
-              const Icon = s.icon;
-              return (
-                <motion.div
-                  key={s.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                  className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 p-4 text-center"
-                >
-                  <Icon size={16} className="text-teal-400 mx-auto mb-1" />
-                  <p className="text-xl font-black text-white">{s.value}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{s.label}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Partner marquee */}
-          <div className="overflow-hidden mt-10">
-            <div className="flex animate-marquee gap-12">
-              {[...HERO_INVESTIR.partners, ...HERO_INVESTIR.partners].map((p, i) => (
-                <span key={i} className="text-xs font-semibold text-gray-500 whitespace-nowrap">
-                  {p}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
-      </section>
+      </CompactHero>
 
       {/* Sticky anchor nav */}
       <div className="sticky top-16 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200/50 dark:border-white/5">
@@ -265,7 +215,7 @@ export default function InvestirContent() {
               </div>
             </div>
             {/* Callout */}
-            <div className="bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-2xl border border-teal-500/20 p-6">
+            <div className="bg-linear-to-br from-teal-500/10 to-emerald-500/10 rounded-2xl border border-teal-500/20 p-6">
               <p className="text-sm text-gray-300 italic leading-relaxed">
                 &ldquo;{PARADOXE_META.callout.stat}&rdquo;
               </p>
@@ -307,7 +257,7 @@ export default function InvestirContent() {
                         whileInView={{ height: `${(Math.abs(d.v) / max) * 100}%` }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.08 }}
-                        className={`w-full rounded-t-md ${d.v >= 0 ? 'bg-gradient-to-t from-teal-500 to-emerald-400' : 'bg-red-400'}`}
+                        className={`w-full rounded-t-md ${d.v >= 0 ? 'bg-linear-to-t from-teal-500 to-emerald-400' : 'bg-red-400'}`}
                         style={{ minHeight: 4 }}
                       />
                       <span className="text-[8px] text-gray-400">{d.y}</span>
@@ -452,7 +402,7 @@ export default function InvestirContent() {
         <p className="text-sm text-gray-500 mb-8">
           Code des Investissements, ANPI, ZIS de Nkok, exonérations fiscales.
         </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
           {CADRE_JURIDIQUE.map((c, i) => {
             const Icon = c.icon;
             return (
@@ -462,11 +412,13 @@ export default function InvestirContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:shadow-md transition-all"
               >
-                <Icon size={18} className="text-teal-500 mb-3" />
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">{c.titre}</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                <div className="flex items-center gap-2 mb-1 sm:mb-3 sm:block">
+                  <Icon size={16} className="text-teal-500 sm:mb-3 shrink-0" />
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">{c.titre}</h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 leading-relaxed hidden sm:block">
                   {c.description}
                 </p>
                 {c.lien && (
@@ -474,7 +426,7 @@ export default function InvestirContent() {
                     href={c.lien.href}
                     target={c.lien.external ? '_blank' : undefined}
                     rel={c.lien.external ? 'noopener noreferrer' : undefined}
-                    className="inline-flex items-center gap-1 text-xs text-teal-500 font-semibold mt-2 hover:underline"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-teal-500 font-semibold mt-1 sm:mt-2 hover:underline"
                   >
                     <ExternalLink size={10} /> {c.lien.label}
                   </a>
@@ -494,7 +446,7 @@ export default function InvestirContent() {
         <p className="text-sm text-gray-500 mb-8">
           Un réseau institutionnel structuré pour sécuriser et accélérer votre investissement.
         </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
           {ECOSYSTEME_SUPPORT.map((inst, i) => {
             const Icon = inst.icon;
             return (
@@ -504,21 +456,22 @@ export default function InvestirContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:shadow-md transition-all"
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white mb-3"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white mb-2 sm:mb-3"
                   style={{ background: inst.color }}
                 >
-                  <Icon size={16} />
+                  <Icon size={14} className="sm:hidden" />
+                  <Icon size={16} className="hidden sm:block" />
                 </div>
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white">{inst.name}</h3>
-                <p className="text-[10px] text-gray-500 mb-2">{inst.role}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{inst.description}</p>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">{inst.name}</h3>
+                <p className="text-[10px] text-gray-500 mb-1 sm:mb-2">{inst.role}</p>
+                <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:block">{inst.description}</p>
                 {inst.link && (
                   <a
                     href={inst.link}
-                    className="text-xs text-teal-500 font-semibold mt-2 inline-block hover:underline"
+                    className="text-[10px] sm:text-xs text-teal-500 font-semibold mt-1 sm:mt-2 inline-block hover:underline"
                   >
                     En savoir plus →
                   </a>
@@ -596,7 +549,7 @@ export default function InvestirContent() {
         <p className="text-sm text-gray-500 mb-8">
           Transparence totale — chaque risque est accompagné de sa stratégie de mitigation.
         </p>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-2 sm:gap-4">
           {RISQUES.map((r, i) => (
             <RisqueCard key={r.risque} risque={r} index={i} />
           ))}
@@ -675,63 +628,21 @@ export default function InvestirContent() {
         </p>
       </SectionWrapper>
 
-      {/* ═══════════ 14. FAQ ═══════════ */}
-      <SectionWrapper id="faq" theme="light">
-        <SectionBadge text="❓ Questions Fréquentes" />
-        <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-6">
-          Foire aux Questions
-        </h2>
-        <div className="max-w-3xl mx-auto space-y-2">
-          {FAQ_INVESTIR.map((f, i) => (
-            <div
-              key={i}
-              className="bg-gray-50 dark:bg-white/3 rounded-xl border border-gray-200/40 dark:border-white/5 overflow-hidden"
-            >
-              <button
-                onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                className="w-full flex items-center justify-between p-4 text-left"
-              >
-                <span className="text-sm font-bold text-gray-900 dark:text-white pr-4">{f.q}</span>
-                {faqOpen === i ? (
-                  <ChevronUp size={16} className="text-teal-500 shrink-0" />
-                ) : (
-                  <ChevronDown size={16} className="text-gray-400 shrink-0" />
-                )}
-              </button>
-              <AnimatePresence>
-                {faqOpen === i && (
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: 'auto' }}
-                    exit={{ height: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <p className="text-sm text-gray-600 dark:text-gray-400 px-4 pb-4 leading-relaxed">
-                      {f.a}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-        </div>
-      </SectionWrapper>
-
       {/* ═══════════ 15. CTA FINAL ═══════════ */}
       <SectionWrapper theme="gradient">
-        <div className="text-center py-8">
-          <h2 className="text-2xl md:text-3xl font-black text-white mb-3">{CTA_FINAL.title}</h2>
-          <p className="text-sm text-white/80 mb-8 max-w-xl mx-auto">{CTA_FINAL.subtitle}</p>
-          <div className="flex flex-wrap justify-center gap-3">
+        <div className="text-center py-2 sm:py-8">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 sm:mb-3">{CTA_FINAL.title}</h2>
+          <p className="text-xs sm:text-sm text-white/80 mb-4 sm:mb-8 max-w-xl mx-auto">{CTA_FINAL.subtitle}</p>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {CTA_FINAL.actions.map((a) => {
               const Icon = a.icon;
               return a.variant === 'primary' ? (
                 <Link
                   key={a.label}
                   href={a.href}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-teal-600 font-bold text-sm hover:bg-white/90 transition-all shadow-lg"
+                  className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-teal-600 font-bold text-xs sm:text-sm hover:bg-white/90 transition-all shadow-lg"
                 >
-                  <Icon size={16} /> {a.label}
+                  <Icon size={14} /> {a.label}
                 </Link>
               ) : (
                 <a
@@ -739,9 +650,9 @@ export default function InvestirContent() {
                   href={a.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-white/30 text-white font-bold text-sm hover:bg-white/10 transition-all"
+                  className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl border-2 border-white/30 text-white font-bold text-xs sm:text-sm hover:bg-white/10 transition-all"
                 >
-                  <Icon size={16} /> {a.label}
+                  <Icon size={14} /> {a.label}
                 </a>
               );
             })}
@@ -749,20 +660,7 @@ export default function InvestirContent() {
         </div>
       </SectionWrapper>
 
-      {/* Marquee CSS */}
-      <style jsx global>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-      `}</style>
+
     </div>
   );
 }
