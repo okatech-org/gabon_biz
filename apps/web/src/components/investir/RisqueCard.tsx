@@ -21,7 +21,7 @@ export default function RisqueCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08 }}
-      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 transition-all"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">

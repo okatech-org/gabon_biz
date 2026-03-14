@@ -87,7 +87,7 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
       custom={index}
       whileHover={{ y: -6, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
-      className="group relative bg-white/80 dark:bg-white/6 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/8 shadow-xl shadow-black/3 dark:shadow-black/30 hover:shadow-2xl hover:border-white/40 dark:hover:border-white/15 transition-all duration-500 cursor-pointer overflow-hidden flex flex-col"
+      className="group relative bg-white/80 dark:bg-white/6 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/8 shadow-black/3 dark:shadow-black/30 hover:border-white/40 dark:hover:border-white/15 transition-all duration-500 cursor-pointer overflow-hidden flex flex-col"
       onClick={handleClick}
     >
       {/* Accent glow on hover */}
@@ -108,7 +108,7 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
         {/* Avatar row */}
         <div className="flex items-center gap-3.5 mb-4">
           <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-lg"
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-sm shrink-0"
             style={{
               background: `linear-gradient(135deg, ${account.accentColor}, ${account.accentColor}bb)`,
               boxShadow: `0 8px 24px ${account.accentColor}30`,
@@ -131,7 +131,7 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
 
         {/* Org + Location */}
         {account.user.organization && (
-          <div className="mb-3 px-3 py-2 rounded-xl bg-gray-50/80 dark:bg-white/4 border border-gray-100/50 dark:border-white/6">
+          <div className="mb-3 px-3 py-2 rounded-xl bg-gray-100/80 dark:bg-white/4 border border-gray-200/50 dark:border-white/6">
             <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
               {account.user.title} — {account.user.organization}
             </p>
@@ -174,7 +174,7 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
         {/* CTA button */}
         <button
           disabled={loading}
-          className="mt-auto w-full py-3 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg disabled:opacity-60"
+          className="mt-auto w-full py-3 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] disabled:opacity-60"
           style={{
             background: `linear-gradient(135deg, ${account.accentColor}, ${account.accentColor}cc)`,
             boxShadow: `0 4px 16px ${account.accentColor}30`,
@@ -223,9 +223,9 @@ function AccessMatrix() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group hover:bg-gray-50/50 dark:hover:bg-white/2 transition-colors"
+                className="group hover:bg-gray-100/50 dark:hover:bg-white/2 transition-colors"
               >
-                <td className="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-100/50 dark:border-white/4 sticky left-0 bg-white/90 dark:bg-gray-950/90 backdrop-blur-sm z-10 whitespace-nowrap">
+                <td className="py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200/50 dark:border-white/4 sticky left-0 bg-white/90 dark:bg-gray-950/90 backdrop-blur-sm z-10 whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <span
                       className="w-2 h-2 rounded-full shrink-0"
@@ -236,7 +236,7 @@ function AccessMatrix() {
                   </div>
                 </td>
                 {MATRIX_MODULES.map((m) => (
-                  <td key={m.path} className="text-center py-3 px-2.5 border-b border-gray-100/50 dark:border-white/4">
+                  <td key={m.path} className="text-center py-3 px-2.5 border-b border-gray-200/50 dark:border-white/4">
                     {account.accessibleModules.includes(m.path) ? (
                       <CheckCircle2 size={16} className="inline-block text-emerald-500" />
                     ) : (
@@ -360,7 +360,7 @@ export default function DemoPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       <Navbar />
 
       {/* ═══════ HERO ═══════ */}
@@ -453,7 +453,7 @@ export default function DemoPageContent() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/80 dark:bg-white/3 backdrop-blur-xl rounded-3xl border border-gray-200/50 dark:border-white/6 p-4 md:p-6 shadow-xl shadow-black/2 dark:shadow-black/20"
+            className="bg-white/80 dark:bg-white/3 backdrop-blur-xl rounded-3xl border border-gray-200/50 dark:border-white/6 p-4 md:p-6 shadow-black/2 dark:shadow-black/20"
           >
             <AccessMatrix />
           </motion.div>

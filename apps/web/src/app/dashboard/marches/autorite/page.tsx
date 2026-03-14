@@ -219,7 +219,7 @@ export default function AutoriteContractantePage() {
         />
         <button
           onClick={() => { setShowForm(!showForm); setFormFeedback(null); }}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-lg hover:shadow-violet-200 dark:hover:shadow-violet-900/30 transition-all shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-violet-200 dark:hover:shadow-violet-900/30 transition-all shrink-0"
           aria-expanded={showForm}
           aria-controls="ao-form"
         >
@@ -242,8 +242,8 @@ export default function AutoriteContractantePage() {
               animate="visible"
               className={`p-4 rounded-xl bg-white dark:bg-gray-900 border text-center cursor-pointer transition-all ${
                 statusFilter === stage.key
-                  ? 'border-2 shadow-md'
-                  : 'border-gray-100 dark:border-gray-800 hover:shadow-sm'
+                  ? 'border-2'
+                  : 'border-gray-200 dark:border-gray-800'
               }`}
               style={statusFilter === stage.key ? { borderColor: stage.color } : undefined}
               onClick={() => setStatusFilter(statusFilter === stage.key ? 'ALL' : stage.key)}
@@ -281,7 +281,7 @@ export default function AutoriteContractantePage() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border-2 border-violet-200 dark:border-violet-800 shadow-lg">
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border-2 border-violet-200 dark:border-violet-800">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <ClipboardList size={18} className="text-violet-500" />
                 Nouvel Appel d&apos;Offres
@@ -315,7 +315,7 @@ export default function AutoriteContractantePage() {
                     value={formData.title}
                     onChange={(e) => updateField('title', e.target.value)}
                     placeholder="Ex: Modernisation du système informatique"
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
                   />
                 </div>
@@ -330,7 +330,7 @@ export default function AutoriteContractantePage() {
                     id="ao-sector"
                     value={formData.sector}
                     onChange={(e) => updateField('sector', e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 transition-colors"
                     required
                   >
                     <option value="">Sélectionner un secteur</option>
@@ -354,7 +354,7 @@ export default function AutoriteContractantePage() {
                     value={formData.budget}
                     onChange={(e) => updateField('budget', e.target.value)}
                     placeholder="1 500 000 000"
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
                     min={0}
                   />
@@ -371,7 +371,7 @@ export default function AutoriteContractantePage() {
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => updateField('deadline', e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 transition-colors"
                     required
                   />
                 </div>
@@ -388,7 +388,7 @@ export default function AutoriteContractantePage() {
                     value={formData.description}
                     onChange={(e) => updateField('description', e.target.value)}
                     placeholder="Décrivez les exigences techniques et administratives..."
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 resize-y transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-sm text-gray-900 dark:text-white outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100 dark:focus:ring-violet-800 resize-y transition-colors"
                   />
                 </div>
               </div>
@@ -403,7 +403,7 @@ export default function AutoriteContractantePage() {
                 <button
                   onClick={handlePublish}
                   disabled={saving}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold border-none cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={14} /> {saving ? 'Publication...' : 'Publier l\'appel d\'offres'}
                 </button>
@@ -429,7 +429,7 @@ export default function AutoriteContractantePage() {
                 custom={idx}
                 initial="hidden"
                 animate="visible"
-                className="p-5 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow"
+                className="p-5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow"
               >
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                   <div className="flex-1 min-w-0">
@@ -513,10 +513,10 @@ export default function AutoriteContractantePage() {
         </h2>
 
         {/* Desktop Table */}
-        <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-800/50 text-left">
+              <tr className="bg-gray-100 dark:bg-gray-800/50 text-left">
                 <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">
                   Entreprise
                 </th>
@@ -541,7 +541,7 @@ export default function AutoriteContractantePage() {
               {SUBMISSIONS_RECEIVED.map((sub) => (
                 <tr
                   key={sub.id}
-                  className="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
+                  className="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800/30 transition-colors"
                 >
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                     {sub.enterprise}
@@ -578,7 +578,7 @@ export default function AutoriteContractantePage() {
           {SUBMISSIONS_RECEIVED.map((sub) => (
             <div
               key={sub.id}
-              className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+              className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white truncate">

@@ -2,12 +2,11 @@
 
 import React from 'react';
 import { FileSearch, Search, BellRing, Send, ShieldCheck, ClipboardList, Download } from 'lucide-react';
-import { ServiceHero } from '@/components/services/ServiceHero';
+import CompactHero from '@/components/services/CompactHero';
 import { ServiceFeatures } from '@/components/services/ServiceFeatures';
 import { ServiceTimeline } from '@/components/services/ServiceTimeline';
 import { ServiceStats } from '@/components/services/ServiceStats';
 
-import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
 import { useI18n } from '@/lib/i18n/i18nContext';
 
 const accentColor = '#3b82f6';
@@ -16,23 +15,24 @@ export default function MarchesPublicsContent() {
   const { tr } = useI18n();
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-36 sm:pt-28 pb-4">
-        <ServiceBreadcrumb serviceName={tr('svc.name.marches')} accentColor={accentColor} />
-      </div>
-
-      <ServiceHero
+      <CompactHero
         badge={tr('svc.marches.badge')}
-        title={tr('svc.name.marches')}
+        badgeIcon={<FileSearch size={14} />}
+        title={<><span className="block">{tr('svc.name.marches')}</span><span className="block text-white/85 text-xl md:text-2xl font-medium">Marchés Publics Numériques</span></>}
         subtitle={tr('svc.marches.subtitle')}
+        backgroundClasses="bg-linear-to-br from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-900 dark:via-blue-800 dark:to-indigo-900"
+        overlays={<>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.08),transparent_50%)]" />
+        </>}
+        accentColor={accentColor}
         ctaPrimary={{ label: tr('svc.marches.cta1'), href: "/dashboard/marches" }}
         ctaSecondary={{ label: tr('svc.marches.cta2'), href: "/dashboard/marches" }}
-        metrics={[
+        stats={[
           { value: tr('svc.marches.m1.val'), label: tr('svc.marches.m1.label') },
           { value: tr('svc.marches.m2.val'), label: tr('svc.marches.m2.label') },
           { value: tr('svc.marches.m3.val'), label: tr('svc.marches.m3.label') }
         ]}
-        accentColor={accentColor}
-        icon={FileSearch}
       />
 
       <ServiceFeatures
@@ -57,7 +57,7 @@ export default function MarchesPublicsContent() {
         ]}
       />
 
-      <section className="py-24 bg-gray-50 dark:bg-gray-900/50">
+      <section className="py-24 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center mb-24">
           <div className="bg-gray-200 dark:bg-gray-800 rounded-3xl aspect-4/3 flex items-center justify-center p-8">
             <span className="text-gray-400">Image illustrative</span>

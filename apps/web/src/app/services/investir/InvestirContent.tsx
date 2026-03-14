@@ -85,7 +85,7 @@ function SectionWrapper({
     theme === 'dark'
       ? 'bg-slate-900'
       : theme === 'light-gray'
-        ? 'bg-gray-50 dark:bg-gray-950'
+        ? 'bg-gray-100 dark:bg-gray-950'
         : theme === 'gradient'
           ? 'bg-linear-to-r from-teal-600 via-emerald-500 to-green-600'
           : 'bg-white dark:bg-gray-950';
@@ -242,7 +242,7 @@ export default function InvestirContent() {
           {[MACRO_CHARTS.gdpGrowth, MACRO_CHARTS.inflation].map((chart) => {
             const max = Math.max(...chart.data.map((d) => Math.abs(d.v))) * 1.3;
             return (
-              <div key={chart.title} className="bg-gray-50 dark:bg-white/3 rounded-xl p-4">
+              <div key={chart.title} className="bg-gray-100 dark:bg-white/3 rounded-xl p-4">
                 <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-3">
                   {chart.title}
                 </h3>
@@ -334,7 +334,7 @@ export default function InvestirContent() {
           </div>
           {/* Metrics + VC Context */}
           <div className="space-y-4">
-            <div className="bg-gray-50 dark:bg-white/3 rounded-2xl p-5 grid grid-cols-2 gap-3">
+            <div className="bg-gray-100 dark:bg-white/3 rounded-2xl p-5 grid grid-cols-2 gap-3">
               {Object.entries(CASE_STUDY_POZI.metriques).map(([k, v]) => (
                 <div key={k}>
                   <p className="text-[10px] text-gray-400 uppercase">
@@ -412,7 +412,7 @@ export default function InvestirContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:shadow-md transition-all"
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:border-gray-300 dark:hover:border-white/15 transition-all"
               >
                 <div className="flex items-center gap-2 mb-1 sm:mb-3 sm:block">
                   <Icon size={16} className="text-teal-500 sm:mb-3 shrink-0" />
@@ -456,7 +456,7 @@ export default function InvestirContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:shadow-md transition-all"
+                className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-5 hover:border-gray-300 dark:hover:border-white/15 transition-all"
               >
                 <div
                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white mb-2 sm:mb-3"
@@ -491,7 +491,7 @@ export default function InvestirContent() {
         <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-white/8">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-white/3">
+              <tr className="bg-gray-100 dark:bg-white/3">
                 {['Partenaire', 'Programme', 'Montant', 'Impact', 'Type'].map((h) => (
                   <th
                     key={h}
@@ -509,7 +509,7 @@ export default function InvestirContent() {
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  className="hover:bg-gray-50/50 dark:hover:bg-white/2"
+                  className="hover:bg-gray-100/50 dark:hover:bg-white/2"
                 >
                   <td className="px-4 py-3 font-bold text-gray-900 dark:text-white text-xs">
                     {p.partenaire}
@@ -640,7 +640,7 @@ export default function InvestirContent() {
                 <Link
                   key={a.label}
                   href={a.href}
-                  className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-teal-600 font-bold text-xs sm:text-sm hover:bg-white/90 transition-all shadow-lg"
+                  className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-teal-600 font-bold text-xs sm:text-sm hover:bg-white/90 transition-all"
                 >
                   <Icon size={14} /> {a.label}
                 </Link>

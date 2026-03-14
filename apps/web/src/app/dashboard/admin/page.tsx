@@ -339,7 +339,7 @@ export default function AdminDashboardPage() {
                 className={`p-4 rounded-xl border bg-white dark:bg-gray-900 ${
                   svc.status === 'warning'
                     ? 'border-amber-200 dark:border-amber-800 ring-1 ring-amber-100 dark:ring-amber-900/50'
-                    : 'border-gray-100 dark:border-gray-800'
+                    : 'border-gray-200 dark:border-gray-800'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
                 custom={i + 6}
                 initial="hidden"
                 animate="visible"
-                className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-500 dark:text-gray-400">{m.label}</span>
@@ -431,7 +431,7 @@ export default function AdminDashboardPage() {
                 custom={i}
                 initial="hidden"
                 animate="visible"
-                className="flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <span
                   className={`px-2 py-1 rounded-lg text-xs font-bold shrink-0 ${DEPLOY_STYLES[d.status]}`}
@@ -472,7 +472,7 @@ export default function AdminDashboardPage() {
                   className={`px-2.5 py-1 rounded-lg text-xs font-medium border cursor-pointer transition-all ${
                     logFilter === lvl
                       ? 'bg-slate-700 text-white border-slate-700 dark:bg-slate-600 dark:border-slate-600'
-                      : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
                   {lvl === 'all' ? 'Tous' : lvl.toUpperCase()}
@@ -519,7 +519,7 @@ export default function AdminDashboardPage() {
             return (
               <div
                 key={f.key}
-                className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <div className="min-w-0 mr-3">
                   <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -540,7 +540,7 @@ export default function AdminDashboardPage() {
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 flex items-center justify-center ${
+                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200 flex items-center justify-center ${
                       f.enabled ? 'translate-x-[22px]' : 'translate-x-0.5'
                     }`}
                   >
@@ -559,7 +559,7 @@ export default function AdminDashboardPage() {
       {/* System Info */}
       <section
         aria-label="Informations système"
-        className="p-5 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"
+        className="p-5 rounded-xl bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800"
       >
         <h3 className="text-sm font-bold text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-2">
           <Server size={14} /> Informations Système

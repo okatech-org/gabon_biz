@@ -19,7 +19,7 @@ export default function MentorCard({ mentor, index = 0 }: { mentor: Mentor; inde
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
-      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-lg transition-all hover:-translate-y-1"
+      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 transition-all hover:-translate-y-1"
     >
       <div className="flex items-start gap-3 mb-4">
         <div
@@ -64,7 +64,7 @@ export default function MentorCard({ mentor, index = 0 }: { mentor: Mentor; inde
         ))}
       </div>
 
-      <div className="flex gap-3 text-[10px] text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-white/5">
+      <div className="flex gap-3 text-[10px] text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-white/5">
         <span className="flex items-center gap-1">
           <Users size={10} /> {mentor.mentees} mentees
         </span>

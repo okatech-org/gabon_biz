@@ -24,7 +24,7 @@ export default function DealFlowCard({ deal, index }: { deal: DealPipeline; inde
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-md transition-all group cursor-pointer"
+      className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 transition-all group cursor-pointer"
     >
       <div className="flex items-start justify-between mb-2">
         <div>

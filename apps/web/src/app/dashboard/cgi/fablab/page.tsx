@@ -57,7 +57,7 @@ export default function CGIFabLabPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-shadow flex flex-col"
+                  className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow flex flex-col"
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <h3 className="font-bold text-gray-900 dark:text-white">{p.titre}</h3>
@@ -100,9 +100,9 @@ export default function CGIFabLabPage() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Printer size={20} className="text-emerald-500" /> Équipements
           </h2>
-          <div className="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-800">
+          <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+              <thead className="bg-gray-100 dark:bg-gray-900">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Site</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Équipement</th>
@@ -112,7 +112,7 @@ export default function CGIFabLabPage() {
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-950">
                 {CGI_EQUIPEMENTS.map((eq, i) => (
-                  <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                  <tr key={i} className="hover:bg-gray-100 dark:hover:bg-gray-900/50 transition-colors">
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-400 font-medium">{eq.site}</td>
                     <td className="px-4 py-3 text-gray-900 dark:text-white">{eq.equipement}</td>
                     <td className="px-4 py-3 text-center font-bold text-gray-900 dark:text-white">{eq.quantite}</td>

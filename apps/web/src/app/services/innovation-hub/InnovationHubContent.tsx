@@ -9,7 +9,6 @@ import {
   GraduationCap, Truck, Building2, Leaf, Shield, ShoppingCart, Lock,
   ArrowRight, ChevronLeft, ChevronRight, Lightbulb, Search, X, SlidersHorizontal,
 } from 'lucide-react';
-import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
 import SolutionCard from '@/components/innovation/SolutionCard';
 import DefiCard from '@/components/innovation/DefiCard';
 import { ServiceTimeline } from '@/components/services/ServiceTimeline';
@@ -135,14 +134,8 @@ export default function InnovationHubContent() {
 
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-24 pb-2 sm:pb-4">
-        <ServiceBreadcrumb serviceName="Innovation Hub KIMBA 2.0" accentColor={accentColor} />
-      </div>
-
       {/* ═══════════════ SECTION 1 : HERO ═══════════════ */}
       <CompactHero
-        innerClassName="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-20"
         badge="Plateforme Nationale d'Open Innovation"
         badgeIcon={<Lightbulb size={14} />}
         title={<>KIMBA <span className="bg-linear-to-r from-amber-300 to-yellow-300 bg-clip-text text-transparent">2.0</span></>}
@@ -162,7 +155,7 @@ export default function InnovationHubContent() {
         {/* Quick action pills — search moved to filter bar below */}
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/dashboard/innovation"
-            className="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-violet-500 hover:bg-violet-400 transition-all shadow-lg shadow-violet-500/25 flex items-center gap-1.5 no-underline border-none cursor-pointer">
+            className="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-violet-500 hover:bg-violet-400 transition-all shadow-violet-500/25 flex items-center gap-1.5 no-underline border-none cursor-pointer">
             <Grid3x3 size={13} /> Explorer le catalogue
           </Link>
           <Link href="/dashboard/innovation/matching"
@@ -198,7 +191,7 @@ export default function InnovationHubContent() {
                 <div className="absolute left-0 top-0 bottom-0 w-10 bg-linear-to-r from-white dark:from-gray-950 to-transparent z-10 pointer-events-none rounded-l-xl" />
                 <button
                   onClick={() => scrollCatBy(-1)}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <ChevronLeft size={14} />
                 </button>
@@ -211,7 +204,7 @@ export default function InnovationHubContent() {
                 <div className="absolute right-0 top-0 bottom-0 w-10 bg-linear-to-l from-white dark:from-gray-950 to-transparent z-10 pointer-events-none rounded-r-xl" />
                 <button
                   onClick={() => scrollCatBy(1)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -226,7 +219,7 @@ export default function InnovationHubContent() {
             >
               <button
                 onClick={() => { setActiveFilter('all'); setPage(1); }}
-                className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${activeFilter === 'all' ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${activeFilter === 'all' ? 'bg-violet-600 text-white shadow-violet-500/25' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
               >
                 Tout <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>{SOLUTIONS_KIMBA.length}</span>
               </button>
@@ -237,7 +230,7 @@ export default function InnovationHubContent() {
                 return (
                   <button key={cat.value}
                     onClick={() => { setActiveFilter(cat.value); setPage(1); }}
-                    className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${activeFilter === cat.value ? 'text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                    className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${activeFilter === cat.value ? 'text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                     style={activeFilter === cat.value ? { background: cat.color, boxShadow: `0 6px 20px ${cat.color}30` } : undefined}
                   >
                     {Icon && <Icon size={13} />} {cat.label} <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === cat.value ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>{count}</span>
@@ -255,7 +248,7 @@ export default function InnovationHubContent() {
           </div>
 
           {/* ── Compact filter bar (search + active tags) ── */}
-          <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-8 shadow-sm">
+          <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-8">
             <div className="flex items-center gap-2 flex-wrap">
               {/* Integrated search */}
               <div className="relative flex-1 min-w-[180px] max-w-sm">
@@ -364,7 +357,7 @@ export default function InnovationHubContent() {
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
                     className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                      bg-white border-gray-200/70 hover:shadow-sm
+                      bg-white border-gray-200/70
                       dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                       border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
                   >
@@ -382,8 +375,8 @@ export default function InnovationHubContent() {
                         onClick={() => setPage(p)}
                         className={`w-9 h-9 rounded-xl text-sm font-semibold border cursor-pointer transition-all
                           ${page === p
-                            ? 'bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-500/25'
-                            : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-50 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
+                            ? 'bg-violet-600 text-white border-violet-600 shadow-violet-500/25'
+                            : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-100 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
                           }`}
                       >
                         {p}
@@ -395,7 +388,7 @@ export default function InnovationHubContent() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                     className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                      bg-white border-gray-200/70 hover:shadow-sm
+                      bg-white border-gray-200/70
                       dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                       border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
                   >
@@ -409,7 +402,7 @@ export default function InnovationHubContent() {
       </section>
 
       {/* ═══════════════ SECTION 3 : DÉFIS ═══════════════ */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
+      <section className="py-20 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
@@ -448,7 +441,7 @@ export default function InnovationHubContent() {
       />
 
       {/* ═══════════════ SECTION 5 : STARTUPS VEDETTES ═══════════════ */}
-      <section className="py-10 sm:py-20 bg-gray-50 dark:bg-gray-900/50 overflow-hidden">
+      <section className="py-10 sm:py-20 bg-gray-100 dark:bg-gray-900/50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-4 sm:mb-10">
             <h2 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">Startups à la Une</h2>
@@ -470,7 +463,7 @@ export default function InnovationHubContent() {
 
                   return (
                     <div key={st.id} className="w-full shrink-0 px-1 sm:px-2">
-                      <div className="bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 border border-gray-100 dark:border-gray-800 shadow-sm">
+                      <div className="bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 border border-gray-200 dark:border-gray-800">
                         <div className="flex items-start gap-3 sm:gap-8 sm:flex-col md:flex-row">
                           {/* Avatar */}
                           <div className="w-10 h-10 sm:w-20 sm:h-20 rounded-xl sm:rounded-3xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-lg sm:text-3xl font-bold shrink-0">
@@ -487,7 +480,7 @@ export default function InnovationHubContent() {
                             <p className="text-xs sm:text-base text-gray-700 dark:text-gray-300 mb-2 sm:mb-4 line-clamp-2 sm:line-clamp-none">{st.description}</p>
                             <div className="flex flex-wrap gap-1.5 sm:gap-3">
                               {Object.entries(st.metriques).map(([key, val]) => (
-                                <div key={key} className="px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                                <div key={key} className="px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl bg-gray-100 dark:bg-gray-800/50">
                                   <div className="text-[10px] sm:text-sm font-bold text-gray-900 dark:text-white">{val}</div>
                                   <div className="text-[8px] sm:text-[10px] text-gray-400 capitalize">{key}</div>
                                 </div>
@@ -532,7 +525,7 @@ export default function InnovationHubContent() {
           </div>
           <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
             {ECOSYSTEME_STATS.map(stat => (
-              <div key={stat.label} className="text-center p-2 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+              <div key={stat.label} className="text-center p-2 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                 <div className="text-lg sm:text-3xl font-bold mb-0.5 sm:mb-1" style={{ color: stat.color }}>
                   <CountUp end={stat.value} prefix={stat.prefix || ''} suffix={stat.suffix || ''} />
                 </div>
@@ -557,7 +550,7 @@ export default function InnovationHubContent() {
           </p>
           <div className="flex flex-row gap-2 sm:gap-3 justify-center">
             <Link href="/dashboard/innovation"
-              className="px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:opacity-90 transition-opacity no-underline text-xs sm:text-sm shadow-lg shadow-violet-500/25">
+              className="px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:opacity-90 transition-opacity no-underline text-xs sm:text-sm shadow-violet-500/25">
               Explorer le catalogue
             </Link>
             <Link href="/dashboard/innovation/matching"

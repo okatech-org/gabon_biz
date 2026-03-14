@@ -172,7 +172,7 @@ export default function MonParcoursPage() {
           {nextTasks.map((t) => (
             <div
               key={t.title}
-              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/3"
+              className="flex items-center gap-3 p-3 rounded-xl bg-gray-100 dark:bg-white/3"
             >
               <div
                 className="w-2 h-2 rounded-full"

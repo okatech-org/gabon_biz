@@ -62,7 +62,7 @@ export default function ImpactDashboard() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: i * 0.08 }}
-          className="text-center bg-white dark:bg-white/5 rounded-xl sm:rounded-2xl border border-gray-200/60 dark:border-white/8 p-2 sm:p-4 hover:shadow-md transition-all"
+          className="text-center bg-white dark:bg-white/5 rounded-xl sm:rounded-2xl border border-gray-200/60 dark:border-white/8 p-2 sm:p-4 transition-all"
         >
           <div
             className="w-6 h-6 sm:w-10 sm:h-10 rounded-full mx-auto mb-1 sm:mb-2 flex items-center justify-center"

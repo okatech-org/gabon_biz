@@ -47,7 +47,7 @@ export default function DefiDetailPage() {
           { icon: Users, label: 'Soumissions', value: `${d.soumissions}`, color: '#8B5CF6' },
           { icon: Award, label: 'Récompense', value: 'Voir ci-dessous', color: '#10B981' },
         ].map(item => (
-          <div key={item.label} className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
+          <div key={item.label} className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
             <item.icon size={20} className="mx-auto mb-2" style={{ color: item.color }} />
             <div className="text-sm font-bold text-gray-900 dark:text-white">{item.value}</div>
             <div className="text-xs text-gray-400">{item.label}</div>
@@ -56,7 +56,7 @@ export default function DefiDetailPage() {
       </div>
 
       {/* Description */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 mb-6">
+      <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 mb-6">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">Description du défi</h2>
         <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4">{d.description}</p>
         <div className="flex flex-wrap gap-1.5">
@@ -73,12 +73,12 @@ export default function DefiDetailPage() {
       </div>
 
       {/* Submit CTA */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+      <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">Soumettre une proposition</h2>
         <p className="text-sm text-gray-500 mb-4">Décrivez votre solution et expliquez en quoi elle répond au défi.</p>
         <textarea
           placeholder="Décrivez votre solution..."
-          className="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white resize-none h-32 outline-none focus:border-violet-400 transition-colors"
+          className="w-full p-4 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white resize-none h-32 outline-none focus:border-violet-400 transition-colors"
         />
         <button className="mt-3 px-6 py-3 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold border-none cursor-pointer hover:opacity-90 transition-opacity">
           Soumettre ma proposition

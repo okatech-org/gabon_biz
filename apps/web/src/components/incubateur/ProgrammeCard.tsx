@@ -31,7 +31,7 @@ export default function ProgrammeCard({
         transition={{ delay: index * 0.05, type: 'spring', stiffness: 120 }}
         onClick={() => setShowDetail(true)}
         className="group cursor-pointer rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 h-full flex flex-col
-          bg-white border-gray-200/70 hover:shadow-md hover:shadow-gray-200/40
+          bg-white border-gray-200/70
           dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:shadow-lg dark:hover:shadow-black/20 dark:hover:border-gray-600/60"
       >
         <div className="p-5 flex-1 flex flex-col">
@@ -62,15 +62,15 @@ export default function ProgrammeCard({
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-1.5 mb-3">
-            <div className="text-center rounded-lg py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="text-xs font-semibold text-gray-700 dark:text-gray-300">{programme.startupsActives}</div>
               <div className="text-[9px] text-gray-400 dark:text-gray-500">Actives</div>
             </div>
-            <div className="text-center rounded-lg py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="text-xs font-semibold text-gray-700 dark:text-gray-300">{programme.totalEmplois}</div>
               <div className="text-[9px] text-gray-400 dark:text-gray-500">Emplois</div>
             </div>
-            <div className="text-center rounded-lg py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="text-xs font-semibold text-gray-700 dark:text-gray-300">{activeRate}%</div>
               <div className="text-[9px] text-gray-400 dark:text-gray-500">Activité</div>
             </div>
@@ -100,7 +100,7 @@ export default function ProgrammeCard({
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="rounded-2xl border max-w-xl w-full max-h-[80vh] overflow-y-auto shadow-2xl
+              className="rounded-2xl border max-w-xl w-full max-h-[80vh] overflow-y-auto
                 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
               onClick={(e) => e.stopPropagation()}
             >
@@ -140,7 +140,7 @@ export default function ProgrammeCard({
                     { icon: Briefcase, label: 'Emplois créés', value: programme.totalEmplois },
                   ].map((s) => (
                     <div key={s.label} className="flex items-center gap-3 rounded-xl p-3
-                      bg-gray-50 dark:bg-gray-800/50">
+                      bg-gray-100 dark:bg-gray-800/50">
                       <s.icon size={15} className="shrink-0" style={{ color: soft.text }} />
                       <div>
                         <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{s.value}</div>
@@ -151,7 +151,7 @@ export default function ProgrammeCard({
                 </div>
 
                 <div className="flex items-center gap-3 rounded-xl p-3 mb-5
-                  bg-gray-50 dark:bg-gray-800/50">
+                  bg-gray-100 dark:bg-gray-800/50">
                   <FileCheck size={15} className="shrink-0" style={{ color: soft.text }} />
                   <div>
                     <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{programme.startupsMatures}</div>

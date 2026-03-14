@@ -43,7 +43,7 @@ function FilterSelect({
         onChange={(e) => onChange(e.target.value)}
         className={`appearance-none text-xs font-medium pl-3 pr-8 py-2 rounded-xl border cursor-pointer transition-all duration-200 outline-none
           ${isActive
-            ? 'text-white border-transparent shadow-md'
+            ? 'text-white border-transparent'
             : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
           }`}
         style={isActive ? { background: accentColor } : undefined}
@@ -68,7 +68,7 @@ function Chip({ label, active, color, onClick }: { label: string; active: boolea
       onClick={onClick}
       className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border-none cursor-pointer transition-all duration-200 whitespace-nowrap ${
         active
-          ? 'text-white shadow-sm'
+          ? 'text-white'
           : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
       }`}
       style={active ? { background: color || '#10b981' } : undefined}

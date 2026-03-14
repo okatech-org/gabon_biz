@@ -20,7 +20,7 @@ export default function SolutionQuickView({ solution: s, onClose, onViewDetail }
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Modal */}
-      <div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+      <div className="relative bg-white dark:bg-gray-900 rounded-3xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
         {/* Close */}
         <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border-none cursor-pointer flex items-center justify-center text-lg">×</button>
 
@@ -73,7 +73,7 @@ export default function SolutionQuickView({ solution: s, onClose, onViewDetail }
         </div>
 
         {/* Pricing */}
-        <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 mb-5">
+        <div className="p-3 rounded-xl bg-gray-100 dark:bg-gray-800/50 mb-5">
           <span className="text-xs text-gray-400">💰 Prix indicatif</span>
           <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">{s.prixIndicatif}</p>
         </div>

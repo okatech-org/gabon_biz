@@ -57,8 +57,8 @@ export default function CGIFormationsPage() {
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
                 tab === t.id
-                  ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20'
-                  : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  ? 'bg-amber-500 text-white shadow-amber-500/20'
+                  : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
               <t.icon size={16} />
@@ -75,7 +75,7 @@ export default function CGIFormationsPage() {
             </p>
             <div className="grid gap-4">
               {CGI_FORMATIONS.map((f) => (
-                <div key={f.id} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                <div key={f.id} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div>
                       <h3 className="font-bold text-gray-900 dark:text-white">{f.titre}</h3>
@@ -124,7 +124,7 @@ export default function CGIFormationsPage() {
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               {CGI_CERTIFICATIONS.map((c) => (
-                <div key={c.id} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                <div key={c.id} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <h3 className="font-bold text-gray-900 dark:text-white">{c.titre}</h3>
                     {c.reconnaissanceInternationale && (
@@ -152,9 +152,9 @@ export default function CGIFormationsPage() {
             <p className="text-gray-500 dark:text-gray-400">
               Clubs technologiques implantés dans les établissements scolaires — IA, robotique, code, data.
             </p>
-            <div className="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-800">
+            <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 dark:bg-gray-900">
+                <thead className="bg-gray-100 dark:bg-gray-900">
                   <tr>
                     <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Club</th>
                     <th className="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300">Ville</th>
@@ -165,7 +165,7 @@ export default function CGIFormationsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-950">
                   {CGI_CLUBS_TECH.map((club) => (
-                    <tr key={club.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                    <tr key={club.id} className="hover:bg-gray-100 dark:hover:bg-gray-900/50 transition-colors">
                       <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{club.nom}</td>
                       <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{club.ville}</td>
                       <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{club.enseignant}</td>

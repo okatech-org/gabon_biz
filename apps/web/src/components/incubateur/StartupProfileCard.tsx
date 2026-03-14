@@ -30,7 +30,7 @@ export default function StartupProfileCard({
       viewport={{ once: true, margin: '-40px' }}
       transition={{ delay: Math.min(index * 0.03, 0.4), type: 'spring', stiffness: 120 }}
       className="group relative block rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 cursor-pointer
-        bg-white border-gray-200/70 hover:shadow-md hover:shadow-gray-200/40
+        bg-white border-gray-200/70
         dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:shadow-lg dark:hover:shadow-black/20 dark:hover:border-gray-600/60"
     >
       <div className="p-3 sm:p-5">
@@ -87,21 +87,21 @@ export default function StartupProfileCard({
 
         {/* Metrics row */}
         <div className="grid grid-cols-3 gap-1 sm:gap-1.5 mb-2 sm:mb-3">
-          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
             <div className="flex items-center justify-center gap-0.5 sm:gap-1">
               <Users size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
               <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.emplois}</span>
             </div>
             <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Emplois</div>
           </div>
-          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
             <div className="flex items-center justify-center gap-0.5 sm:gap-1">
               <Zap size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
               <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.actif ? 'Oui' : 'Non'}</span>
             </div>
             <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Actif</div>
           </div>
-          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
             <div className="flex items-center justify-center gap-0.5 sm:gap-1">
               <CheckCircle size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
               <span className="text-[9px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">{startup.formalisation ? 'Oui' : 'Non'}</span>
@@ -111,7 +111,7 @@ export default function StartupProfileCard({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t border-gray-200 dark:border-gray-800">
           <span className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-600 truncate mr-1 sm:mr-2">
             #{startup.num} · {startup.dateDemarrage || '—'}
           </span>

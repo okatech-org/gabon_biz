@@ -341,11 +341,11 @@ export default function AdminDashboard({
               <Link
                 href={mod.href}
                 aria-label={`Accéder à ${mod.title}`}
-                className="relative block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group no-underline"
+                className="relative block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline"
               >
                 {mod.badge && (
                   <span
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
                     aria-label={`${mod.badge} notifications`}
                   >
                     {mod.badge}
@@ -383,7 +383,7 @@ export default function AdminDashboard({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors"
+                className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors"
               >
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"

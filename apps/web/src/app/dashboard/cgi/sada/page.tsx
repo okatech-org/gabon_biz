@@ -40,11 +40,11 @@ export default function CGISADAPage() {
 
         {/* Signataries */}
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <div className="text-xs text-gray-400 uppercase font-semibold mb-2">🇬🇦 Pour le Gabon</div>
             <p className="font-bold text-gray-900 dark:text-white">{sada.signataires.gabon}</p>
           </div>
-          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <div className="text-xs text-gray-400 uppercase font-semibold mb-2">🌍 Pour Smart Africa</div>
             <p className="font-bold text-gray-900 dark:text-white">{sada.signataires.smartAfrica}</p>
           </div>
@@ -62,7 +62,7 @@ export default function CGISADAPage() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-start gap-3 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="flex items-start gap-3 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400 font-bold text-sm">
                   {i + 1}
@@ -80,7 +80,7 @@ export default function CGISADAPage() {
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             {sada.financements.map((f) => (
-              <div key={f.source} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+              <div key={f.source} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                 <h3 className="font-bold text-gray-900 dark:text-white">{f.source}</h3>
                 <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">{f.montant}</div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{f.programme}</p>
@@ -101,7 +101,7 @@ export default function CGISADAPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow"
+                className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow"
               >
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{m.titre}</h3>
                 <div className="space-y-2 text-sm">
@@ -126,7 +126,7 @@ export default function CGISADAPage() {
                     <span className="font-medium text-amber-600 dark:text-amber-400">{m.prochaine}</span>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
                   <div className="text-xs text-gray-400">
                     <GraduationCap size={12} className="inline mr-1" />
                     {m.inscrits}/{m.places} inscrits
@@ -144,7 +144,7 @@ export default function CGISADAPage() {
         </div>
 
         {/* Network Impact */}
-        <div className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+        <div className="p-6 rounded-2xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Users size={20} className="text-amber-500" /> Impact Réseau SADA
           </h2>

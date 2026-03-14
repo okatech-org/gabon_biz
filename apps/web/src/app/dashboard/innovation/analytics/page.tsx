@@ -20,7 +20,7 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Donut - Répartition */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Répartition des solutions par catégorie</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Area - Évolution */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Évolution du catalogue</h3>
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={ANALYTICS_EVOLUTION}>
@@ -55,7 +55,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Bar - Note moyenne */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Note moyenne par catégorie</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={AVG_RATING_BY_CAT} layout="vertical">
@@ -73,11 +73,11 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Leaderboard - Top 5 */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Top 5 solutions les plus consultées</h3>
           <div className="space-y-3">
             {TOP_SOLUTIONS.map((sol, i) => (
-              <div key={sol.id} className="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <div key={sol.id} className="flex items-center gap-4 p-3 rounded-xl bg-gray-100 dark:bg-gray-800/50">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold ${
                   i === 0 ? 'bg-amber-400' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-300 dark:bg-gray-600'
                 }`}>

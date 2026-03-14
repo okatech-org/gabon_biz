@@ -45,7 +45,7 @@ export default function CohortesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-md transition-all"
+              className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 transition-all"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
@@ -110,7 +110,7 @@ export default function CohortesPage() {
               </div>
 
               {c.results && (
-                <div className="flex gap-4 pt-3 border-t border-gray-100 dark:border-white/5">
+                <div className="flex gap-4 pt-3 border-t border-gray-200 dark:border-white/5">
                   {Object.entries(c.results).map(([k, v]) => (
                     <div key={k} className="text-xs">
                       <span className="text-gray-400 capitalize">

@@ -268,7 +268,7 @@ export default function AnalysteDashboard({
                 className={`text-[11px] font-semibold px-3 py-1 rounded-lg border transition-all cursor-pointer ${
                   categoryFilter === cat
                     ? 'bg-amber-500 text-white border-amber-500'
-                    : 'bg-white dark:bg-white/5 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/8'
+                    : 'bg-white dark:bg-white/5 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/8'
                 }`}
               >
                 {cat}
@@ -286,7 +286,7 @@ export default function AnalysteDashboard({
               aria-label="Indicateurs économiques numériques"
             >
               <thead>
-                <tr className="border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/2">
+                <tr className="border-b border-gray-200 dark:border-white/5 bg-gray-100/50 dark:bg-white/2">
                   <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                     Indicateur
                   </th>
@@ -311,7 +311,7 @@ export default function AnalysteDashboard({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-50 dark:hover:bg-white/2 transition-colors"
+                    className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-100 dark:hover:bg-white/2 transition-colors"
                   >
                     <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">
                       {ind.name}
@@ -466,7 +466,7 @@ export default function AnalysteDashboard({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors"
+                className="flex items-center gap-3 p-4 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors"
               >
                 <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">
                   <FileText size={16} className="text-blue-500" />
@@ -534,7 +534,7 @@ export default function AnalysteDashboard({
               {API_STATS.map((api, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 p-3 bg-gray-50/50 dark:bg-white/3 rounded-lg"
+                  className="flex items-center gap-3 p-3 bg-gray-100/50 dark:bg-white/3 rounded-lg"
                 >
                   <Globe size={14} className="text-amber-500 shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -609,7 +609,7 @@ export default function AnalysteDashboard({
               <Link
                 href={mod.href}
                 aria-label={`Accéder à ${mod.title}`}
-                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group no-underline"
+                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline"
               >
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"

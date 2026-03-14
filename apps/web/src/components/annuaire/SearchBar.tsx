@@ -38,7 +38,7 @@ export default function SearchBar({ value, onChange, placeholder, large = false 
           text-gray-900 dark:text-white placeholder:text-gray-400
           focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500
           transition-all duration-200
-          ${large ? 'pl-14 pr-12 py-4 text-lg shadow-lg' : 'pl-11 pr-10 py-3 text-sm'}`}
+          ${large ? 'pl-14 pr-12 py-4 text-lg' : 'pl-11 pr-10 py-3 text-sm'}`}
       />
       {local && (
         <button

@@ -239,7 +239,7 @@ export default function MentorDashboard({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-5 hover:-translate-y-0.5 transition-all"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="min-w-0">
@@ -300,7 +300,7 @@ export default function MentorDashboard({
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors"
+              className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors"
             >
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -351,7 +351,7 @@ export default function MentorDashboard({
               aria-label="Évaluations des candidatures SING 2.0"
             >
               <thead>
-                <tr className="border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/2">
+                <tr className="border-b border-gray-200 dark:border-white/5 bg-gray-100/50 dark:bg-white/2">
                   <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                     Candidat
                   </th>
@@ -376,7 +376,7 @@ export default function MentorDashboard({
                 {EVALUATIONS_EN_COURS.map((ev) => (
                   <tr
                     key={ev.id}
-                    className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-50 dark:hover:bg-white/2 transition-colors"
+                    className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-100 dark:hover:bg-white/2 transition-colors"
                   >
                     <td className="py-3 px-4 font-semibold text-gray-900 dark:text-white">
                       {ev.candidat}
@@ -480,7 +480,7 @@ export default function MentorDashboard({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors"
+                className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors"
               >
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
@@ -543,7 +543,7 @@ export default function MentorDashboard({
                 <Link
                   href={mod.href}
                   aria-label={`Accéder à ${mod.title}`}
-                  className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group no-underline"
+                  className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline"
                 >
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"

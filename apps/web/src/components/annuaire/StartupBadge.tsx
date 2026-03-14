@@ -40,7 +40,7 @@ export function StatusBadge({ status }: { status: string }) {
     ACTIVE:    { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-600 dark:text-emerald-400', label: '✅ Active' },
     SUSPENDED: { bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-600 dark:text-amber-400', label: '⏸️ Suspendue' },
     CLOSED:    { bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-600 dark:text-red-400', label: '❌ Radiée' },
-    INACTIVE:  { bg: 'bg-gray-50 dark:bg-gray-800', text: 'text-gray-500', label: '⚪ Inactive' },
+    INACTIVE:  { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: '⚪ Inactive' },
   };
   const c = config[status] || config.INACTIVE;
   return (

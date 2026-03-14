@@ -70,7 +70,7 @@ export default function InnovationPage() {
         {TABS.map(tab => (
           <button key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === 'matching') router.push('/dashboard/innovation/matching'); }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium border-none cursor-pointer transition-all duration-200 ${
-              activeTab === tab.id ? 'bg-white dark:bg-gray-900 text-violet-600 dark:text-violet-400 shadow-sm' : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              activeTab === tab.id ? 'bg-white dark:bg-gray-900 text-violet-600 dark:text-violet-400' : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}>
             <tab.icon size={16} />
             {tab.label}
@@ -98,11 +98,11 @@ export default function InnovationPage() {
             </select>
             <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
               <button onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg border-none cursor-pointer transition-colors ${viewMode === 'grid' ? 'bg-white dark:bg-gray-900 text-violet-600 shadow-sm' : 'bg-transparent text-gray-400'}`}>
+                className={`p-2 rounded-lg border-none cursor-pointer transition-colors ${viewMode === 'grid' ? 'bg-white dark:bg-gray-900 text-violet-600' : 'bg-transparent text-gray-400'}`}>
                 <LayoutGrid size={16} />
               </button>
               <button onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg border-none cursor-pointer transition-colors ${viewMode === 'list' ? 'bg-white dark:bg-gray-900 text-violet-600 shadow-sm' : 'bg-transparent text-gray-400'}`}>
+                className={`p-2 rounded-lg border-none cursor-pointer transition-colors ${viewMode === 'list' ? 'bg-white dark:bg-gray-900 text-violet-600' : 'bg-transparent text-gray-400'}`}>
                 <List size={16} />
               </button>
             </div>
@@ -110,7 +110,7 @@ export default function InnovationPage() {
 
           {/* Filters panel */}
           {showFilters && (
-            <div className="p-5 mb-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+            <div className="p-5 mb-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
               <FilterPanel
                 activeCategorie={activeCategorie} onCategorieChange={setActiveCategorie}
                 activePricing={activePricing} onPricingChange={setActivePricing}
@@ -144,7 +144,7 @@ export default function InnovationPage() {
 
           {/* Compare bar */}
           {compareIds.length > 0 && (
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 rounded-2xl bg-white dark:bg-gray-900 border border-violet-200 dark:border-violet-800 shadow-2xl shadow-violet-500/10 z-40">
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 rounded-2xl bg-white dark:bg-gray-900 border border-violet-200 dark:border-violet-800 shadow-violet-500/10 z-40">
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
                 ⚖ {compareIds.length} solution{compareIds.length > 1 ? 's' : ''} sélectionnée{compareIds.length > 1 ? 's' : ''}
               </span>

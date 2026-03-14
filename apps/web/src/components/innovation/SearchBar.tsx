@@ -56,7 +56,7 @@ export default function SearchBar({ value, onChange, onSubmit, placeholder, size
         placeholder={showTypewriter ? typewriterText : (placeholder || 'Recherche...')}
         className={`w-full border-none outline-none transition-all duration-200 ${
           isHero
-            ? 'py-4 pl-13 pr-32 rounded-2xl text-base bg-white/10 backdrop-blur-xl text-white placeholder-white/50 shadow-2xl shadow-violet-900/30 ring-1 ring-white/20 focus:ring-violet-400/60'
+            ? 'py-4 pl-13 pr-32 rounded-2xl text-base bg-white/10 backdrop-blur-xl text-white placeholder-white/50 shadow-violet-900/30 ring-1 ring-white/20 focus:ring-violet-400/60'
             : 'py-2.5 pl-11 pr-4 rounded-xl text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 ring-1 ring-gray-200 dark:ring-gray-700 focus:ring-violet-400'
         }`}
       />

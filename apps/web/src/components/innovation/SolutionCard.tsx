@@ -28,7 +28,7 @@ export default function SolutionCard({
 
   if (variant === 'list') {
     return (
-      <div className="group relative flex items-start gap-5 p-5 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-200">
+      <div className="group relative flex items-start gap-5 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-200">
         {/* Avatar */}
         <div className="w-12 h-12 rounded-xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-lg font-bold shrink-0">
           {s.startup.nom.charAt(0)}
@@ -68,7 +68,7 @@ export default function SolutionCard({
             )}
             {onCompare && (
               <button onClick={(e) => { e.preventDefault(); onCompare(s.id); }}
-                className={`text-xs px-3 py-1.5 rounded-lg border-none cursor-pointer transition-colors ${isCompareSelected ? 'bg-violet-600 text-white' : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+                className={`text-xs px-3 py-1.5 rounded-lg border-none cursor-pointer transition-colors ${isCompareSelected ? 'bg-violet-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
                 ⚖ Comparer
               </button>
             )}
@@ -80,7 +80,7 @@ export default function SolutionCard({
 
   // Grid variant
   return (
-    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-xl hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
+    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
       {/* Top row */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: PRICING_CONFIG[s.pricingModel].color, background: PRICING_CONFIG[s.pricingModel].bg }}>
@@ -128,7 +128,7 @@ export default function SolutionCard({
           )}
           {onCompare && (
             <button onClick={(e) => { e.preventDefault(); onCompare(s.id); }}
-              className={`flex-1 text-xs py-2 rounded-lg border-none cursor-pointer transition-colors font-medium ${isCompareSelected ? 'bg-violet-600 text-white' : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
+              className={`flex-1 text-xs py-2 rounded-lg border-none cursor-pointer transition-colors font-medium ${isCompareSelected ? 'bg-violet-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
               ⚖ Comparer
             </button>
           )}

@@ -157,7 +157,7 @@ export default function EcosystemeNumeriquePage() {
                   {seekingFunding
                     .sort((a, b) => (b.startupProfile?.fundingTarget || 0) - (a.startupProfile?.fundingTarget || 0))
                     .map((e) => (
-                      <tr key={e.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <tr key={e.id} className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
                         <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">{e.name}</td>
                         <td className="py-3 px-4">
                           <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
@@ -178,7 +178,7 @@ export default function EcosystemeNumeriquePage() {
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3 text-center text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800/30">
+            <div className="px-4 py-3 text-center text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800/30">
               {tr('ann.total_sought')} <strong className="text-amber-600 dark:text-amber-400">{formatXAF(stats.totalFundingTarget)}</strong>
             </div>
           </div>

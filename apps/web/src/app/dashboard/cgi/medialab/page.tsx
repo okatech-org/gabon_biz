@@ -50,7 +50,7 @@ export default function CGIMediaLabPage() {
             const totalEpisodes = CGI_PRODUCTIONS_MEDIALAB.filter((p) => p.type === type).reduce((s, p) => s + p.episodes, 0);
             const TypeIcon = cfg.icon;
             return (
-              <div key={type} className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+              <div key={type} className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cfg.bg} mb-3`}>
                   <TypeIcon size={20} className={cfg.color} />
                 </div>
@@ -72,7 +72,7 @@ export default function CGIMediaLabPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-shadow flex flex-col"
+                className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow flex flex-col"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export default function CGIMediaLabPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
                   <button className="flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                     <Play size={14} /> Voir les contenus
                   </button>

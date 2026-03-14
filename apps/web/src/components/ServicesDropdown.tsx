@@ -53,7 +53,7 @@ export function ServicesDropdown({ scrolled, activeSlug }: { scrolled: boolean, 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[340px] p-2 rounded-2xl bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-100 dark:border-gray-800 shadow-[0_25px_50px_rgba(0,0,0,0.15)] overflow-hidden"
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[340px] p-2 rounded-2xl bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-100 dark:border-gray-800 border-gray-200 overflow-hidden"
           >
             <div className="flex flex-col gap-1">
               {servicesItems.map((item) => {

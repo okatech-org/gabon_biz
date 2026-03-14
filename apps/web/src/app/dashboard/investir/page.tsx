@@ -149,7 +149,7 @@ export default function InvestirHubPage() {
                     custom={i}
                     initial="hidden"
                     animate="visible"
-                    className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow"
+                    className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <Icon size={16} style={{ color: r.color }} aria-hidden="true" />
@@ -195,7 +195,7 @@ export default function InvestirHubPage() {
             <button
               onClick={handleDownloadPDF}
               disabled={pdfDownloading}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold border-none cursor-pointer transition-colors shrink-0 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold border-none cursor-pointer transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download size={14} /> {pdfDownloading ? 'Téléchargement...' : 'Télécharger PDF'}
             </button>
@@ -214,7 +214,7 @@ export default function InvestirHubPage() {
                   custom={i + 4}
                   initial="hidden"
                   animate="visible"
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow cursor-pointer group"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow cursor-pointer group"
                 >
                   <div
                     className="w-1.5 h-14 rounded-full shrink-0 group-hover:scale-y-110 transition-transform"
@@ -290,7 +290,7 @@ export default function InvestirHubPage() {
               >
                 <Link
                   href={m.href}
-                  className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+                  className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group"
                 >
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"

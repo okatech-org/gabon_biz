@@ -27,7 +27,7 @@ export default function StartupCard({ startup: st, isPublic = false }: StartupCa
   const mainBadgeColor = badgeColors[mainBadge] || '#8B5CF6';
 
   return (
-    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-xl hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
+    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
       {/* Header */}
       <div className="flex items-start gap-4 mb-4">
         <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shrink-0">
@@ -54,7 +54,7 @@ export default function StartupCard({ startup: st, isPublic = false }: StartupCa
       {/* Metrics */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         {Object.entries(st.metriques).slice(0, 3).map(([key, val]) => (
-          <div key={key} className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+          <div key={key} className="text-center p-2 rounded-xl bg-gray-100 dark:bg-gray-800/50">
             <div className="text-sm font-bold text-gray-900 dark:text-white">{val}</div>
             <div className="text-[10px] text-gray-400 dark:text-gray-500 capitalize truncate">{key}</div>
           </div>

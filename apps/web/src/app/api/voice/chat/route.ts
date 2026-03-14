@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { message, history = [] } = body;
+    const { message, history = [], page } = body;
 
     if (!message || typeof message !== 'string') {
       return new Response(
@@ -27,9 +27,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Build system prompt with optional page context
+    const systemPrompt = IASTED_SYSTEM_PROMPT_VOCAL +
+      (page ? `\n\n[CONTEXTE] L'utilisateur est sur la page : ${page}. Adapte ta réponse.` : '');
+
     // Build messages array with system prompt + history + current message
     const messages = [
-      { role: 'system', content: IASTED_SYSTEM_PROMPT_VOCAL },
+      { role: 'system', content: systemPrompt },
       ...history.slice(-10).map((msg: { role: string; content: string }) => ({
         role: msg.role === 'model' ? 'assistant' : msg.role,
         content: msg.content,

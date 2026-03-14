@@ -24,7 +24,7 @@ export default function InvestorJourneyMap() {
             >
               {/* Number circle */}
               <div className="relative z-10 shrink-0">
-                <div className="w-12 h-12 rounded-full bg-linear-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-linear-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-teal-500/20 group-hover:scale-110 transition-transform">
                   <Icon size={18} />
                 </div>
               </div>

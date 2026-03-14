@@ -13,7 +13,7 @@ export default function MacroTable({ data, source }: { data: MacroIndicator[]; s
       <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-white/8">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 dark:bg-white/3">
+            <tr className="bg-gray-100 dark:bg-white/3">
               <th className="text-left font-bold text-gray-900 dark:text-white px-4 py-3 text-xs uppercase tracking-wider">
                 Indicateur
               </th>
@@ -35,7 +35,7 @@ export default function MacroTable({ data, source }: { data: MacroIndicator[]; s
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="hover:bg-gray-50/50 dark:hover:bg-white/2 transition-colors"
+                className="hover:bg-gray-100/50 dark:hover:bg-white/2 transition-colors"
               >
                 <td className="px-4 py-3 text-xs font-medium text-gray-700 dark:text-gray-300 max-w-[200px]">
                   {row.indicateur}

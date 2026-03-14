@@ -83,9 +83,31 @@ export function getTimeGreeting(): string {
   return 'Bonsoir';
 }
 
-/** Build voice greeting text */
+/** Build voice greeting text — varied per time period */
 export function getVocalGreeting(): string {
-  return `${getTimeGreeting()}, je suis iAsted, votre assistant IA gabonais. Comment puis-je vous aider aujourd'hui ?`;
+  const greetings: Record<string, string[]> = {
+    morning: [
+      "Bonjour ! Je suis iAsted, ton assistant IA. Comment puis-je t'aider ce matin ?",
+      "Bonjour ! Que puis-je faire pour toi aujourd'hui ?",
+      "Bonjour et bienvenue sur GABON BIZ ! Je suis iAsted, à ton service.",
+      "Salut ! C'est iAsted. Dis-moi ce dont tu as besoin.",
+    ],
+    afternoon: [
+      "Bon après-midi ! Je suis iAsted, ton assistant. Comment puis-je t'aider ?",
+      "Hello ! iAsted à ton service. Que cherches-tu ?",
+      "Bon après-midi ! Dis-moi comment je peux t'assister.",
+      "Salut ! Prêt à t'aider. Qu'est-ce que je peux faire pour toi ?",
+    ],
+    evening: [
+      "Bonsoir ! Je suis iAsted, votre assistant IA gabonais. Comment puis-je vous aider ?",
+      "Bonsoir ! Qu'est-ce que je peux faire pour toi ce soir ?",
+      "Bonsoir et bienvenue ! iAsted à ton écoute.",
+      "Bonsoir ! Dis-moi ce dont tu as besoin, je suis là pour ça.",
+    ],
+  };
+  const period = getTimePeriod();
+  const pool = greetings[period];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 /** Strip markdown for TTS reading */

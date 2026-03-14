@@ -160,7 +160,7 @@ export default function CGIDashboardPage() {
             custom={i}
             initial="hidden"
             animate="visible"
-            className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg transition-shadow"
+            className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-shadow"
           >
             <div
               className={`w-10 h-10 rounded-xl bg-linear-to-br ${s.color} flex items-center justify-center mb-3`}
@@ -190,7 +190,7 @@ export default function CGIDashboardPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                    className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
                   >
                     <Icon size={16} style={{ color: b.color }} className="mb-2" />
                     <div className="text-lg font-extrabold text-gray-900 dark:text-white">
@@ -214,7 +214,7 @@ export default function CGIDashboardPage() {
                 return (
                   <div
                     key={c.id}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                    className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
                   >
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-gray-900 dark:text-white">{c.name}</h4>
@@ -257,7 +257,7 @@ export default function CGIDashboardPage() {
               >
                 <Link
                   href={pole.href}
-                  className="group block p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all"
+                  className="group block p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-all"
                 >
                   <div className="flex items-center gap-4 mb-3">
                     <div
@@ -277,7 +277,7 @@ export default function CGIDashboardPage() {
                     {Object.entries(pole.stats).map(([k, v]) => (
                       <span
                         key={k}
-                        className="px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300"
+                        className="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300"
                       >
                         {String(v)}{' '}
                         <span className="text-gray-400">{k.replace(/([A-Z])/g, ' $1').trim()}</span>
@@ -305,7 +305,7 @@ export default function CGIDashboardPage() {
             return (
               <div
                 key={evt.id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <div className="w-14 text-center shrink-0">
                   <div className="text-xs text-gray-400 uppercase">
@@ -350,7 +350,7 @@ export default function CGIDashboardPage() {
             {CGI_SITES.map((site) => (
               <div
                 key={site.id}
-                className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <h4 className="font-semibold text-gray-900 dark:text-white">{site.name}</h4>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{site.province}</p>
@@ -373,7 +373,7 @@ export default function CGIDashboardPage() {
             {CGI_PARTENARIATS.map((p) => (
               <div
                 key={p.nom}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
+                className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
               >
                 <Globe size={18} className="text-amber-500 shrink-0" />
                 <div className="flex-1 min-w-0">

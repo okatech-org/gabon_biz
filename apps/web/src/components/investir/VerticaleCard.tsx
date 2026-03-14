@@ -58,7 +58,7 @@ export default function VerticaleCard({
         viewport={{ once: true }}
         transition={{ delay: index * 0.08 }}
         onClick={() => setOpen(true)}
-        className="group bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden relative"
+        className="group bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5 hover:-translate-y-1 transition-all cursor-pointer overflow-hidden relative"
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -172,19 +172,19 @@ export default function VerticaleCard({
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
+                  <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-3">
                     <p className="text-[10px] text-gray-500 mb-1">Taille</p>
                     <p className="text-xs font-bold text-gray-900 dark:text-white">
                       {verticale.marche.taille}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
+                  <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-3">
                     <p className="text-[10px] text-gray-500 mb-1">Pénétration</p>
                     <p className="text-xs font-bold" style={{ color: verticale.color }}>
                       {verticale.marche.penetration}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
+                  <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-3">
                     <p className="text-[10px] text-gray-500 mb-1">Croissance</p>
                     <p className="text-xs font-bold text-gray-900 dark:text-white">
                       {verticale.marche.croissance}
@@ -199,7 +199,7 @@ export default function VerticaleCard({
                     {verticale.startupsExistantes.map((s) => (
                       <div
                         key={s.nom}
-                        className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-white/5"
+                        className="flex items-center justify-between p-2 rounded-lg bg-gray-100 dark:bg-white/5"
                       >
                         <div>
                           <p className="text-sm font-bold text-gray-900 dark:text-white">{s.nom}</p>

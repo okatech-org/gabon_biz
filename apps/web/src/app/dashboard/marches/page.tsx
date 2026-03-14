@@ -157,7 +157,7 @@ export default function MarchesPage() {
       {isDGMP && (
         <Link
           href="/dashboard/marches/autorite"
-          className="flex items-center justify-between p-4 mb-5 rounded-xl bg-linear-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/60 dark:border-violet-800/40 no-underline hover:shadow-md transition-all duration-200"
+          className="flex items-center justify-between p-4 mb-5 rounded-xl bg-linear-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border border-violet-200/60 dark:border-violet-800/40 no-underline transition-all duration-200"
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏛️</span>
@@ -231,7 +231,7 @@ export default function MarchesPage() {
             return (
               <Link key={t.id} href={`/dashboard/marches/${t.id}`} className="no-underline group">
                 <div
-                  className={`bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ${isCompatible ? 'border-emerald-200/60 dark:border-emerald-800/40' : 'border-gray-100 dark:border-gray-800'}`}
+                  className={`bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 border hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ${isCompatible ? 'border-emerald-200/60 dark:border-emerald-800/40' : 'border-gray-200 dark:border-gray-800'}`}
                 >
                   {/* Header */}
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">

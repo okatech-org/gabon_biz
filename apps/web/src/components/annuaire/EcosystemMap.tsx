@@ -24,7 +24,7 @@ export default function EcosystemMap() {
   const provinces = DIGITAL_ECOSYSTEM_STATS.provinces;
 
   return (
-    <div className="relative bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 overflow-hidden">
+    <div className="relative bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 overflow-hidden">
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 text-center">
         {tr('ann.geo_title')}
       </h3>
@@ -100,7 +100,7 @@ export default function EcosystemMap() {
 
         {/* Tooltip */}
         {hovered && (
-          <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 rounded-xl p-3 shadow-lg border border-gray-200 dark:border-gray-700 text-sm z-10">
+          <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 rounded-xl p-3 border border-gray-200 dark:border-gray-700 text-sm z-10">
             <div className="font-semibold text-gray-900 dark:text-white">{hovered}</div>
             <div className="text-gray-500 dark:text-gray-400 text-xs mt-1">
               {provinces.find((p) => p.name === hovered)?.count || 0} startup{(provinces.find((p) => p.name === hovered)?.count || 0) > 1 ? 's' : ''} {tr('ann.tech')}

@@ -263,7 +263,7 @@ Si on te demande l'éligibilité, pose 2-3 questions clés puis recommande :
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, history } = await request.json();
+    const { message, history, page } = await request.json();
 
     if (!message || typeof message !== 'string') {
       return new Response(JSON.stringify({ error: 'Message requis' }), {
@@ -319,7 +319,7 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           system_instruction: {
-            parts: [{ text: SYSTEM_PROMPT }],
+            parts: [{ text: SYSTEM_PROMPT + (page ? `\n\n[CONTEXTE] L'utilisateur est actuellement sur la page : ${page}. Adapte ta réponse à ce contexte.` : '') }],
           },
           contents,
           generationConfig: {

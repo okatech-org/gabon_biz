@@ -59,7 +59,7 @@ export default function StartupProfilePage() {
       {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         {Object.entries(st.metriques).map(([key, val]) => (
-          <div key={key} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
+          <div key={key} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
             <div className="text-xl font-bold text-gray-900 dark:text-white">{val}</div>
             <div className="text-xs text-gray-400 capitalize mt-1">{key}</div>
           </div>

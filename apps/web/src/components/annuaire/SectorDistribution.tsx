@@ -19,7 +19,7 @@ export default function SectorDistribution({ selectedCategory, onSelectCategory 
           onClick={() => onSelectCategory?.(undefined)}
           className={`px-4 py-2 rounded-full text-sm font-semibold border-none cursor-pointer transition-all duration-200
             ${!selectedCategory
-              ? 'bg-emerald-500 text-white shadow-md'
+              ? 'bg-emerald-500 text-white'
               : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
         >
@@ -35,7 +35,7 @@ export default function SectorDistribution({ selectedCategory, onSelectCategory 
             onClick={() => onSelectCategory?.(selectedCategory === cat.name ? undefined : cat.name)}
             className={`px-4 py-2 rounded-full text-sm font-semibold border-none cursor-pointer transition-all duration-200
               ${selectedCategory === cat.name
-                ? 'text-white shadow-md'
+                ? 'text-white'
                 : 'text-gray-600 dark:text-gray-400 hover:opacity-80'
               }`}
             style={

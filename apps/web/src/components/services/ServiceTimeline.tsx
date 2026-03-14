@@ -43,10 +43,10 @@ export function ServiceTimeline({ steps, accentColor }: ServiceTimelineProps) {
         </div>
 
         {/* Compact Interactive Stepper */}
-        <div className="bg-gray-50/80 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div className="bg-gray-100 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
 
           {/* Step pills row */}
-          <div className={`p-3 border-b border-gray-100 dark:border-gray-800 ${isCompact ? 'overflow-x-auto' : ''}`}
+          <div className={`p-3 border-b border-gray-200 dark:border-gray-800 ${isCompact ? 'overflow-x-auto' : ''}`}
             style={isCompact ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : undefined}
           >
             <div className={`flex gap-1.5 ${isCompact ? 'min-w-max' : ''}`}>
@@ -56,11 +56,11 @@ export function ServiceTimeline({ steps, accentColor }: ServiceTimelineProps) {
                   onClick={() => setActiveStep(i)}
                   className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border-none cursor-pointer transition-all duration-200 shrink-0
                     ${activeStep === i
-                      ? 'text-white shadow-md'
+                      ? 'text-white'
                       : 'bg-white dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800'
                     }`}
                   style={activeStep === i
-                    ? { backgroundColor: accentColor, boxShadow: `0 4px 14px ${accentColor}30` }
+                    ? { backgroundColor: accentColor }
                     : undefined
                   }
                 >
@@ -91,8 +91,8 @@ export function ServiceTimeline({ steps, accentColor }: ServiceTimelineProps) {
               <div className="flex flex-col md:flex-row items-start gap-4">
                 {/* Step number badge */}
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg"
-                  style={{ backgroundColor: accentColor, boxShadow: `0 8px 24px ${accentColor}30` }}
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shrink-0"
+                  style={{ backgroundColor: accentColor }}
                 >
                   {current.number}
                 </div>
@@ -132,7 +132,7 @@ export function ServiceTimeline({ steps, accentColor }: ServiceTimelineProps) {
           </AnimatePresence>
 
           {/* Progress bar */}
-          <div className="h-1 bg-gray-100 dark:bg-gray-800">
+          <div className="h-1 bg-gray-200 dark:bg-gray-800">
             <motion.div
               className="h-full rounded-full"
               style={{ backgroundColor: accentColor }}

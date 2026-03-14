@@ -162,7 +162,7 @@ export default function StartupDetailPage() {
                 { label: 'Emplois', value: programme.totalEmplois },
                 { label: 'Formalisées', value: programme.startupsFormalisees },
               ].map((s) => (
-                <div key={s.label} className="bg-gray-50 dark:bg-white/3 rounded-lg p-2 text-center">
+                <div key={s.label} className="bg-gray-100 dark:bg-white/3 rounded-lg p-2 text-center">
                   <div className="text-sm font-bold text-gray-900 dark:text-white">{s.value}</div>
                   <div className="text-[9px] text-gray-500">{s.label}</div>
                 </div>

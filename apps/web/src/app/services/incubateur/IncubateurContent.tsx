@@ -129,7 +129,7 @@ function ProgrammesSection() {
   };
 
   return (
-    <section id="programmes" className="py-20 bg-gray-50 dark:bg-gray-900/50">
+    <section id="programmes" className="py-20 bg-gray-100 dark:bg-gray-900/50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -155,7 +155,7 @@ function ProgrammesSection() {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`text-xs font-semibold px-4 py-2 rounded-full transition-all border-none cursor-pointer ${filter === s ? 'bg-pink-500 text-white shadow-md' : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:bg-pink-50 dark:hover:bg-pink-500/10'}`}
+              className={`text-xs font-semibold px-4 py-2 rounded-full transition-all border-none cursor-pointer ${filter === s ? 'bg-pink-500 text-white' : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:bg-pink-50 dark:hover:bg-pink-500/10'}`}
             >
               {s === 'all' ? `Tous (${programmes.length})` : s}
             </button>
@@ -167,13 +167,13 @@ function ProgrammesSection() {
           {/* Left/Right nav arrows (desktop hover) */}
           <button
             onClick={() => scrollByPage(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
           >
             <ChevronLeft size={16} />
           </button>
           <button
             onClick={() => scrollByPage(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
           >
             <ChevronRight size={16} />
           </button>
@@ -303,7 +303,7 @@ function PortfolioSection() {
         </motion.div>
 
         {/* ═══ Search + Filters Bar ═══ */}
-        <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-6 shadow-sm">
+        <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-6">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Search input */}
             <div className="relative flex-1 min-w-[160px] max-w-sm">
@@ -332,7 +332,7 @@ function PortfolioSection() {
                 onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }}
                 className={`appearance-none text-xs font-medium pl-3 pr-8 py-2 rounded-xl border cursor-pointer transition-all duration-200 outline-none
                   ${sectorFilter !== 'all'
-                    ? 'bg-pink-500 text-white border-transparent shadow-md'
+                    ? 'bg-pink-500 text-white border-transparent'
                     : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
               >
@@ -363,7 +363,7 @@ function PortfolioSection() {
                   onClick={() => { setTierFilter(chip.value); setPage(1); }}
                   className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border-none cursor-pointer transition-all duration-200 whitespace-nowrap ${
                     tierFilter === chip.value
-                      ? 'text-white shadow-sm'
+                      ? 'text-white'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                   style={tierFilter === chip.value ? { background: chip.color } : undefined}
@@ -456,7 +456,7 @@ function PortfolioSection() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                  bg-white border-gray-200/70 hover:shadow-sm
+                  bg-white border-gray-200/70
                   dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                   border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
               >
@@ -473,8 +473,8 @@ function PortfolioSection() {
                     onClick={() => setPage(p)}
                     className={`w-9 h-9 rounded-xl text-sm font-semibold border cursor-pointer transition-all
                       ${page === p
-                        ? 'bg-pink-500 text-white border-pink-500 shadow-sm'
-                        : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-50 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
+                        ? 'bg-pink-500 text-white border-pink-500'
+                        : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-100 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
                       }`}
                   >
                     {p}
@@ -485,7 +485,7 @@ function PortfolioSection() {
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                  bg-white border-gray-200/70 hover:shadow-sm
+                  bg-white border-gray-200/70
                   dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                   border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
               >
@@ -503,7 +503,7 @@ function SuccessStoriesSection() {
   const [active, setActive] = useState(0);
   const story = SUCCESS_STORIES[active];
   return (
-    <section className="py-10 sm:py-20 bg-gray-50 dark:bg-gray-900/50">
+    <section className="py-10 sm:py-20 bg-gray-100 dark:bg-gray-900/50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -595,7 +595,7 @@ function PiliersSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white dark:bg-white/5 rounded-xl sm:rounded-2xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-6 hover:shadow-lg transition-all hover:-translate-y-1 group"
+                className="bg-white dark:bg-white/5 rounded-xl sm:rounded-2xl border border-gray-200/60 dark:border-white/8 p-3 sm:p-6 transition-all hover:-translate-y-1 group"
               >
                 {/* Icon + Title inline */}
                 <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
@@ -652,7 +652,7 @@ function MinilabSection() {
   const ml = MINILAB_SECTION;
   const FEATURE_ICONS: Record<string, React.ElementType> = { Headset, Code, Palette, Globe };
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
+    <section className="py-20 bg-gray-100 dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -788,7 +788,7 @@ function Sing300Section() {
   const s3 = SING_300_SECTION;
   const ICONS: Record<string, React.ElementType> = { Shield, Building2, Zap, Globe };
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
+    <section className="py-20 bg-gray-100 dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

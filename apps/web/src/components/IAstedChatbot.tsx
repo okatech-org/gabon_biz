@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import { useRealtimeVoice } from '@/hooks/useRealtimeVoice';
 import { useLocalCommandRouter } from '@/hooks/useLocalCommandRouter';
 import { VoiceMicButton } from '@/components/iasted/VoiceMicButton';
+import { getSuggestions } from '@/lib/iasted/suggestions';
 import {
   getTimeGreeting,
   getVocalGreeting,
@@ -38,7 +39,49 @@ Dis-moi ce dont tu as besoin !`;
 }
 
 // ─── TTS Helpers (OpenAI TTS with browser fallback) ───
-let currentAudioEl: HTMLAudioElement | null = null;
+// Mobile fix: reuse a single pre-warmed <audio> element to bypass iOS/Android auto-play restrictions
+let sharedAudioEl: HTMLAudioElement | null = null;
+let audioUnlocked = false;
+
+/**
+ * Must be called INSIDE a user gesture (click/touchend) to unlock
+ * audio playback on iOS and Android.
+ */
+function unlockAudio() {
+  if (audioUnlocked) return;
+  try {
+    // Create a persistent audio element — reused for all TTS
+    if (!sharedAudioEl) {
+      sharedAudioEl = new Audio();
+      sharedAudioEl.setAttribute('playsinline', 'true');
+    }
+    // Play silent data URI to unlock (tiny valid MP3)
+    sharedAudioEl.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwRHAAAAAAD/+1DEAAAGAAGn9AAAIUAMK/8wAACKqqKiqioAAAAA0CEfePfhhOE7/ir/+Lv1cJx8Tzv/xd+j7/8XBgGPiYOAgEP/5cPu//////lxMTExcBAIBD///5c//KCYmJi4CAQ/////8uJi4CAAAAATEE//tQxBAADmBnV/z0ACIMDO3/nosePxExBTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+    sharedAudioEl.volume = 0.01;
+    const p = sharedAudioEl.play();
+    if (p) p.then(() => { sharedAudioEl!.pause(); audioUnlocked = true; }).catch(() => {});
+
+    // Also unlock Web Audio API context (for level analysis)
+    if (typeof AudioContext !== 'undefined') {
+      const ctx = new AudioContext();
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      ctx.close().catch(() => {});
+    }
+
+    // Also poke SpeechSynthesis on iOS (needs a dummy speak to load voices)
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance('');
+      u.volume = 0;
+      window.speechSynthesis.speak(u);
+      window.speechSynthesis.cancel();
+    }
+
+    audioUnlocked = true;
+    console.log('[iAsted] [audio] Mobile audio unlocked');
+  } catch {
+    console.warn('[iAsted] [audio] Failed to unlock audio');
+  }
+}
 
 async function speak(text: string, onEnd?: () => void) {
   try {
@@ -52,24 +95,28 @@ async function speak(text: string, onEnd?: () => void) {
     if (response.ok) {
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      currentAudioEl = audio;
+
+      // Reuse the pre-warmed audio element on mobile, or create new
+      const audio = sharedAudioEl || new Audio();
+      audio.src = audioUrl;
+      audio.volume = 1.0;
+
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl);
-        currentAudioEl = null;
         onEnd?.();
       };
       audio.onerror = () => {
         URL.revokeObjectURL(audioUrl);
-        currentAudioEl = null;
         onEnd?.();
       };
-      await audio.play().catch(() => {
-        // Auto-play blocked — fallback
+
+      try {
+        await audio.play();
+      } catch {
+        // Auto-play blocked — fallback to browser TTS
         URL.revokeObjectURL(audioUrl);
-        currentAudioEl = null;
         speakBrowser(text, onEnd);
-      });
+      }
       return;
     }
   } catch { /* fallback */ }
@@ -88,14 +135,23 @@ function speakBrowser(text: string, onEnd?: () => void) {
   utterance.volume = 1.0;
   const voice = findBestFrenchVoice();
   if (voice) utterance.voice = voice;
-  if (onEnd) utterance.onend = onEnd;
+  utterance.onend = () => onEnd?.();
+  utterance.onerror = () => {
+    // iOS sometimes fails on first try — retry once after 100ms
+    setTimeout(() => {
+      try {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      } catch { onEnd?.(); }
+    }, 100);
+  };
   window.speechSynthesis.speak(utterance);
 }
 
 function stopSpeaking() {
-  if (currentAudioEl) {
-    currentAudioEl.pause();
-    currentAudioEl = null;
+  if (sharedAudioEl) {
+    sharedAudioEl.pause();
+    sharedAudioEl.src = '';
   }
   if (typeof window !== 'undefined' && window.speechSynthesis) {
     window.speechSynthesis.cancel();
@@ -341,7 +397,7 @@ export function IAstedChatbot() {
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: messageText, history }),
+        body: JSON.stringify({ message: messageText, history, page: pathname }),
         signal: abortController.signal,
       });
 
@@ -726,6 +782,21 @@ export function IAstedChatbot() {
 
           {/* ── Zone de saisie ── */}
           <div className="border-t border-gray-200/50 dark:border-white/10 px-4 py-3 shrink-0 safe-area-bottom">
+            {/* Suggestion chips (only when no messages yet) */}
+            {messages.length === 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {getSuggestions(pathname).map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => { setInput(s.message); setTimeout(() => sendMessage(s.message), 50); }}
+                    className="text-xs px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-700/30 hover:bg-emerald-100 dark:hover:bg-emerald-800/40 transition-all cursor-pointer"
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -748,7 +819,7 @@ export function IAstedChatbot() {
               </button>
             </div>
             <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">
-              Propulsé par iAsted AI — GABON BIZ
+              Propulsé par Gemini & GPT-4o — GABON BIZ
             </p>
           </div>
         </div>
@@ -763,6 +834,8 @@ export function IAstedChatbot() {
           ref={fabRef}
           type="button"
           onPointerDown={(e) => {
+            // ★ Unlock audio playback on mobile (must be in user gesture)
+            unlockAudio();
             (e.target as HTMLElement).setPointerCapture(e.pointerId);
             const rect = fabRef.current?.getBoundingClientRect();
             if (!rect) return;
@@ -777,8 +850,8 @@ export function IAstedChatbot() {
             // Long-press detection: vibrate at 400ms to signal chat mode
             longPressTimerRef.current = setTimeout(() => {
               if (!hasDraggedRef.current) {
-                // Haptic feedback if available
-                navigator?.vibrate?.(30);
+                // Haptic feedback if available (not on iOS Safari)
+                try { navigator?.vibrate?.(30); } catch { /* unsupported */ }
               }
             }, 400);
           }}
@@ -819,7 +892,7 @@ export function IAstedChatbot() {
               startVoiceOnly(); // Short tap → voice only
             }
           }}
-          className={`fixed z-50 flex items-center justify-center shadow-xl text-white touch-none select-none ${
+          className={`fixed z-50 flex items-center justify-center text-white touch-none select-none ${
             voiceOnly ? '' : 'animate-heartbeat'
           }`}
           style={{
@@ -893,12 +966,12 @@ export function IAstedChatbot() {
                 ))}
               </span>
             ) : (
-              <span className="font-extrabold text-sm text-white drop-shadow-md tracking-wide pointer-events-none">
+              <span className="font-extrabold text-sm text-white tracking-wide pointer-events-none">
                 ...
               </span>
             )
           ) : (
-            <span className="font-extrabold text-sm text-white drop-shadow-md tracking-wide pointer-events-none">
+            <span className="font-extrabold text-sm text-white tracking-wide pointer-events-none">
               iAsted
             </span>
           )}

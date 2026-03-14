@@ -13,6 +13,7 @@ interface Feature {
 interface ServiceFeaturesProps {
   features: Feature[];
   accentColor: string;
+  mobileColumns?: 2 | 3 | 4;
 }
 
 const stagger: Variants = {
@@ -25,15 +26,19 @@ const fadeUp: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
 };
 
-export function ServiceFeatures({ features, accentColor }: ServiceFeaturesProps) {
+const MOBILE_COLS: Record<number, string> = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' };
+const SM_COLS: Record<number, string> = { 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-3', 4: 'sm:grid-cols-4', 5: 'sm:grid-cols-4', 6: 'sm:grid-cols-4' };
+
+export function ServiceFeatures({ features, accentColor, mobileColumns = 4 }: ServiceFeaturesProps) {
+  const smCols = SM_COLS[features.length] || 'sm:grid-cols-4';
   return (
     <section 
-      className="py-12 sm:py-24 bg-gray-50 dark:bg-gray-900/30"
+      className="py-12 sm:py-24 bg-gray-100 dark:bg-gray-900/30"
       style={{ '--accent': accentColor } as React.CSSProperties}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-6">
         <motion.div 
-          className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 lg:gap-6"
+          className={`grid ${MOBILE_COLS[mobileColumns]} ${smCols} gap-2 sm:gap-4 lg:gap-6`}
           variants={stagger}
           initial="hidden"
           whileInView="visible"
@@ -46,7 +51,7 @@ export function ServiceFeatures({ features, accentColor }: ServiceFeaturesProps)
                 key={i} 
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="bg-white dark:bg-gray-800 p-3 sm:p-5 lg:p-8 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-accent"
+                className="bg-white dark:bg-gray-800 p-3 sm:p-5 lg:p-8 rounded-xl sm:rounded-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
               >
                 <div 
                   className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-4 lg:mb-6"

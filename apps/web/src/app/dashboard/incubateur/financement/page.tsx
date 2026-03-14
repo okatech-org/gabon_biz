@@ -80,7 +80,7 @@ export default function FinancementPage() {
           {FINANCEMENT_PIPELINE.columns.map((col) => (
             <div
               key={col.id}
-              className="min-w-[200px] shrink-0 bg-gray-50 dark:bg-white/3 rounded-xl p-3"
+              className="min-w-[200px] shrink-0 bg-gray-100 dark:bg-white/3 rounded-xl p-3"
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold text-gray-900 dark:text-white">{col.label}</h3>

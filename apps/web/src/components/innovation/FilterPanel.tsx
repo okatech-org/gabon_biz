@@ -21,8 +21,8 @@ function Chip({ label, active, color, count, onClick }: { label: string; active:
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border-none cursor-pointer transition-all duration-200 ${
         active
-          ? 'text-white shadow-md'
-          : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+          ? 'text-white'
+          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
       }`}
       style={active ? { background: color || '#8B5CF6' } : undefined}
     >

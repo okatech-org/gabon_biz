@@ -16,7 +16,7 @@ const navServices = [
 export function ServiceNavCards({ currentSlug }: { currentSlug: string }) {
   const { tr } = useI18n();
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-16">
+    <div className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <h3 className="text-xl font-bold text-center text-gray-900 dark:text-white mb-10">{tr('svc.nav.discover')}</h3>
         <div className="grid grid-cols-6 lg:grid-cols-5 gap-2 sm:gap-4">
@@ -30,8 +30,8 @@ export function ServiceNavCards({ currentSlug }: { currentSlug: string }) {
               <Link 
                 key={srv.slug} 
                 href={`/services/${srv.slug}`}
-                className={`${mobileSpan} lg:col-span-1 relative group flex flex-col p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-950 shadow-sm transition-all duration-300 border
-                  ${isActive ? `border-2 ${srv.border} shadow-md` : 'border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-1'}`}
+                className={`${mobileSpan} lg:col-span-1 relative group flex flex-col p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-950 transition-all duration-300 border
+                  ${isActive ? `border-2 ${srv.border}` : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-1'}`}
               >
                 {isActive && (
                   <div className={`absolute -top-2.5 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${srv.bg} ${srv.color}`}>

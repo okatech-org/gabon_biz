@@ -48,7 +48,7 @@ export function DemoToasts({ toasts, onDismiss }: { toasts: DemoToast[]; onDismi
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 shadow-lg animate-in slide-in-from-right"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 animate-in slide-in-from-right"
           style={{ minWidth: 320 }}
         >
           <span className="text-blue-500 text-lg">ℹ️</span>

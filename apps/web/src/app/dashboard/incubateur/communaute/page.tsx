@@ -62,7 +62,7 @@ export default function CommunautePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-md transition-all cursor-pointer"
+              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

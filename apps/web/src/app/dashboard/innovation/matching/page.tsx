@@ -56,7 +56,7 @@ function MatchingContent() {
 
       {/* ═══ Step 1: Input ═══ */}
       {step === 'input' && (
-        <div className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white">
               <Brain size={20} />
@@ -67,7 +67,7 @@ function MatchingContent() {
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Décrivez votre besoin en langage libre :</label>
           <textarea value={query} onChange={e => setQuery(e.target.value)}
             placeholder="J'ai besoin d'une solution pour payer mes employés dans les provinces par mobile money..."
-            className="w-full p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white resize-none h-28 outline-none focus:border-violet-400 transition-colors mb-5" />
+            className="w-full p-4 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white resize-none h-28 outline-none focus:border-violet-400 transition-colors mb-5" />
 
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Ou sélectionnez une catégorie :</label>
           <div className="flex flex-wrap gap-2 mb-5">
@@ -109,7 +109,7 @@ function MatchingContent() {
 
       {/* ═══ Step 2: Loading ═══ */}
       {step === 'loading' && (
-        <div className="p-12 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
+        <div className="p-12 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
           <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white mx-auto mb-6 animate-pulse">
             <Brain size={28} />
           </div>
@@ -124,7 +124,7 @@ function MatchingContent() {
       {/* ═══ Step 3: Results ═══ */}
       {step === 'results' && (
         <div>
-          <div className="p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm mb-6">
+          <div className="p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 mb-6">
             <p className="text-sm text-gray-500 mb-1">Votre recherche :</p>
             <p className="text-base font-semibold text-gray-900 dark:text-white mb-4 italic">&ldquo;{query}&rdquo;</p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">✨ {results.length} solutions correspondent à votre besoin :</p>
@@ -135,7 +135,7 @@ function MatchingContent() {
               const sol = getSolutionById(r.solutionId);
               if (!sol) return null;
               return (
-                <div key={r.solutionId} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:border-violet-300 dark:hover:border-violet-700 transition-colors">
+                <div key={r.solutionId} className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-violet-300 dark:hover:border-violet-700 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">

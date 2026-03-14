@@ -90,7 +90,7 @@ export default function MacroPage() {
         </h3>
         <div className="grid grid-cols-3 gap-4 mb-3">
           {CASE_STUDY_POZI.vcContext.stats.map((s) => (
-            <div key={s.label} className="text-center bg-gray-50 dark:bg-white/3 rounded-xl p-4">
+            <div key={s.label} className="text-center bg-gray-100 dark:bg-white/3 rounded-xl p-4">
               <p className="text-lg font-black text-teal-500">{s.value}</p>
               <p className="text-xs text-gray-500 mt-1">{s.label}</p>
               <p className="text-[10px] text-gray-400">{s.source}</p>

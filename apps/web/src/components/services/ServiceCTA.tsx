@@ -31,7 +31,7 @@ export function ServiceCTA() {
           <div className="flex flex-row items-center justify-center gap-2 sm:gap-4">
             <Link 
               href="/login"
-              className="px-4 sm:px-8 py-2.5 sm:py-4 bg-white text-emerald-700 font-bold rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="px-4 sm:px-8 py-2.5 sm:py-4 bg-white text-emerald-700 font-bold rounded-xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               {tr('svc.cta.btn')} <ArrowRight size={16} className="sm:w-5 sm:h-5" />
             </Link>

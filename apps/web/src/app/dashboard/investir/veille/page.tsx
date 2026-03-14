@@ -88,7 +88,7 @@ export default function VeillePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-md transition-all"
+              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 transition-all"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
@@ -117,7 +117,7 @@ export default function VeillePage() {
       </div>
 
       {/* Alert config */}
-      <div className="bg-gray-50 dark:bg-white/3 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5">
+      <div className="bg-gray-100 dark:bg-white/3 rounded-2xl border border-gray-200/60 dark:border-white/8 p-5">
         <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
           <Filter size={14} /> Configurer mes alertes
         </h2>

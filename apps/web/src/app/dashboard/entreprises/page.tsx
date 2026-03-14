@@ -166,7 +166,7 @@ export default function EntreprisesPage() {
             <Link
               key={a.label}
               href={a.href}
-              className="no-underline group flex items-center gap-3 p-3.5 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+              className="no-underline group flex items-center gap-3 p-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:-translate-y-0.5 transition-all duration-200"
             >
               <span className="text-xl group-hover:scale-110 transition-transform">{a.icon}</span>
               <span className="text-[13px] font-semibold" style={{ color: a.color }}>

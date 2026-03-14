@@ -2,12 +2,11 @@
 
 import React from 'react';
 import { Lightbulb, Users, Award, Wrench, Video, Globe, GraduationCap, Star, MapPin, Cpu } from 'lucide-react';
-import { ServiceHero } from '@/components/services/ServiceHero';
+import CompactHero from '@/components/services/CompactHero';
 import { ServiceFeatures } from '@/components/services/ServiceFeatures';
 import { ServiceTimeline } from '@/components/services/ServiceTimeline';
 import { ServiceStats } from '@/components/services/ServiceStats';
 
-import { ServiceBreadcrumb } from '@/components/services/ServiceBreadcrumb';
 import { useI18n } from '@/lib/i18n/i18nContext';
 
 const accentColor = '#F59E0B';
@@ -49,23 +48,24 @@ export default function CGIContent() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-36 sm:pt-28 pb-4">
-        <ServiceBreadcrumb serviceName={tr('svc.cgi.breadcrumb')} accentColor={accentColor} />
-      </div>
-
-      <ServiceHero
+      <CompactHero
         badge={tr('svc.cgi.badge')}
-        title={tr('svc.cgi.title')}
+        badgeIcon={<Lightbulb size={14} />}
+        title={<><span className="block">{tr('svc.cgi.title')}</span><span className="block text-white/85 text-xl md:text-2xl font-medium">{tr('svc.cgi.breadcrumb')}</span></>}
         subtitle={tr('svc.cgi.subtitle')}
+        backgroundClasses="bg-linear-to-br from-amber-600 via-orange-500 to-yellow-600 dark:from-amber-900 dark:via-orange-800 dark:to-yellow-900"
+        overlays={<>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.08),transparent_50%)]" />
+        </>}
+        accentColor={accentColor}
         ctaPrimary={{ label: tr('svc.cgi.cta1'), href: '/dashboard/cgi' }}
         ctaSecondary={{ label: tr('svc.cgi.cta2'), href: '/demo' }}
-        metrics={[
+        stats={[
           { value: tr('svc.cgi.m1v'), label: tr('svc.cgi.m1l') },
           { value: tr('svc.cgi.m2v'), label: tr('svc.cgi.m2l') },
           { value: tr('svc.cgi.m3v'), label: tr('svc.cgi.m3l') },
         ]}
-        accentColor={accentColor}
-        icon={Lightbulb}
       />
 
       <ServiceFeatures
@@ -87,14 +87,14 @@ export default function CGIContent() {
       />
 
       {/* Poles Detail Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
+      <section className="py-16 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">{tr('svc.cgi.poles')}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
             {features.map((feature, i) => {
               const Icon = FEATURE_ICONS[i] || Lightbulb;
               return (
-                <div key={i} className="p-5 rounded-2xl bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-shadow">
+                <div key={i} className="p-5 rounded-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${accentColor}20` }}>
                     <Icon size={22} style={{ color: accentColor }} />
                   </div>
@@ -157,7 +157,7 @@ export default function CGIContent() {
       </section>
 
       {/* SADA Section */}
-      <section className="py-24 bg-gray-50 dark:bg-gray-900/50">
+      <section className="py-24 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
           <div className="bg-linear-to-br from-amber-500 to-orange-500 rounded-3xl p-8 text-white aspect-4/3 flex flex-col justify-center">
             <Globe size={48} className="mb-6 opacity-80" />

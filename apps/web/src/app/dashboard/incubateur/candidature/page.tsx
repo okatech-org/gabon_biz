@@ -41,7 +41,7 @@ export default function CandidaturePage() {
             Candidature soumise !
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Réponse sous 15 jours ouvrés.</p>
-          <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 text-left space-y-2">
+          <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-4 text-left space-y-2">
             {[
               'Confirmation email envoyée',
               'Revue par le comité de sélection',
@@ -157,7 +157,7 @@ export default function CandidaturePage() {
                     {f.r && <span className="text-pink-500">*</span>}
                   </label>
                   {f.t === 'select' ? (
-                    <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
+                    <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
                       <option>Libreville</option>
                       <option>Port-Gentil</option>
                       <option>Franceville</option>
@@ -167,7 +167,7 @@ export default function CandidaturePage() {
                   ) : (
                     <input
                       type={f.t}
-                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                     />
                   )}
                 </div>
@@ -178,7 +178,7 @@ export default function CandidaturePage() {
                 </label>
                 <textarea
                   rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -200,12 +200,12 @@ export default function CandidaturePage() {
                   {f.t === 'area' ? (
                     <textarea
                       rows={3}
-                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                     />
                   ) : (
                     <input
                       type="text"
-                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                     />
                   )}
                 </div>
@@ -215,7 +215,7 @@ export default function CandidaturePage() {
                   <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1 block">
                     Secteur
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
+                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
                     {[
                       'FinTech',
                       'HealthTech',
@@ -234,7 +234,7 @@ export default function CandidaturePage() {
                   <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1 block">
                     Stade actuel
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
+                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
                     {['Idée', 'Prototype', 'MVP', 'Lancé', 'Traction'].map((s) => (
                       <option key={s}>{s}</option>
                     ))}
@@ -256,14 +256,14 @@ export default function CandidaturePage() {
                     min={1}
                     max={20}
                     defaultValue={2}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1 block">
                     Disponibilité
                   </label>
-                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
+                  <select className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white">
                     <option>Temps plein</option>
                     <option>Temps partiel (&gt;50%)</option>
                     <option>Temps partiel (&lt;50%)</option>
@@ -276,7 +276,7 @@ export default function CandidaturePage() {
                 </label>
                 <textarea
                   rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -315,7 +315,7 @@ export default function CandidaturePage() {
                 <input
                   type="url"
                   placeholder="YouTube, Loom ou Google Drive"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                 />
               </div>
               <div>
@@ -334,7 +334,7 @@ export default function CandidaturePage() {
                 </label>
                 <textarea
                   rows={4}
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-900 dark:text-white"
                 />
               </div>
             </div>

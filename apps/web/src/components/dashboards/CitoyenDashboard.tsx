@@ -200,7 +200,7 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Nom d'entreprise, RCCM, NIF..."
               aria-label="Rechercher une entreprise par nom, RCCM ou NIF"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
@@ -237,7 +237,7 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 sm:p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 sm:p-5 hover:-translate-y-0.5 transition-all"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="min-w-0">
@@ -254,7 +254,7 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
                   </h3>
                 </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs mt-3 pt-3 border-t border-gray-100 dark:border-white/5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs mt-3 pt-3 border-t border-gray-200 dark:border-white/5">
                 <div>
                   <span className="text-gray-400 block mb-0.5">Autorité</span>
                   <span className="font-medium text-gray-700 dark:text-gray-300">
@@ -297,7 +297,7 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 text-center hover:shadow-md transition-all"
+              className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 text-center transition-all"
             >
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"
@@ -330,7 +330,7 @@ export default function CitoyenDashboard({ user }: { user: { name?: string; loca
               <Link
                 href={link.href}
                 aria-label={`Accéder à ${link.title}`}
-                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group no-underline"
+                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline"
               >
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"

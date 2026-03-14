@@ -207,7 +207,7 @@ export default function IncubateurHubPage() {
             >
               <Link
                 href={m.href}
-                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+                className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group"
               >
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"
@@ -245,7 +245,7 @@ export default function IncubateurHubPage() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-white/3 transition-colors cursor-pointer"
+              className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors cursor-pointer"
             >
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"

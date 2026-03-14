@@ -66,7 +66,7 @@ export default function EnterpriseCard({ enterprise: e, index = 0, showFavorite,
       <Link
         href={`/annuaire/${e.rccm}`}
         className="group relative block rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 no-underline h-full
-          bg-white border-gray-200/70 hover:shadow-md hover:shadow-gray-200/40
+          bg-white border-gray-200/70
           dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:shadow-lg dark:hover:shadow-black/20 dark:hover:border-gray-600/60"
       >
         <div className="p-3 sm:p-5 flex flex-col h-full">
@@ -120,21 +120,21 @@ export default function EnterpriseCard({ enterprise: e, index = 0, showFavorite,
 
           {/* Metrics row — 3 columns (inspired from incubateur) */}
           <div className="grid grid-cols-3 gap-1 sm:gap-1.5 mb-2 sm:mb-3">
-            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                 <MapPin size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
                 <span className="text-[9px] sm:text-[10px] font-semibold text-gray-700 dark:text-gray-300 truncate">{e.address.city}</span>
               </div>
               <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5 hidden sm:block">{e.address.province}</div>
             </div>
-            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                 <Users size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
                 <span className="text-[9px] sm:text-[10px] font-semibold text-gray-700 dark:text-gray-300">{e.employeeCount}</span>
               </div>
               <div className="text-[8px] sm:text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">Emplois</div>
             </div>
-            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-50 dark:bg-gray-800/50">
+            <div className="text-center rounded-lg py-1 sm:py-1.5 bg-gray-100 dark:bg-gray-800/50">
               <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                 <Calendar size={8} className="text-gray-400 dark:text-gray-500 hidden sm:block" />
                 <span className="text-[9px] sm:text-[10px] font-semibold text-gray-700 dark:text-gray-300">{e.yearFounded}</span>
@@ -144,7 +144,7 @@ export default function EnterpriseCard({ enterprise: e, index = 0, showFavorite,
           </div>
 
           {/* Footer: RCCM + link */}
-          <div className="mt-auto pt-2 sm:pt-2.5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <div className="mt-auto pt-2 sm:pt-2.5 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
             <button
               onClick={copyRccm}
               className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-mono text-gray-400 dark:text-gray-600 hover:text-emerald-500 bg-transparent border-none cursor-pointer p-0 transition-colors truncate mr-1 sm:mr-2"

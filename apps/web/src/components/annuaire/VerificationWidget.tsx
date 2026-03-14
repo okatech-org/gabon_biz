@@ -121,7 +121,7 @@ export default function VerificationWidget() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
                     <Link
                       href={`/annuaire/${result.rccm}`}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 no-underline"
@@ -132,7 +132,7 @@ export default function VerificationWidget() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6">
+              <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 p-6">
                 <div className="flex items-start gap-3">
                   <XCircle size={24} className="text-gray-400 shrink-0 mt-0.5" />
                   <div>

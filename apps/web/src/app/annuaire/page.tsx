@@ -72,7 +72,7 @@ export default function AnnuairePage() {
         backgroundClasses="bg-slate-900"
         overlays={<>
           <div className="absolute inset-0">
-            <Image src="/images/hero-libreville.png" alt="Libreville" fill priority className="object-cover opacity-25" />
+            <Image src="/images/hero-libreville.png" alt="Libreville" fill priority sizes="100vw" className="object-cover opacity-25" />
           </div>
           <div className="absolute inset-0 bg-linear-to-b from-slate-900/60 via-slate-900/80 to-slate-900" />
         </>}
@@ -88,7 +88,7 @@ export default function AnnuairePage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => { setActiveSector(undefined); setFilters({}); setQuery(''); setPage(1); }}
-            className="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-emerald-600 hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/25 flex items-center gap-1.5 border-none cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-emerald-600 hover:bg-emerald-500 transition-all shadow-emerald-500/25 flex items-center gap-1.5 border-none cursor-pointer"
           >
             <Search size={13} /> {tr('ann.all')}
           </button>
@@ -123,7 +123,7 @@ export default function AnnuairePage() {
                 <div className="absolute left-0 top-0 bottom-0 w-10 bg-linear-to-r from-white dark:from-gray-950 to-transparent z-10 pointer-events-none rounded-l-xl" />
                 <button
                   onClick={() => scrollBy(-1)}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <ChevronLeft size={14} />
                 </button>
@@ -136,7 +136,7 @@ export default function AnnuairePage() {
                 <div className="absolute right-0 top-0 bottom-0 w-10 bg-linear-to-l from-white dark:from-gray-950 to-transparent z-10 pointer-events-none rounded-r-xl" />
                 <button
                   onClick={() => scrollBy(1)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -154,7 +154,7 @@ export default function AnnuairePage() {
                 onClick={() => { setActiveSector(undefined); setPage(1); }}
                 className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${
                   !activeSector
-                    ? 'text-white shadow-md bg-emerald-500'
+                    ? 'text-white bg-emerald-500'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
@@ -168,7 +168,7 @@ export default function AnnuairePage() {
                     onClick={() => { setActiveSector(activeSector === s.slug ? undefined : s.slug); setPage(1); }}
                     className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border-none cursor-pointer transition-all duration-200 ${
                       activeSector === s.slug
-                        ? 'text-white shadow-md'
+                        ? 'text-white'
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                     }`}
                     style={activeSector === s.slug ? { background: s.color } : undefined}
@@ -189,7 +189,7 @@ export default function AnnuairePage() {
         </div>
 
         {/* ═══════ ADVANCED FILTERS + SEARCH — compact bar ═══════ */}
-        <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-8 shadow-sm">
+        <div className="bg-white/60 dark:bg-white/3 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/6 px-4 py-3 mb-8">
           <EnterpriseFilters
             filters={filters}
             onChange={(f) => { setFilters(f); setPage(1); }}
@@ -268,7 +268,7 @@ export default function AnnuairePage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                    bg-white border-gray-200/70 hover:shadow-sm
+                    bg-white border-gray-200/70
                     dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                     border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
                 >
@@ -287,8 +287,8 @@ export default function AnnuairePage() {
                       onClick={() => setPage(p)}
                       className={`w-9 h-9 rounded-xl text-sm font-semibold border cursor-pointer transition-all
                         ${page === p
-                          ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-gray-900 dark:border-white shadow-sm'
-                          : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-50 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
+                          ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-gray-900 dark:border-white'
+                          : 'bg-white border-gray-200/70 text-gray-600 hover:bg-gray-100 dark:bg-gray-900/60 dark:border-gray-700/50 dark:text-gray-400 dark:hover:bg-gray-800/60'
                         }`}
                     >
                       {p}
@@ -301,7 +301,7 @@ export default function AnnuairePage() {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                    bg-white border-gray-200/70 hover:shadow-sm
+                    bg-white border-gray-200/70
                     dark:bg-gray-900/60 dark:border-gray-700/50 dark:hover:border-gray-600/60
                     border text-gray-600 dark:text-gray-400 disabled:opacity-30 cursor-pointer transition-all"
                 >

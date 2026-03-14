@@ -68,7 +68,7 @@ export default function SolutionDetailPage() {
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">Fonctionnalités</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {s.fonctionnalites.map(f => (
-                <div key={f} className="flex items-start gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                <div key={f} className="flex items-start gap-2 p-3 rounded-xl bg-gray-100 dark:bg-gray-800/50">
                   <span className="text-violet-500 font-bold mt-0.5">✓</span>
                   <span className="text-sm text-gray-700 dark:text-gray-300">{f}</span>
                 </div>
@@ -94,7 +94,7 @@ export default function SolutionDetailPage() {
                 { name: 'Utilisateur vérifié', rating: 5, text: 'Excellente solution, mise en place rapide et support réactif.' },
                 { name: 'Entreprise Libreville', rating: 4, text: 'Bon produit dans l\'ensemble, quelques améliorations souhaitées sur le reporting.' },
               ].map((review, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                <div key={i} className="p-4 rounded-2xl bg-gray-100 dark:bg-gray-800/50">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">
                       {review.name.charAt(0)}
@@ -114,7 +114,7 @@ export default function SolutionDetailPage() {
         {/* Sidebar */}
         <div className="lg:w-[320px] shrink-0 space-y-4">
           {/* Actions */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm space-y-3">
+          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 space-y-3">
             <button className="w-full py-3 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold border-none cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
               📩 Contacter la startup
             </button>
@@ -124,17 +124,17 @@ export default function SolutionDetailPage() {
               </button>
             )}
             <div className="flex gap-2">
-              <button className="flex-1 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 text-sm border-none cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5">
+              <button className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 text-sm border-none cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5">
                 <Heart size={14} /> Favoris
               </button>
-              <button className="flex-1 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 text-sm border-none cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5">
+              <button className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 text-sm border-none cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1.5">
                 <Flag size={14} /> Signaler
               </button>
             </div>
           </div>
 
           {/* Matching score mock */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Score de compatibilité</h3>
             <div className="relative w-full h-3 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
               <div className="h-full rounded-full bg-linear-to-r from-violet-500 to-indigo-500" style={{ width: '87%' }} />
@@ -144,14 +144,14 @@ export default function SolutionDetailPage() {
           </div>
 
           {/* Pricing */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+          <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">💰 Tarification</h3>
             <p className="text-base font-semibold text-gray-900 dark:text-white mb-1">{pricingConf.label}</p>
             <p className="text-sm text-gray-500">{s.prixIndicatif}</p>
           </div>
 
           {/* Startup link */}
-          <Link href={`/dashboard/innovation/startups/${s.startup.id}`} className="block p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:border-violet-300 dark:hover:border-violet-700 transition-colors no-underline">
+          <Link href={`/dashboard/innovation/startups/${s.startup.id}`} className="block p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-violet-300 dark:hover:border-violet-700 transition-colors no-underline">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold">
                 {s.startup.nom.charAt(0)}
@@ -165,12 +165,12 @@ export default function SolutionDetailPage() {
 
           {/* Similar solutions */}
           {similar.length > 0 && (
-            <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+            <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Solutions similaires</h3>
               <div className="space-y-2">
                 {similar.map(sim => (
                   <Link key={sim.id} href={`/dashboard/innovation/${sim.id}`}
-                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 no-underline transition-colors">
+                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 no-underline transition-colors">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">{sim.nom}</div>
                     <span className="text-xs text-gray-400 ml-auto">⭐ {sim.rating}</span>
                   </Link>

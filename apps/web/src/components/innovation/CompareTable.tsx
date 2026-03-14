@@ -48,15 +48,15 @@ export default function CompareTable({ solutions, onRemove }: CompareTableProps)
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-800">
+    <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800">
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className="text-left p-4 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky left-0 min-w-[140px]">
+            <th className="text-left p-4 bg-gray-100 dark:bg-gray-800/50 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky left-0 min-w-[140px]">
               Critère
             </th>
             {solutions.map(s => (
-              <th key={s.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 text-center min-w-[200px]">
+              <th key={s.id} className="p-4 bg-gray-100 dark:bg-gray-800/50 text-center min-w-[200px]">
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-sm font-bold text-gray-900 dark:text-white">{s.nom}</span>
                   <span className="text-xs text-gray-400">{s.startup.nom}</span>
@@ -72,7 +72,7 @@ export default function CompareTable({ solutions, onRemove }: CompareTableProps)
         </thead>
         <tbody>
           {COMPARE_ROWS.map((row, i) => (
-            <tr key={row.key} className={i % 2 === 0 ? 'bg-white dark:bg-gray-900/30' : 'bg-gray-50/50 dark:bg-gray-800/20'}>
+            <tr key={row.key} className={i % 2 === 0 ? 'bg-white dark:bg-gray-900/30' : 'bg-gray-100/50 dark:bg-gray-800/20'}>
               <td className="p-3 text-xs font-semibold text-gray-500 dark:text-gray-400 sticky left-0 bg-inherit">
                 {row.label}
               </td>

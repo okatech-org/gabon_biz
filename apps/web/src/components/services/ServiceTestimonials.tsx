@@ -106,13 +106,13 @@ export function ServiceTestimonials({ testimonials, accentColor }: ServiceTestim
               }}
               className="absolute w-full px-4"
             >
-              <div className="bg-gray-50 dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+              <div className="bg-gray-100 dark:bg-gray-900 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
                 <div className="shrink-0">
                   {current.avatar ? (
-                    <Image src={current.avatar} alt={current.author} width={80} height={80} className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-md" />
+                    <Image src={current.avatar} alt={current.author} width={80} height={80} className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-800" />
                   ) : (
                     <div 
-                      className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold border-4 border-white dark:border-gray-800 shadow-md"
+                      className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold border-4 border-white dark:border-gray-800"
                       style={{ backgroundColor: 'var(--accent)' }}
                     >
                       {current.author.charAt(0)}
@@ -141,13 +141,13 @@ export function ServiceTestimonials({ testimonials, accentColor }: ServiceTestim
           {testimonials.length > 1 && (
             <>
               <button 
-                className="absolute left-0 md:-left-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md flex items-center justify-center text-gray-500 hover:text-accent transition-colors z-10"
+                className="absolute left-0 md:-left-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-accent transition-colors z-10"
                 onClick={() => paginate(-1)}
               >
                 <ChevronLeft size={20} />
               </button>
               <button 
-                className="absolute right-0 md:-right-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md flex items-center justify-center text-gray-500 hover:text-accent transition-colors z-10"
+                className="absolute right-0 md:-right-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-accent transition-colors z-10"
                 onClick={() => paginate(1)}
               >
                 <ChevronRight size={20} />

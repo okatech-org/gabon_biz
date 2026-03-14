@@ -53,7 +53,7 @@ export function ServiceHero({
           <div className="flex-1 max-w-2xl">
             {/* Badge */}
             <motion.div 
-              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full w-fit mb-4 sm:mb-6 shadow-sm border"
+              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full w-fit mb-4 sm:mb-6 border"
               style={{ 
                 backgroundColor: `color-mix(in srgb, var(--accent) 10%, transparent)`, 
                 borderColor: `color-mix(in srgb, var(--accent) 25%, transparent)` 
@@ -102,14 +102,14 @@ export function ServiceHero({
             >
               <Link 
                 href={ctaPrimary.href}
-                className="px-7 py-3 rounded-xl text-white font-semibold text-sm text-center transition-all shadow-lg hover:shadow-xl hover:opacity-90 flex items-center justify-center no-underline"
-                style={{ backgroundColor: 'var(--accent)', boxShadow: `0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent)` }}
+                className="px-7 py-3 rounded-xl text-white font-semibold text-sm text-center transition-all hover:opacity-90 flex items-center justify-center no-underline"
+                style={{ backgroundColor: 'var(--accent)' }}
               >
                 {ctaPrimary.label}
               </Link>
               <Link 
                 href={ctaSecondary.href}
-                className="px-7 py-3 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 font-semibold text-sm text-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center no-underline"
+                className="px-7 py-3 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 font-semibold text-sm text-center transition-all hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center no-underline"
               >
                 {ctaSecondary.label}
               </Link>

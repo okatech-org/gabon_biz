@@ -24,7 +24,7 @@ export default function DefiCard({ defi: d, isPublic = false }: DefiCardProps) {
   const catColor = CATEGORY_COLORS[d.categorie] || '#8B5CF6';
 
   return (
-    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-xl hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
+    <div className="group relative flex flex-col p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/60 hover:shadow-violet-500/5 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300">
       {/* Top */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ color: catColor, background: `${catColor}15` }}>

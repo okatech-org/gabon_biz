@@ -115,7 +115,7 @@ export function StatsCard({
   color?: string;
 }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col gap-2 transition-shadow hover:shadow-md">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-gray-800 flex flex-col gap-2 transition-shadow">
       <div className="flex justify-between items-center">
         <span className="text-[13px] text-gray-500 dark:text-gray-400 font-medium">{title}</span>
         <span
@@ -199,8 +199,8 @@ export function PrimaryButton({
 }) {
   const cls = `inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold
     bg-linear-to-br from-emerald-600 to-emerald-500 dark:from-emerald-500 dark:to-emerald-600
-    text-white border-0 cursor-pointer no-underline shadow-md shadow-emerald-600/20
-    hover:shadow-lg hover:shadow-emerald-600/30 hover:-translate-y-0.5
+    text-white border-0 cursor-pointer no-underline shadow-emerald-600/20
+    hover:shadow-emerald-600/30 hover:-translate-y-0.5
     active:translate-y-0 transition-all duration-200 ${extraClass || ''}`;
 
   if (href) {
@@ -245,7 +245,7 @@ export function FilterBar({
               focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500
               ${
                 isActive
-                  ? 'text-white border-transparent shadow-sm'
+                  ? 'text-white border-transparent'
                   : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
             style={
@@ -267,7 +267,7 @@ export function FilterBar({
 // ============================================
 export function DataTableWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">{children}</table>
       </div>

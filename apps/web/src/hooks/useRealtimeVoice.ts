@@ -38,6 +38,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const historyRef = useRef<{ role: string; content: string }[]>([]);
   const speakWithBrowserRef = useRef<(text: string) => Promise<void>>(() => Promise.resolve());
+  const disconnectRef = useRef<() => void>(() => {});
+  const startRecordingRef = useRef<() => void>(() => {});
 
   // ─── Audio Level Analysis ────────────────────────────────────
   const startAudioAnalysis = useCallback((stream: MediaStream) => {
@@ -88,15 +90,16 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   }, []);
 
   // Keep the ref in sync
-  speakWithBrowserRef.current = speakWithBrowser;
+  useEffect(() => { speakWithBrowserRef.current = speakWithBrowser; }, [speakWithBrowser]);
 
   // ─── OpenAI TTS — speak via API ─────────────────────────────
+  // Mobile: reuse a pre-warmed <audio> element (unlocked on user gesture in IAstedChatbot)
   const speakWithOpenAI = useCallback(async (text: string): Promise<void> => {
     try {
       const response = await fetch('/api/voice/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voice: 'onyx' }), // onyx = deep masculine
+        body: JSON.stringify({ text, voice: 'onyx' }),
       });
 
       if (!response.ok || !response.body) {
@@ -104,26 +107,30 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
         return speakWithBrowserRef.current(text);
       }
 
-      // Play the audio stream
+      // Play the audio stream — reuse existing element or create new
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      currentAudioRef.current = audio;
+
+      // Reuse the pre-warmed audio element if it exists
+      if (!currentAudioRef.current) {
+        currentAudioRef.current = new Audio();
+        currentAudioRef.current.setAttribute('playsinline', 'true');
+      }
+      const audio = currentAudioRef.current;
+      audio.src = audioUrl;
+      audio.volume = 1.0;
 
       return new Promise<void>((resolve) => {
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl);
-          currentAudioRef.current = null;
           resolve();
         };
         audio.onerror = () => {
           URL.revokeObjectURL(audioUrl);
-          currentAudioRef.current = null;
           resolve();
         };
         audio.play().catch(() => {
           URL.revokeObjectURL(audioUrl);
-          currentAudioRef.current = null;
           speakWithBrowserRef.current(text).then(resolve);
         });
       });
@@ -155,9 +162,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     idleTimerRef.current = setTimeout(() => {
       console.log('[iAsted] [state] Auto-disconnect (idle 2min)');
-      disconnect();
+      disconnectRef.current();
     }, IASTED_CONFIG.AUTO_DISCONNECT_IDLE_MS);
-  // eslint-disable-next-line
   }, []);
 
   // ─── Disconnect ──────────────────────────────────────────────
@@ -195,6 +201,9 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     setTranscript('');
     setAudioLevel(0);
   }, [stopAudioAnalysis, stopSpeaking]);
+
+  // Keep disconnectRef in sync
+  useEffect(() => { disconnectRef.current = disconnect; }, [disconnect]);
 
   // ─── Whisper Transcription ───────────────────────────────────
   const transcribeWithWhisper = useCallback(async (audioBlob: Blob): Promise<string> => {
@@ -239,7 +248,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       let buffer = '';
       let fullText = '';
 
-      // eslint-disable-next-line no-constant-condition
+      // Stream reading loop
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -275,9 +284,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   // ─── Handle Finalized Audio ─────────────────────────────────
   const handleAudioChunk = useCallback(async (audioBlob: Blob) => {
     if (audioBlob.size < 1000) {
-      // Too small, likely just noise
       console.log('[iAsted] [audio] Chunk too small, skipping');
-      startRecording(); // Resume recording
+      startRecordingRef.current();
       return;
     }
 
@@ -285,33 +293,49 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     setVoiceState('thinking');
     setTranscript('Transcription...');
 
-    // 1. Transcribe with Whisper
-    const text = await transcribeWithWhisper(audioBlob);
+    try {
+      // 1. Transcribe with Whisper
+      const text = await transcribeWithWhisper(audioBlob);
 
-    if (!text.trim() || isNoisyTranscription(text)) {
-      console.log('[iAsted] [transcript] Empty or noisy:', text);
-      setTranscript('');
-      setVoiceState('listening');
-      startRecording();
-      return;
-    }
+      if (!text.trim() || isNoisyTranscription(text)) {
+        console.log('[iAsted] [transcript] Empty or noisy:', text);
+        setTranscript('');
+        setVoiceState('listening');
+        startRecordingRef.current();
+        return;
+      }
 
-    console.log('[iAsted] [Whisper]', text);
-    setTranscript(text);
-    options.onTranscript(text);
+      console.log('[iAsted] [Whisper]', text);
+      setTranscript(text);
+      options.onTranscript(text);
 
-    // 2. Send to GPT-4o
-    const response = await sendToGPT(text);
+      // 2. Send to GPT-4o
+      const response = await sendToGPT(text);
 
-    if (response) {
-      options.onResponse(response);
+      if (response) {
+        options.onResponse(response);
 
-      // 3. Speak with OpenAI TTS
+        // 3. Speak with OpenAI TTS
+        if (options.voiceEnabled) {
+          setVoiceState('speaking');
+          const ttsText = stripMarkdownForTTS(response);
+          const shortened = ttsText.length > 500 ? ttsText.slice(0, 500) + '...' : ttsText;
+          await speak(shortened);
+        }
+      } else {
+        // GPT-4o returned empty → vocal error feedback
+        console.warn('[iAsted] [GPT-4o] Empty response');
+        if (options.voiceEnabled) {
+          setVoiceState('speaking');
+          await speak("Désolé, je suis momentanément indisponible. Réessaie ou utilise le chat textuel.");
+        }
+      }
+    } catch (err) {
+      // Vocal error feedback for any failure in the pipeline
+      console.error('[iAsted] [pipeline] Error:', err);
       if (options.voiceEnabled) {
         setVoiceState('speaking');
-        const ttsText = stripMarkdownForTTS(response);
-        const shortened = ttsText.length > 500 ? ttsText.slice(0, 500) + '...' : ttsText;
-        await speak(shortened);
+        await speak("Je ne t'ai pas bien entendu, peux-tu répéter ?");
       }
     }
 
@@ -319,10 +343,9 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     setVoiceState('listening');
     setTranscript('');
     if (shouldListenRef.current) {
-      startRecording();
+      startRecordingRef.current();
     }
-  // eslint-disable-next-line
-  }, [options.voiceEnabled, resetIdleTimer, transcribeWithWhisper, sendToGPT, speak]);
+  }, [options, resetIdleTimer, transcribeWithWhisper, sendToGPT, speak]);
 
   // ─── Voice Activity Detection (silence-based) ───────────────
   const detectSilence = useCallback(() => {
@@ -392,6 +415,9 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
     console.log('[iAsted] [MediaRecorder] Started recording');
   }, [handleAudioChunk, detectSilence]);
+
+  // Keep startRecordingRef in sync
+  useEffect(() => { startRecordingRef.current = startRecording; }, [startRecording]);
 
   // ─── Connect ─────────────────────────────────────────────────
   const connect = useCallback(async () => {

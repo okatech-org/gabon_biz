@@ -191,7 +191,7 @@ function getStatusColor(status: string) {
     case 'Rejeté':
       return { bg: 'bg-red-50 dark:bg-red-950/30', text: 'text-red-600 dark:text-red-400' };
     default:
-      return { bg: 'bg-gray-50 dark:bg-gray-800', text: 'text-gray-500 dark:text-gray-400' };
+      return { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500 dark:text-gray-400' };
   }
 }
 
@@ -221,7 +221,7 @@ export default function SoumissionsPage() {
           {DGMP_EVAL_STATS.map((s) => (
             <div
               key={s.label}
-              className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-5 border border-gray-100 dark:border-gray-800 shadow-sm"
+              className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-800"
             >
               <div className="text-2xl font-bold" style={{ color: s.color }}>
                 {s.value}
@@ -293,7 +293,7 @@ export default function SoumissionsPage() {
                   <Td align="center">
                     {s.status === 'À évaluer' ? (
                       <button
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white border-0 cursor-pointer transition-colors shadow-sm"
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white border-0 cursor-pointer transition-colors"
                         aria-label={`Évaluer ${s.enterprise}`}
                       >
                         Évaluer
@@ -334,7 +334,7 @@ export default function SoumissionsPage() {
           {MOCK_SUBMISSIONS.map((s) => (
             <div
               key={s.id}
-              className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 transition-shadow"
             >
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                 <div className="flex-1 min-w-0">

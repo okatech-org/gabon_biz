@@ -81,7 +81,7 @@ export default function CompactHero({
       {/* Overlays (gradients, images, etc.) */}
       {overlays}
 
-      <div className={innerClassName || "relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-36 sm:py-20 sm:pt-28"}>
+      <div className={innerClassName || "relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-36 sm:py-20 sm:pt-36"}>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-12">
           {/* ── LEFT: Text content ── */}
           <div className="flex-1 max-w-2xl min-w-0">
@@ -132,10 +132,9 @@ export default function CompactHero({
                   <Link
                     href={ctaPrimary.href}
                     target={ctaPrimary.external ? '_blank' : undefined}
-                    className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 shadow-lg no-underline"
+                    className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 no-underline"
                     style={{
                       backgroundColor: accentColor,
-                      boxShadow: `0 8px 24px ${accentColor}40`,
                     }}
                   >
                     {ctaPrimary.label}

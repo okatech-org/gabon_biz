@@ -27,7 +27,7 @@ export default function EventCard({ event, index = 0 }: { event: Evenement; inde
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, type: 'spring', stiffness: 100 }}
-      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1"
+      className="bg-white dark:bg-white/5 rounded-2xl border border-gray-200/60 dark:border-white/8 overflow-hidden transition-all hover:-translate-y-1"
     >
       <div className="h-1.5 w-full" style={{ background: typeConf.color }} />
       <div className="p-5">

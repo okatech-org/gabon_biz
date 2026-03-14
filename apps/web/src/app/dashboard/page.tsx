@@ -498,7 +498,7 @@ export default function DashboardPage() {
               <Link
                 key={a.label}
                 href={a.href}
-                className="no-underline group flex items-center gap-3 p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                className="no-underline group flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span
                   className="text-xl w-10 h-10 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
@@ -521,7 +521,7 @@ export default function DashboardPage() {
           <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
             <span>📝</span> Activité récente
           </h2>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 divide-y divide-gray-50 dark:divide-gray-800/50 mb-8 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 divide-y divide-gray-50 dark:divide-gray-800/50 mb-8">
             {recentActivity.map((act, i) => (
               <div key={i} className="flex items-start gap-3 px-5 py-4">
                 <span className="text-lg mt-0.5">{act.icon}</span>
@@ -544,7 +544,7 @@ export default function DashboardPage() {
           <Link
             key={mod.path}
             href={mod.path}
-            className="no-underline group bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col gap-3"
+            className="no-underline group bg-white dark:bg-gray-900 rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-gray-800 hover:-translate-y-1 transition-all duration-200 flex flex-col gap-3"
           >
             <span
               className="text-3xl w-13 h-13 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200"
