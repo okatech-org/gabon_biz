@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimitWithQuota } from '@/lib/iasted/rate-limiter';
 
 /**
  * POST /api/voice/transcribe
@@ -7,6 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting + daily voice quota
+    const rateLimited = rateLimitWithQuota(request, 'transcribe', true);
+    if (rateLimited) return rateLimited;
+
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(

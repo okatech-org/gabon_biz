@@ -1,7 +1,7 @@
 'use client';
 
 // GABON BIZ — Sidebar Navigation Layout
-// Dynamic navigation based on user role and demo account permissions
+// Dynamic navigation based on active profile (progressive profile system)
 // Responsive: drawer overlay on mobile, fixed sidebar on md+
 
 import React, { useState, useEffect } from 'react';
@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getDemoAccountByNip } from '@/lib/demo-accounts';
+import { getDashboardPathsForProfile, PROFILE_DEFINITIONS } from '@/lib/profiles';
+import ProfileSwitcher from '@/components/ProfileSwitcher';
 import DemoBanner from '@/components/DemoBanner';
 
 interface NavItem {
@@ -53,6 +55,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { path: '/dashboard/filieres', icon: '🏭', label: 'Filières' },
   { path: '/dashboard/annuaire', icon: '📒', label: 'Annuaire' },
   { path: '/dashboard/cgi', icon: '💡', label: "Centre d'Innovation" },
+  { path: '/dashboard/profils', icon: '🎭', label: 'Mes Profils' },
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
@@ -61,26 +64,33 @@ const ADMIN_ITEMS: NavItem[] = [
   { path: '/dashboard/admin/marches', icon: '📊', label: 'Gestion Marchés' },
 ];
 
-function getNavItemsForUser(user: ReturnType<typeof useAuth>['user']): NavItem[] {
-  if (!user) return ALL_NAV_ITEMS.slice(0, 4); // Default: first 4
-
-  // Demo user: filter by accessible modules
-  if (user.isDemo) {
+function getNavItemsForProfile(
+  allowedPaths: string[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user?: any,
+): NavItem[] {
+  // Demo user: use demo account accessible modules if available
+  if (user?.isDemo) {
     const account = getDemoAccountByNip(user.nip);
     if (account) {
-      return ALL_NAV_ITEMS.filter((item) => account.accessibleModules.includes(item.path)).map(
-        (item) => ({
+      // Demo account modules are the single source of truth for sidebar
+      const demoPaths = new Set(account.accessibleModules);
+      return ALL_NAV_ITEMS
+        .filter((item) => demoPaths.has(item.path))
+        .map((item) => ({
           ...item,
-          children: item.children?.filter((child) =>
-            account.accessibleModules.includes(child.path),
-          ),
-        }),
-      );
+          children: item.children?.filter((child) => demoPaths.has(child.path)),
+        }));
     }
   }
 
-  // Non-demo: show all items
-  return ALL_NAV_ITEMS;
+  // Real user: filter by profile-allowed paths
+  return ALL_NAV_ITEMS
+    .filter((item) => allowedPaths.includes(item.path))
+    .map((item) => ({
+      ...item,
+      children: item.children?.filter((child) => allowedPaths.includes(child.path)),
+    }));
 }
 
 function SidebarContent({
@@ -89,6 +99,7 @@ function SidebarContent({
   logout,
   isAdmin,
   navItems,
+  userName,
   onNavClick,
 }: {
   pathname: string;
@@ -97,6 +108,7 @@ function SidebarContent({
   logout: () => void;
   isAdmin: boolean;
   navItems: NavItem[];
+  userName: string;
   onNavClick?: () => void;
 }) {
   return (
@@ -188,34 +200,19 @@ function SidebarContent({
         )}
       </nav>
 
-      {/* User */}
-      <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex items-center gap-3 safe-area-bottom">
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-          style={{
-            background: user?.isDemo
-              ? getDemoAccountByNip(user.nip)?.accentColor || '#009e49'
-              : 'linear-gradient(135deg, #009e49, #3cba54)',
-          }}
+      {/* Profile Switcher + User footer */}
+      <div className="p-3 border-t border-gray-100 dark:border-gray-800 safe-area-bottom">
+        <ProfileSwitcher
+          userName={userName}
+          userEmail={user?.email}
+        />
+
+        <button
+          onClick={logout}
+          className="mt-2 w-full text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 bg-transparent border-none cursor-pointer py-1.5 text-left px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
-          {user?.name?.charAt(0) || '?'}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-            {user?.name || 'Utilisateur'}
-          </div>
-          {user?.organization && (
-            <div className="text-xs text-gray-400 dark:text-gray-500 truncate">
-              {user.organization}
-            </div>
-          )}
-          <button
-            onClick={logout}
-            className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 bg-transparent border-none cursor-pointer p-0 mt-0.5"
-          >
-            Déconnexion
-          </button>
-        </div>
+          Déconnexion
+        </button>
       </div>
     </>
   );
@@ -223,9 +220,16 @@ function SidebarContent({
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
-  const isAdmin = !!(user?.roles?.includes('ADMIN') || user?.roles?.includes('SYSADMIN'));
-  const navItems = getNavItemsForUser(user);
+  const { user, logout, activeProfile } = useAuth();
+
+  // Determine admin status from profile system
+  const isAdmin = activeProfile === 'ADMIN' || activeProfile === 'SYSADMIN'
+    || !!(user?.roles?.includes('ADMIN') || user?.roles?.includes('SYSADMIN'));
+
+  // Get allowed paths from profile system
+  const allowedPaths = getDashboardPathsForProfile(activeProfile);
+  const navItems = getNavItemsForProfile(allowedPaths, user);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Prevent body scroll when mobile sidebar open
@@ -240,9 +244,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
   }, [sidebarOpen]);
 
-  const accentColor = user?.isDemo
-    ? getDemoAccountByNip(user.nip)?.accentColor || '#009e49'
-    : '#009e49';
+  const accentColor = (() => {
+    // First try active profile color
+    const profileDef = PROFILE_DEFINITIONS[activeProfile];
+    if (profileDef && activeProfile !== 'PUBLIC') return profileDef.color;
+    // Then demo account color
+    if (user?.isDemo) return getDemoAccountByNip(user.nip)?.accentColor || '#009e49';
+    return '#009e49';
+  })();
+
+  const userName = user?.name || 'Utilisateur';
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -269,12 +280,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </span>
           </Link>
 
-          {/* User avatar */}
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-            style={{ background: accentColor }}
-          >
-            {user?.name?.charAt(0) || '?'}
+          {/* User avatar + profile badge */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${accentColor}15`, color: accentColor }}>
+              {PROFILE_DEFINITIONS[activeProfile]?.shortLabel || 'Citoyen'}
+            </span>
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+              style={{ background: accentColor }}
+            >
+              {userName.charAt(0)}
+            </div>
           </div>
         </div>
       </header>
@@ -320,6 +336,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           logout={logout}
           isAdmin={isAdmin}
           navItems={navItems}
+          userName={userName}
           onNavClick={() => setSidebarOpen(false)}
         />
       </aside>

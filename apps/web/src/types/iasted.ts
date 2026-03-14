@@ -3,15 +3,6 @@
 /** 5-state voice machine */
 export type VoiceState = 'idle' | 'connecting' | 'listening' | 'thinking' | 'speaking';
 
-/** Voice configuration */
-export interface VoiceConfig {
-  voice: string;               // SpeechSynthesis voice name
-  rate: number;                // Speech rate (0.5–2)
-  pitch: number;               // Speech pitch (0–2)
-  volume: number;              // Volume (0–1)
-  lang: string;                // BCP-47 language tag
-}
-
 /** Local command definition */
 export interface LocalCommand {
   patterns: RegExp[];          // Regex patterns that match this command
@@ -61,6 +52,7 @@ export interface UseRealtimeVoiceReturn {
 export interface GreetingSession {
   timestamp: number;
   period: 'morning' | 'afternoon' | 'evening';
+  text: string;
 }
 
 /** Quotas per role */

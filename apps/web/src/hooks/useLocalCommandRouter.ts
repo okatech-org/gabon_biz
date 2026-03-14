@@ -70,20 +70,26 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
         actions.clearMessages();
         break;
 
-      // ── Disconnect (with farewell) ──
+      // ── Disconnect (with farewell via OpenAI TTS for voice consistency) ──
       case 'disconnectVoice': {
-        // Speak a brief goodbye before disconnecting
-        if (typeof window !== 'undefined' && window.speechSynthesis) {
-          const farewell = new SpeechSynthesisUtterance('À bientôt !');
-          farewell.lang = 'fr-FR';
-          farewell.rate = 0.95;
-          farewell.pitch = 0.9;
-          farewell.onend = () => actions.disconnectVoice();
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(farewell);
-        } else {
-          actions.disconnectVoice();
-        }
+        // Speak goodbye via OpenAI TTS API (same 'echo' voice as all other speech)
+        fetch('/api/voice/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: 'À bientôt !', voice: 'echo' }),
+        })
+          .then(res => res.ok ? res.blob() : null)
+          .then(blob => {
+            if (blob) {
+              const audio = new Audio(URL.createObjectURL(blob));
+              audio.onended = () => actions.disconnectVoice();
+              audio.onerror = () => actions.disconnectVoice();
+              audio.play().catch(() => actions.disconnectVoice());
+            } else {
+              actions.disconnectVoice();
+            }
+          })
+          .catch(() => actions.disconnectVoice());
         break;
       }
     }
@@ -99,8 +105,8 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
 
     executeCommand(match);
 
-    // Return whether this was a silent action (no vocal feedback needed)
-    return SILENT_ACTIONS.includes(match.action);
+    // Always return true when a command was matched — prevents sending to Gemini
+    return true;
   }, [executeCommand]);
 
   return { tryLocalCommand };

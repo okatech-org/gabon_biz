@@ -1,10 +1,11 @@
 'use client';
 
 // GABON BIZ — Dashboard Home (adaptive by profile)
-// Routes to dedicated dashboard components for specific profiles
+// Routes to dedicated dashboard components based on active profile or demo account
 
 import { useAuth } from '@/lib/auth-context';
 import { getDemoAccountByNip } from '@/lib/demo-accounts';
+import { type ProfileType } from '@/lib/profiles';
 import { StatsCard } from '@/components/ui';
 import Link from 'next/link';
 
@@ -17,9 +18,14 @@ import EntrepreneurDashboard from '@/components/dashboards/EntrepreneurDashboard
 import StartupDashboard from '@/components/dashboards/StartupDashboard';
 import InvestisseurDashboard from '@/components/dashboards/InvestisseurDashboard';
 import DGMPDashboard from '@/components/dashboards/DGMPDashboard';
+import PartenaireDashboard from '@/components/dashboards/PartenaireDashboard';
+import AutoriteDashboard from '@/components/dashboards/AutoriteDashboard';
+import SysadminDashboard from '@/components/dashboards/SysadminDashboard';
+import CGIDashboard from '@/components/dashboards/CGIDashboard';
 
 // Map of profile IDs to their dedicated dashboard components
-const PROFILE_DASHBOARDS: Record<
+// Demo account → dashboard component mapping
+const DEMO_DASHBOARDS: Record<
   string,
   React.ComponentType<{ user: Record<string, string | undefined> }>
 > = {
@@ -31,6 +37,23 @@ const PROFILE_DASHBOARDS: Record<
   'demo-startup': StartupDashboard,
   'demo-investisseur': InvestisseurDashboard,
   'demo-dgmp': DGMPDashboard,
+  'demo-partenaire': PartenaireDashboard,
+  'demo-autorite': AutoriteDashboard,
+  'demo-sysadmin': SysadminDashboard,
+  'demo-cgi': CGIDashboard,
+};
+
+// Profile type → dashboard component mapping (for real users)
+const PROFILE_TYPE_DASHBOARDS: Partial<Record<
+  ProfileType,
+  React.ComponentType<{ user: Record<string, string | undefined> }>
+>> = {
+  PUBLIC: CitoyenDashboard,
+  ENTREPRENEUR: EntrepreneurDashboard,
+  STARTUP: StartupDashboard,
+  INVESTOR: InvestisseurDashboard,
+  ADMIN: AdminDashboard,
+  SYSADMIN: AdminDashboard,
 };
 
 // ─── Demo stats per profile ───
@@ -403,16 +426,31 @@ const DEFAULT_MODULES = [
 ];
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, activeProfile } = useAuth();
   const account = user?.isDemo ? getDemoAccountByNip(user.nip) : null;
 
-  // ─── PROFILE-SPECIFIC DASHBOARD ───
-  if (account && PROFILE_DASHBOARDS[account.id]) {
-    const ProfileDashboard = PROFILE_DASHBOARDS[account.id];
+  // ─── DEMO PROFILE-SPECIFIC DASHBOARD ───
+  if (account && DEMO_DASHBOARDS[account.id]) {
+    const DemoDashboard = DEMO_DASHBOARDS[account.id];
     return (
-      <ProfileDashboard
+      <DemoDashboard
         user={{
           name: user?.name,
+          title: user?.title,
+          organization: user?.organization,
+          location: user?.location,
+        }}
+      />
+    );
+  }
+
+  // ─── REAL USER: PROFILE-TYPE DASHBOARD ───
+  const ProfileTypeDashboard = PROFILE_TYPE_DASHBOARDS[activeProfile];
+  if (ProfileTypeDashboard && !account) {
+    return (
+      <ProfileTypeDashboard
+        user={{
+          name: user?.name || user?.fullName,
           title: user?.title,
           organization: user?.organization,
           location: user?.location,

@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GraduationCap, Award, Users, BookOpen, ChevronRight, ExternalLink } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
+
 import Link from 'next/link';
 import { CGI_FORMATIONS, CGI_CERTIFICATIONS, CGI_CLUBS_TECH } from '@/lib/mock/cgi-data';
 
@@ -36,8 +36,7 @@ export default function CGIFormationsPage() {
   const [tab, setTab] = useState<Tab>('formations');
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <Link href="/dashboard/cgi" className="hover:text-amber-500 transition-colors">CGI</Link>
@@ -181,7 +180,6 @@ export default function CGIFormationsPage() {
             </div>
           </motion.div>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

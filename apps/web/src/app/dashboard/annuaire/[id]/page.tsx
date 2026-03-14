@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight, ArrowLeft, MessageSquare, Bell } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
 import { getEnterpriseById } from '@/lib/annuaire-data';
 import EnterpriseFiche from '@/components/annuaire/EnterpriseFiche';
 import FavoriteButton from '@/components/annuaire/FavoriteButton';
@@ -14,19 +13,17 @@ export default function DashboardEnterpriseDetailPage() {
 
   if (!enterprise) {
     return (
-      <DashboardLayout>
-        <div className="text-center py-20">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Entreprise non trouvée</h1>
-          <Link href="/dashboard/annuaire" className="text-emerald-600 dark:text-emerald-400 no-underline hover:underline">
-            <ArrowLeft size={16} className="inline mr-1" /> Retour à l&apos;annuaire
-          </Link>
-        </div>
-      </DashboardLayout>
+      <div className="text-center py-20">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Entreprise non trouvée</h1>
+        <Link href="/dashboard/annuaire" className="text-emerald-600 dark:text-emerald-400 no-underline hover:underline">
+          <ArrowLeft size={16} className="inline mr-1" /> Retour à l&apos;annuaire
+        </Link>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
+    <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
         <Link href="/dashboard/annuaire" className="hover:text-emerald-500 no-underline transition-colors">Annuaire</Link>
@@ -46,6 +43,6 @@ export default function DashboardEnterpriseDetailPage() {
       </div>
 
       <EnterpriseFiche enterprise={enterprise} />
-    </DashboardLayout>
+    </>
   );
 }

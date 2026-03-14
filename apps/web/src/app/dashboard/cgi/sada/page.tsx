@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { Globe, ChevronRight, BookOpen, DollarSign, Users, Target, Calendar, MapPin, GraduationCap } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
+
 import Link from 'next/link';
 import { CGI_PROGRAMME_SADA, CGI_MODULES_SADA } from '@/lib/mock/cgi-data';
 
@@ -13,8 +13,7 @@ export default function CGISADAPage() {
   const sada = CGI_PROGRAMME_SADA;
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <Link href="/dashboard/cgi" className="hover:text-amber-500 transition-colors">CGI</Link>
@@ -181,7 +180,6 @@ export default function CGISADAPage() {
             ))}
           </div>
         </div>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

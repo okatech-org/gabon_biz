@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimitWithQuota } from '@/lib/iasted/rate-limiter';
 
 /**
  * POST /api/voice/tts
@@ -8,6 +9,10 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting + daily voice quota
+    const rateLimited = rateLimitWithQuota(request, 'tts', true);
+    if (rateLimited) return rateLimited;
+
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -17,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { text, voice = 'onyx' } = body; // 'onyx' = deep masculine voice
+    const { text, voice = 'echo' } = body; // 'echo' = neutral francophone masculine voice
 
     if (!text || typeof text !== 'string') {
       return NextResponse.json(

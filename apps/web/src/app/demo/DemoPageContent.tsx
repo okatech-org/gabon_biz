@@ -15,6 +15,7 @@ import {
   Minus,
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n/i18nContext';
+import { useAuth } from '@/lib/auth-context';
 import { Navbar } from '@/app/page';
 
 import CompactHero from '@/components/services/CompactHero';
@@ -336,6 +337,7 @@ function DemoFooter() {
 
 export default function DemoPageContent() {
   const router = useRouter();
+  const { refreshAuth } = useAuth();
   const [, setError] = useState('');
 
   const handleSelect = async (accountId: string) => {
@@ -353,6 +355,8 @@ export default function DemoPageContent() {
         return;
       }
 
+      // Refresh auth context BEFORE navigating — prevents stale user name
+      await refreshAuth();
       router.push('/dashboard');
     } catch {
       setError('Erreur réseau. Veuillez réessayer.');

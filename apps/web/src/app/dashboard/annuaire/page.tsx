@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { Download, History } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
 import SearchBar from '@/components/annuaire/SearchBar';
 import EnterpriseCard from '@/components/annuaire/EnterpriseCard';
 import EnterpriseFilters from '@/components/annuaire/EnterpriseFilters';
@@ -40,8 +39,7 @@ export default function DashboardAnnuairePage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -141,7 +139,6 @@ export default function DashboardAnnuairePage() {
             </button>
           </div>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

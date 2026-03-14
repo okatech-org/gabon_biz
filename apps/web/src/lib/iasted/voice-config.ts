@@ -1,23 +1,4 @@
-import type { VoiceConfig } from '@/types/iasted';
-
 // ─── Voice Configuration ─────────────────────────────────────────
-
-export const DEFAULT_VOICE_CONFIG: VoiceConfig = {
-  voice: '',  // Resolved at runtime — prefers masculine FR voice
-  rate: 0.95, // Slightly slower for natural fluidity
-  pitch: 0.9, // Lower pitch for masculine tone
-  volume: 1.0,
-  lang: 'fr-FR',
-};
-
-/** Preferred masculine French voice names — tried in order */
-const PREFERRED_MALE_VOICES_FR = [
-  'Thomas',            // macOS high-quality male FR
-  'Microsoft Paul',    // Windows male FR
-  'Microsoft Claude',  // Windows male FR (alternate)
-  'Jacques',           // macOS male FR (alternate)
-  'Google français',   // Chrome — often male by default
-];
 
 /** Optimization constants */
 export const IASTED_CONFIG = {
@@ -33,39 +14,6 @@ export const IASTED_CONFIG = {
 
 /** Session storage key for greeting persistence */
 export const SESSION_GREETING_KEY = 'iasted_gabon_biz_greeting';
-
-// ─── Helpers ─────────────────────────────────────────────────────
-
-/** Find the best masculine French voice from available SpeechSynthesis voices */
-export function findBestFrenchVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
-
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return null;
-
-  // 1. Try preferred masculine voices in order
-  for (const pref of PREFERRED_MALE_VOICES_FR) {
-    const match = voices.find(v =>
-      v.lang.startsWith('fr') && v.name.toLowerCase().includes(pref.toLowerCase())
-    );
-    if (match) return match;
-  }
-
-  // 2. Fallback: any French voice (avoid explicitly feminine names)
-  const feminineNames = ['amelie', 'audrey', 'marie', 'julie', 'sara', 'sophie'];
-  const maleFr = voices.find(v =>
-    v.lang.startsWith('fr') &&
-    !feminineNames.some(f => v.name.toLowerCase().includes(f))
-  );
-  if (maleFr) return maleFr;
-
-  // 3. Any French voice at all
-  const anyFr = voices.find(v => v.lang.startsWith('fr'));
-  if (anyFr) return anyFr;
-
-  // 4. Last resort: first voice
-  return voices[0];
-}
 
 /** Get time period for greeting */
 export function getTimePeriod(): 'morning' | 'afternoon' | 'evening' {

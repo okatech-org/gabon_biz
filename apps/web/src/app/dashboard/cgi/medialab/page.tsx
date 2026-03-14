@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { Video, Podcast, Palette, Camera, ChevronRight, Play, ExternalLink } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
+
 import Link from 'next/link';
 import { CGI_PRODUCTIONS_MEDIALAB } from '@/lib/mock/cgi-data';
 
@@ -25,8 +25,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default function CGIMediaLabPage() {
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <Link href="/dashboard/cgi" className="hover:text-amber-500 transition-colors">CGI</Link>
@@ -122,7 +121,6 @@ export default function CGIMediaLabPage() {
             );
           })}
         </div>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

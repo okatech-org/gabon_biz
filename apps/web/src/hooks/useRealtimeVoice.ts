@@ -15,10 +15,12 @@ interface UseRealtimeVoiceOptions {
   onTranscript: (text: string) => void;
   /** Called when the AI responds (full text) */
   onResponse: (text: string) => void;
-  /** Gemini SSE sendToAI — kept as fallback */
-  sendToAI: (text: string) => Promise<string>;
   /** Whether voice TTS output is enabled */
   voiceEnabled: boolean;
+  /** Try to match and execute a local command. Returns true if handled. */
+  tryLocalCommand?: (transcript: string) => boolean;
+  /** Called when Gemini returns a function call (e.g. navigate, search) */
+  onFunctionCall?: (name: string, args: Record<string, string>) => void;
 }
 
 export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeVoiceReturn {
@@ -37,9 +39,9 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const historyRef = useRef<{ role: string; content: string }[]>([]);
-  const speakWithBrowserRef = useRef<(text: string) => Promise<void>>(() => Promise.resolve());
   const disconnectRef = useRef<() => void>(() => {});
   const startRecordingRef = useRef<() => void>(() => {});
+  const onFunctionCallRef = useRef(options.onFunctionCall);
 
   // ─── Audio Level Analysis ────────────────────────────────────
   const startAudioAnalysis = useCallback((stream: MediaStream) => {
@@ -70,28 +72,6 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     setAudioLevel(0);
   }, []);
 
-  // ─── Browser TTS Fallback ───────────────────────────────────
-  const speakWithBrowser = useCallback((text: string): Promise<void> => {
-    return new Promise((resolve) => {
-      if (typeof window === 'undefined' || !window.speechSynthesis) {
-        resolve();
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 0.95;
-      utterance.pitch = 0.9;
-      utterance.volume = 1.0;
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
-      window.speechSynthesis.speak(utterance);
-    });
-  }, []);
-
-  // Keep the ref in sync
-  useEffect(() => { speakWithBrowserRef.current = speakWithBrowser; }, [speakWithBrowser]);
-
   // ─── OpenAI TTS — speak via API ─────────────────────────────
   // Mobile: reuse a pre-warmed <audio> element (unlocked on user gesture in IAstedChatbot)
   const speakWithOpenAI = useCallback(async (text: string): Promise<void> => {
@@ -99,12 +79,12 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       const response = await fetch('/api/voice/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voice: 'onyx' }),
+        body: JSON.stringify({ text, voice: 'echo' }),
       });
 
       if (!response.ok || !response.body) {
-        console.warn('[iAsted] [TTS] OpenAI TTS failed, falling back to browser');
-        return speakWithBrowserRef.current(text);
+        console.warn('[iAsted] [TTS] OpenAI TTS failed, staying silent');
+        return;
       }
 
       // Play the audio stream — reuse existing element or create new
@@ -131,12 +111,13 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
         };
         audio.play().catch(() => {
           URL.revokeObjectURL(audioUrl);
-          speakWithBrowserRef.current(text).then(resolve);
+          console.warn('[iAsted] [TTS] Auto-play blocked, staying silent');
+          resolve();
         });
       });
     } catch (err) {
       console.error('[iAsted] [TTS] Error:', err);
-      return speakWithBrowserRef.current(text);
+      // No browser fallback — consistent voice identity
     }
   }, []);
 
@@ -151,9 +132,6 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current = null;
-    }
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
     }
   }, []);
 
@@ -204,6 +182,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
   // Keep disconnectRef in sync
   useEffect(() => { disconnectRef.current = disconnect; }, [disconnect]);
+  // Keep onFunctionCallRef in sync
+  useEffect(() => { onFunctionCallRef.current = options.onFunctionCall; }, [options.onFunctionCall]);
 
   // ─── Whisper Transcription ───────────────────────────────────
   const transcribeWithWhisper = useCallback(async (audioBlob: Blob): Promise<string> => {
@@ -229,10 +209,10 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     }
   }, []);
 
-  // ─── GPT-4o Voice Chat ──────────────────────────────────────
-  const sendToGPT = useCallback(async (text: string): Promise<string> => {
+  // ─── Gemini Voice Chat (single brain) ─────────────────
+  const sendToGemini = useCallback(async (text: string): Promise<string> => {
     try {
-      const response = await fetch('/api/voice/chat', {
+      const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -249,7 +229,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       let fullText = '';
 
       // Stream reading loop
-      while (true) {
+      for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
@@ -262,6 +242,10 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
           try {
             const parsed = JSON.parse(data);
             if (parsed.text) fullText += parsed.text;
+            // Forward function calls via ref
+            if (parsed.functionCall && onFunctionCallRef.current) {
+              onFunctionCallRef.current(parsed.functionCall.name, parsed.functionCall.args || {});
+            }
           } catch { /* skip */ }
         }
       }
@@ -276,12 +260,14 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
       return fullText;
     } catch (err) {
-      console.error('[iAsted] [GPT-4o] Error:', err);
+      console.error('[iAsted] [Gemini Voice] Error:', err);
       return '';
     }
   }, []);
 
   // ─── Handle Finalized Audio ─────────────────────────────────
+  const consecutiveFailsRef = useRef(0);
+
   const handleAudioChunk = useCallback(async (audioBlob: Blob) => {
     if (audioBlob.size < 1000) {
       console.log('[iAsted] [audio] Chunk too small, skipping');
@@ -305,12 +291,24 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
         return;
       }
 
+      // Reset fail counter on successful transcription
+      consecutiveFailsRef.current = 0;
+
       console.log('[iAsted] [Whisper]', text);
       setTranscript(text);
       options.onTranscript(text);
 
-      // 2. Send to GPT-4o
-      const response = await sendToGPT(text);
+      // 2. Try local command first (zero-cost, no API call)
+      if (options.tryLocalCommand?.(text)) {
+        console.log('[iAsted] [local] Command handled locally, skipping Gemini');
+        setVoiceState('listening');
+        setTranscript('');
+        if (shouldListenRef.current) startRecordingRef.current();
+        return;
+      }
+
+      // 3. Send to Gemini
+      const response = await sendToGemini(text);
 
       if (response) {
         options.onResponse(response);
@@ -323,14 +321,22 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
           await speak(shortened);
         }
       } else {
-        // GPT-4o returned empty → vocal error feedback
-        console.warn('[iAsted] [GPT-4o] Empty response');
+        // Gemini returned empty → vocal error feedback
+        console.warn('[iAsted] [Gemini] Empty response');
         if (options.voiceEnabled) {
           setVoiceState('speaking');
           await speak("Désolé, je suis momentanément indisponible. Réessaie ou utilise le chat textuel.");
         }
       }
     } catch (err) {
+      // Track consecutive failures (rate limiting, network errors)
+      consecutiveFailsRef.current++;
+      if (consecutiveFailsRef.current >= 3) {
+        console.error('[iAsted] [pipeline] Too many consecutive failures, disconnecting');
+        disconnectRef.current();
+        return;
+      }
+
       // Vocal error feedback for any failure in the pipeline
       console.error('[iAsted] [pipeline] Error:', err);
       if (options.voiceEnabled) {
@@ -345,7 +351,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     if (shouldListenRef.current) {
       startRecordingRef.current();
     }
-  }, [options, resetIdleTimer, transcribeWithWhisper, sendToGPT, speak]);
+  }, [options, resetIdleTimer, transcribeWithWhisper, sendToGemini, speak]);
 
   // ─── Voice Activity Detection (silence-based) ───────────────
   const detectSilence = useCallback(() => {
@@ -421,7 +427,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
   // ─── Connect ─────────────────────────────────────────────────
   const connect = useCallback(async () => {
-    console.log('[iAsted] [state] Connecting voice (OpenAI pipeline)...');
+    console.log('[iAsted] [state] Connecting voice (Whisper + Gemini pipeline)...');
     setVoiceState('connecting');
 
     try {
@@ -449,7 +455,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       // Start idle timer
       resetIdleTimer();
 
-      console.log('[iAsted] [state] Voice connected — listening (Whisper + GPT-4o)');
+      console.log('[iAsted] [state] Voice connected — listening (Whisper + Gemini)');
     } catch (err) {
       console.error('[iAsted] [error] Mic access denied:', err);
       setVoiceState('idle');

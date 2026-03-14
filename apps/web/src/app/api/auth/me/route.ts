@@ -1,9 +1,12 @@
 // GABON BIZ — User Info API Route
 // Returns the authenticated user's info from the session cookie
-// Supports both GABON ID tokens and demo JWT tokens
+// Supports:
+//   1. IDENTITE.GA OAuth tokens (access_token → userinfo endpoint)
+//   2. Demo JWT tokens (prefixed with "demo:")
+// Auto-refreshes expired tokens using the refresh token cookie
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserInfo } from '@/lib/auth';
+import { getUserInfo, refreshAccessToken } from '@/lib/auth';
 import { jwtVerify } from 'jose';
 
 const DEMO_SECRET = new TextEncoder().encode(
@@ -17,9 +20,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ user: null }, { status: 401 });
   }
 
-  // Check if this is a demo token (prefixed with "demo:")
+  // ── Demo token flow ──────────────────────────────────────────
   if (sessionValue.startsWith('demo:')) {
-    const demoToken = sessionValue.slice(5); // Remove "demo:" prefix
+    const demoToken = sessionValue.slice(5);
     try {
       const { payload } = await jwtVerify(demoToken, DEMO_SECRET);
       return NextResponse.json({
@@ -39,19 +42,84 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch {
-      // Demo token expired or invalid
       return NextResponse.json({ user: null, expired: true }, { status: 401 });
     }
   }
 
-  // Normal GABON ID flow
-  try {
-    const user = await getUserInfo(sessionValue);
-    if (!user) {
-      return NextResponse.json({ user: null }, { status: 401 });
-    }
-    return NextResponse.json({ user });
-  } catch {
+  // ── IDENTITE.GA OAuth flow ───────────────────────────────────
+  // Try to get user info with the current access token
+  let user = await getUserInfo(sessionValue);
+
+  if (user) {
+    return NextResponse.json({
+      user: {
+        nip: user.nip,
+        fullName: user.fullName,
+        name: user.fullName,
+        given_name: user.given_name,
+        family_name: user.family_name,
+        email: user.email,
+        phone: user.phone,
+        profileType: user.profileType,
+        gender: user.gender,
+        birthdate: user.birthdate,
+        isDemo: false,
+        provider: 'identite.ga',
+      },
+    });
+  }
+
+  // ── Token expired? Try silent refresh ────────────────────────
+  const refreshToken = request.cookies.get('gabon-biz-refresh')?.value;
+  if (!refreshToken) {
+    return NextResponse.json({ user: null, expired: true }, { status: 401 });
+  }
+
+  const newTokens = await refreshAccessToken(refreshToken);
+  if (!newTokens) {
+    return NextResponse.json({ user: null, expired: true }, { status: 401 });
+  }
+
+  // Fetch user info with the new access token
+  user = await getUserInfo(newTokens.access_token);
+  if (!user) {
     return NextResponse.json({ user: null }, { status: 401 });
   }
+
+  // Build response with refreshed cookies
+  const response = NextResponse.json({
+    user: {
+      nip: user.nip,
+      fullName: user.fullName,
+      name: user.fullName,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      email: user.email,
+      phone: user.phone,
+      profileType: user.profileType,
+      gender: user.gender,
+      birthdate: user.birthdate,
+      isDemo: false,
+      provider: 'identite.ga',
+    },
+  });
+
+  // Update session cookies with new tokens
+  response.cookies.set('__session', newTokens.access_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: newTokens.expires_in || 3600,
+    path: '/',
+  });
+
+  response.cookies.set('gabon-biz-refresh', newTokens.refresh_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 30 * 24 * 60 * 60,
+    path: '/',
+  });
+
+  return response;
 }

@@ -47,3 +47,4 @@ pnpm-debug.log*
 # Temp
 tmp/
 temp/
+.claude/

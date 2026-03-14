@@ -2,18 +2,20 @@
 
 import { Bot, ExternalLink, Loader2, Send, User, Volume2, VolumeX, X } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useRealtimeVoice } from '@/hooks/useRealtimeVoice';
 import { useLocalCommandRouter } from '@/hooks/useLocalCommandRouter';
 import { VoiceMicButton } from '@/components/iasted/VoiceMicButton';
 import { getSuggestions } from '@/lib/iasted/suggestions';
+import { executeFunctionCall } from '@/lib/iasted/function-call-executor';
+import { useTheme } from '@/lib/theme-provider';
+import { useI18n } from '@/lib/i18n/i18nContext';
 import {
   getTimeGreeting,
   getVocalGreeting,
   stripMarkdownForTTS,
-  findBestFrenchVoice,
   SESSION_GREETING_KEY,
   getTimePeriod,
 } from '@/lib/iasted/voice-config';
@@ -68,13 +70,8 @@ function unlockAudio() {
       ctx.close().catch(() => {});
     }
 
-    // Also poke SpeechSynthesis on iOS (needs a dummy speak to load voices)
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      const u = new SpeechSynthesisUtterance('');
-      u.volume = 0;
-      window.speechSynthesis.speak(u);
-      window.speechSynthesis.cancel();
-    }
+    // SpeechSynthesis no longer used — no need to poke it
+
 
     audioUnlocked = true;
     console.log('[iAsted] [audio] Mobile audio unlocked');
@@ -85,11 +82,12 @@ function unlockAudio() {
 
 async function speak(text: string, onEnd?: () => void) {
   try {
-    // Try OpenAI TTS first (onyx = deep masculine)
+    // OpenAI TTS (echo = neutral francophone masculine voice)
+    // NO browser fallback — consistent voice or silence
     const response = await fetch('/api/voice/tts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, voice: 'onyx' }),
+      body: JSON.stringify({ text, voice: 'echo' }),
     });
 
     if (response.ok) {
@@ -113,39 +111,19 @@ async function speak(text: string, onEnd?: () => void) {
       try {
         await audio.play();
       } catch {
-        // Auto-play blocked — fallback to browser TTS
+        // Auto-play blocked — silent rather than different voice
         URL.revokeObjectURL(audioUrl);
-        speakBrowser(text, onEnd);
+        console.warn('[iAsted] [TTS] Auto-play blocked, staying silent');
+        onEnd?.();
       }
       return;
     }
-  } catch { /* fallback */ }
+  } catch (err) {
+    console.warn('[iAsted] [TTS] OpenAI TTS failed, staying silent:', err);
+  }
 
-  // Fallback: browser SpeechSynthesis
-  speakBrowser(text, onEnd);
-}
-
-function speakBrowser(text: string, onEnd?: () => void) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) { onEnd?.(); return; }
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'fr-FR';
-  utterance.rate = 0.95;
-  utterance.pitch = 0.9;
-  utterance.volume = 1.0;
-  const voice = findBestFrenchVoice();
-  if (voice) utterance.voice = voice;
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = () => {
-    // iOS sometimes fails on first try — retry once after 100ms
-    setTimeout(() => {
-      try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-      } catch { onEnd?.(); }
-    }, 100);
-  };
-  window.speechSynthesis.speak(utterance);
+  // No browser fallback — consistent voice identity
+  onEnd?.();
 }
 
 function stopSpeaking() {
@@ -153,114 +131,21 @@ function stopSpeaking() {
     sharedAudioEl.pause();
     sharedAudioEl.src = '';
   }
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-  }
 }
 
-const DEFAULT_QUESTIONS = [
-  'Comment créer mon entreprise ?',
-  "Programmes d'incubation SING",
-  'Investir au Gabon',
-  'Marchés publics',
-];
-
-const CONTEXTUAL_QUESTIONS: Record<string, string[]> = {
-  '/services/cgi': [
-    'Quelles formations CGI sont disponibles ?',
-    'Comment obtenir la certification SADA ?',
-    'Le FabLab, c\'est quoi ?',
-    'Programme INITIA pour l\'IA ?',
-  ],
-  '/services/incubateur': [
-    'Suis-je éligible à la SING ?',
-    'Prochaine cohorte Innovation 4.0 ?',
-    'Comment candidater ?',
-    'SING Capital : quel financement ?',
-  ],
-  '/services/investir': [
-    'ROI des verticales FinTech ?',
-    'Cadre juridique pour investir ?',
-    'Success story POZI ?',
-    'Simulateur ROI disponible ?',
-  ],
-  '/services/marches-publics': [
-    'Marchés ouverts en IT ?',
-    'Comment soumissionner ?',
-    'Alertes marchés publics ?',
-    'Conditions de soumission ?',
-  ],
-  '/services/guichet-entrepreneur': [
-    'Coût création SARL ?',
-    'Documents requis ?',
-    'Délai d\'immatriculation ?',
-    'Créer une SA ?',
-  ],
-  '/services/innovation-hub': [
-    'Solutions FinTech disponibles ?',
-    'Comment publier ma solution ?',
-    'Matching IA, comment ça marche ?',
-    'Badge Vérifié KIMBA ?',
-  ],
-  '/annuaire': [
-    'Entreprises EdTech à Libreville ?',
-    'Vérifier un RCCM ?',
-    'Startups du numérique ?',
-    'Chercher par secteur ?',
-  ],
-  '/demo': [
-    'Quel profil démo pour moi ?',
-    'Profil investisseur ?',
-    'Tester le dashboard entrepreneur ?',
-    'Explorer en tant que citoyen ?',
-  ],
-  '/dashboard': [
-    'Comment utiliser mon dashboard ?',
-    'Où trouver mes notifications ?',
-    'Naviguer entre les modules ?',
-    'Mes démarches en cours ?',
-  ],
-  '/dashboard/marches': [
-    'Marchés compatibles avec mon profil ?',
-    'Comment préparer une soumission ?',
-    'Suivi de mes soumissions ?',
-    'Alertes personnalisées ?',
-  ],
-  '/dashboard/incubateur': [
-    'Mon parcours d\'incubation ?',
-    'Prochains événements SING ?',
-    'Trouver un mentor ?',
-    'Candidater à un programme ?',
-  ],
-  '/dashboard/investir': [
-    'Deal flow en cours ?',
-    'Due diligence : comment ?',
-    'Veille sectorielle ?',
-    'Simuler un investissement ?',
-  ],
-  '/investir-numerique': [
-    'Les 6 verticales d\'investissement ?',
-    'Données macro BAD 2025 ?',
-    'Premier deal VC au Gabon ?',
-    'Avantages fiscaux ?',
-  ],
-};
-
-function getContextualQuestions(pathname: string): string[] {
-  if (CONTEXTUAL_QUESTIONS[pathname]) return CONTEXTUAL_QUESTIONS[pathname];
-  const keys = Object.keys(CONTEXTUAL_QUESTIONS).sort((a, b) => b.length - a.length);
-  for (const key of keys) {
-    if (pathname.startsWith(key)) return CONTEXTUAL_QUESTIONS[key];
-  }
-  return DEFAULT_QUESTIONS;
-}
+// Fix 4: Suggestions now unified via getSuggestions() from suggestions.ts
+// (removed duplicate CONTEXTUAL_QUESTIONS — see suggestions.ts)
 
 export function IAstedChatbot() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { setTheme, toggleTheme } = useTheme();
+  const { setLang } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hasInteracted, setHasInteracted] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -279,48 +164,21 @@ export function IAstedChatbot() {
   const dragStartRef = useRef<{ px: number; py: number; sx: number; sy: number } | null>(null);
   const hasDraggedRef = useRef(false);
 
-  // ─── Voice AI: send transcript to Gemini SSE ───
-  const sendToAI = useCallback(async (text: string): Promise<string> => {
-    const history = messages.map(m => ({ role: m.role, content: m.content }));
-    try {
-      const response = await fetch('/api/chat/stream', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, history, mode: 'vocal' }),
-      });
-      if (!response.ok || !response.body) return '';
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let fullText = '';
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.text) fullText += parsed.text;
-          } catch { /* skip */ }
-        }
-      }
-      return fullText;
-    } catch { return ''; }
-  }, [messages]);
+  // ─── Local Command Router (declared first, used by voice hook via ref) ───
+  const { tryLocalCommand } = useLocalCommandRouter({
+    closeChat: () => { setIsOpen(false); setVoiceOnly(false); stopSpeaking(); },
+    clearMessages: () => { setMessages([]); setHasInteracted(false); },
+    disconnectVoice: () => { setVoiceOnly(false); },
+    setVoiceEnabled,
+  });
+
+  const tryLocalCommandRef = useRef(tryLocalCommand);
+  useEffect(() => { tryLocalCommandRef.current = tryLocalCommand; }, [tryLocalCommand]);
 
   // ─── Realtime Voice Hook ───
   const voice = useRealtimeVoice({
     voiceEnabled,
     onTranscript: (text) => {
-      // Try local command first
-      const handled = tryLocalCommand(text);
-      if (handled) return;
       // In voice-only mode: don't add to chat messages
       if (!voiceOnly) {
         setHasInteracted(true);
@@ -333,24 +191,21 @@ export function IAstedChatbot() {
         setMessages(prev => [...prev, { role: 'model', content: text }]);
       }
     },
-    sendToAI,
+    tryLocalCommand: (text) => tryLocalCommandRef.current(text),
+    onFunctionCall: (name, args) => {
+      const result = executeFunctionCall(name, args, router, {
+        setTheme, toggleTheme,
+        setLang: (l) => setLang(l as 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'ru' | 'ja'),
+        closeChat: () => setIsOpen(false),
+        clearMessages: () => setMessages([]),
+        disconnectVoice: () => voice.disconnect(),
+      });
+      if (result.displayText && !voiceOnly) {
+        setMessages(prev => [...prev, { role: 'model', content: result.displayText! }]);
+      }
+    },
   });
 
-  // ─── Local Command Router ───
-  const { tryLocalCommand } = useLocalCommandRouter({
-    closeChat: () => { setIsOpen(false); setVoiceOnly(false); stopSpeaking(); voice.disconnect(); },
-    clearMessages: () => { setMessages([]); setHasInteracted(false); },
-    disconnectVoice: () => { setVoiceOnly(false); voice.disconnect(); },
-    setVoiceEnabled,
-  });
-
-  // Preload voices on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
-  }, []);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -410,8 +265,8 @@ export function IAstedChatbot() {
       let buffer = '';
       let fullText = '';
 
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
+      // Stream reading loop
+      for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -437,6 +292,26 @@ export function IAstedChatbot() {
                 }
                 return updated;
               });
+            }
+            // Handle Gemini function calls
+            if (parsed.functionCall) {
+              const result = executeFunctionCall(
+                parsed.functionCall.name,
+                parsed.functionCall.args || {},
+                router,
+                { setTheme, toggleTheme, setLang: (l) => setLang(l as 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'ru' | 'ja'), closeChat: () => setIsOpen(false), clearMessages: () => setMessages([]), disconnectVoice: () => voice.disconnect() }
+              );
+              if (result.displayText) {
+                fullText += (fullText ? '\n\n' : '') + result.displayText;
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  const lastIdx = updated.length - 1;
+                  if (lastIdx >= 0 && updated[lastIdx].role === 'model') {
+                    updated[lastIdx] = { role: 'model', content: fullText, isStreaming: true };
+                  }
+                  return updated;
+                });
+              }
             }
           } catch {
             // Skip malformed chunks
@@ -484,26 +359,35 @@ export function IAstedChatbot() {
     }
   };
 
-  // ─── VOICE-ONLY MODE: tap = speak greeting + listen (no chat window) ───
-  const startVoiceOnly = async () => {
-    setVoiceOnly(true);
-    // Speak greeting then start listening
+  // ─── Fix 2: Session greeting — generate ONCE, reuse everywhere ───
+  const getSessionGreeting = useCallback((): string => {
     const lastGreeting = sessionStorage.getItem(SESSION_GREETING_KEY);
-    let greetingText = getVocalGreeting();
     if (lastGreeting) {
       try {
-        const { timestamp, period } = JSON.parse(lastGreeting);
+        const { timestamp, period, text } = JSON.parse(lastGreeting);
         const elapsed = Date.now() - timestamp;
         if (elapsed < 30 * 60 * 1000 && period === getTimePeriod()) {
-          greetingText = "Je t'écoute.";
+          // Same session period — short acknowledgment
+          return "Je t'écoute.";
         }
+        // Different period but same session — reuse stored text if available
+        if (text && elapsed < 2 * 60 * 60 * 1000) return text;
       } catch { /* ignore */ }
     }
+    // First greeting of session — generate and store
+    const text = getVocalGreeting();
     sessionStorage.setItem(SESSION_GREETING_KEY, JSON.stringify({
       timestamp: Date.now(),
       period: getTimePeriod(),
+      text,
     }));
-    // Speak greeting, then auto-start voice recognition
+    return text;
+  }, []);
+
+  // ─── VOICE-ONLY MODE: tap = speak greeting + listen (no chat window) ───
+  const startVoiceOnly = async () => {
+    setVoiceOnly(true);
+    const greetingText = getSessionGreeting();
     await speak(greetingText);
     voice.connect();
   };
@@ -516,7 +400,7 @@ export function IAstedChatbot() {
       hasGreetedRef.current = true;
       setTimeout(async () => {
         setIsSpeaking(true);
-        await speak(getVocalGreeting());
+        await speak(getSessionGreeting());
         setIsSpeaking(false);
       }, 300);
     }
@@ -542,7 +426,6 @@ export function IAstedChatbot() {
     const handleOpen = () => openChat();
     window.addEventListener('iasted:open', handleOpen);
     return () => window.removeEventListener('iasted:open', handleOpen);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -704,22 +587,6 @@ export function IAstedChatbot() {
               </div>
             </div>
 
-            {/* Questions suggérées */}
-            {!hasInteracted && (
-              <div className="flex flex-wrap gap-2 pl-11">
-                {getContextualQuestions(pathname).map((q) => (
-                  <button
-                    type="button"
-                    key={q}
-                    onClick={() => sendMessage(q)}
-                    className="text-xs px-3 py-1.5 rounded-full border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors font-medium"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            )}
-
             {/* Messages du chat */}
             {messages.map((msg, idx) => (
               <div
@@ -819,7 +686,7 @@ export function IAstedChatbot() {
               </button>
             </div>
             <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">
-              Propulsé par Gemini & GPT-4o — GABON BIZ
+              Propulsé par Gemini — GABON BIZ
             </p>
           </div>
         </div>
@@ -892,9 +759,7 @@ export function IAstedChatbot() {
               startVoiceOnly(); // Short tap → voice only
             }
           }}
-          className={`fixed z-50 flex items-center justify-center text-white touch-none select-none ${
-            voiceOnly ? '' : 'animate-heartbeat'
-          }`}
+          className="fixed z-50 flex items-center justify-center text-white touch-none select-none"
           style={{
             width: 84,
             height: 84,
@@ -922,45 +787,61 @@ export function IAstedChatbot() {
               : '0 6px 30px rgba(231, 76, 60, 0.4), 0 0 50px rgba(234, 179, 8, 0.2)',
             transition: isDraggingRef.current ? 'none' : 'background 0.4s ease, box-shadow 0.3s ease',
             cursor: 'grab',
-            animation: voiceOnly && voice.voiceState === 'listening'
-              ? `iasted-pulse ${1.5 - voice.audioLevel * 0.5}s ease-in-out infinite`
-              : voiceOnly && voice.voiceState === 'thinking'
-                ? 'iasted-pulse 1s ease-in-out infinite'
-                : undefined,
+            // Heartbeat animation — distinct names per state force browser to restart animation
+            animation: voiceOnly
+              ? voice.voiceState === 'listening'
+                ? 'iasted-hb-listen 1200ms ease-in-out infinite'   // ~50 BPM
+                : voice.voiceState === 'thinking'
+                  ? 'iasted-hb-think 800ms ease-in-out infinite'   // ~75 BPM
+                  : voice.voiceState === 'speaking'
+                    ? 'iasted-hb-speak 545ms ease-in-out infinite'  // ~110 BPM
+                    : 'iasted-hb-idle 1500ms ease-in-out infinite'  // ~40 BPM
+              : 'iasted-hb-idle 1500ms ease-in-out infinite',
           }}
           aria-label={voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : 'Tap = parler, Appui long = chat'}
         >
           {voiceOnly ? (
             voice.voiceState === 'listening' ? (
+              /* 🎙️ Écoute — barres STATIQUES réactives au niveau audio réel */
               <span className="pointer-events-none flex items-center justify-center gap-[3px]">
-                {[0,1,2,3,4].map(i => (
-                  <span
-                    key={i}
-                    className="bg-white rounded-full"
-                    style={{
-                      width: 3,
-                      animation: `iasted-bar ${0.5 + i * 0.12}s ease-in-out infinite alternate`,
-                      animationDelay: `${i * 0.08}s`,
-                    }}
-                  />
-                ))}
+                {[0,1,2,3,4].map(i => {
+                  // Each bar reacts to audioLevel with slight per-bar variation
+                  const barLevel = Math.min(1, voice.audioLevel * (0.7 + i * 0.15));
+                  const minH = 4;
+                  const maxH = 18;
+                  const h = minH + barLevel * (maxH - minH);
+                  return (
+                    <span
+                      key={i}
+                      className="bg-white rounded-full"
+                      style={{
+                        width: 3,
+                        height: h,
+                        opacity: 0.5 + barLevel * 0.5,
+                        transition: 'height 150ms ease-out, opacity 150ms ease-out',
+                      }}
+                    />
+                  );
+                })}
               </span>
             ) : voice.voiceState === 'thinking' ? (
+              /* 🤔 Réfléchit — spinner */
               <span className="pointer-events-none animate-spin">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" strokeDasharray="31.4" strokeDashoffset="10" strokeLinecap="round" />
                 </svg>
               </span>
             ) : voice.voiceState === 'speaking' ? (
+              /* 🗣️ Parle — barres ANIMÉES rapides, plus larges/hautes = énergie visible */
               <span className="pointer-events-none flex items-center justify-center gap-[3px]">
                 {[0,1,2,3,4].map(i => (
                   <span
                     key={i}
                     className="bg-white rounded-full"
                     style={{
-                      width: 3,
-                      animation: `iasted-bar ${0.6 + i * 0.15}s ease-in-out infinite alternate`,
-                      animationDelay: `${i * 0.1}s`,
+                      width: 3.5,
+                      animation: `iasted-speak-bar ${0.25 + i * 0.075}s ease-in-out infinite alternate`,
+                      animationDelay: `${i * 0.06}s`,
                     }}
                   />
                 ))}
@@ -978,15 +859,45 @@ export function IAstedChatbot() {
         </button>
       )}
 
-      {/* CSS Animations for voice FAB */}
+      {/* CSS Animations for voice FAB — distinct keyframes per state */}
       <style>{`
-        @keyframes iasted-bar {
-          0% { height: 4px; opacity: 0.5; }
-          100% { height: 18px; opacity: 1; }
+        @keyframes iasted-hb-idle {
+          0%   { transform: scale(1); }
+          14%  { transform: scale(1.04); }
+          28%  { transform: scale(0.98); }
+          42%  { transform: scale(1.02); }
+          70%  { transform: scale(1); }
+          100% { transform: scale(1); }
         }
-        @keyframes iasted-pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.08); }
+        @keyframes iasted-hb-listen {
+          0%   { transform: scale(1); }
+          14%  { transform: scale(1.06); }
+          28%  { transform: scale(0.96); }
+          42%  { transform: scale(1.04); }
+          56%  { transform: scale(0.98); }
+          70%  { transform: scale(1.02); }
+          100% { transform: scale(1); }
+        }
+        @keyframes iasted-hb-think {
+          0%   { transform: scale(1) rotate(0deg); }
+          25%  { transform: scale(1.08) rotate(1deg); }
+          50%  { transform: scale(0.95) rotate(-1deg); }
+          75%  { transform: scale(1.06) rotate(0.5deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        @keyframes iasted-hb-speak {
+          0%   { transform: scale(1); }
+          10%  { transform: scale(1.12); }
+          20%  { transform: scale(0.94); }
+          35%  { transform: scale(1.10); }
+          50%  { transform: scale(0.96); }
+          65%  { transform: scale(1.06); }
+          80%  { transform: scale(0.98); }
+          100% { transform: scale(1); }
+        }
+        @keyframes iasted-speak-bar {
+          0%   { height: 4px; opacity: 0.6; }
+          100% { height: 22px; opacity: 1; }
         }
       `}</style>
     </>

@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { Wrench, ChevronRight, Cpu, Printer, CircuitBoard, CheckCircle, Clock, Lightbulb, Rocket, Package } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
+
 import Link from 'next/link';
 import { CGI_PROJETS_FABLAB, CGI_EQUIPEMENTS } from '@/lib/mock/cgi-data';
 
@@ -26,8 +26,7 @@ const EQ_STATUT: Record<string, string> = {
 
 export default function CGIFabLabPage() {
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <Link href="/dashboard/cgi" className="hover:text-amber-500 transition-colors">CGI</Link>
@@ -125,7 +124,6 @@ export default function CGIFabLabPage() {
             </table>
           </div>
         </div>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
