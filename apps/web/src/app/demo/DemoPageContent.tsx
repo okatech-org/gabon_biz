@@ -10,8 +10,16 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { DEMO_ACCOUNTS, type DemoAccount } from '@/lib/demo-accounts';
 import {
-  ArrowRight, ShieldCheck, MapPin, Phone, Clock,
-  Sparkles, Users, Grid3x3, ChevronDown, CheckCircle2,
+  ArrowRight,
+  ShieldCheck,
+  MapPin,
+  Phone,
+  Clock,
+  Sparkles,
+  Users,
+  Grid3x3,
+  ChevronDown,
+  CheckCircle2,
   Minus,
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n/i18nContext';
@@ -53,7 +61,8 @@ const MATRIX_MODULES = [
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { duration: 0.6, delay: i * 0.08, ease: 'easeOut' as const },
   }),
 };
@@ -67,8 +76,17 @@ const stagger = {
    GLASSMORPHIC PROFILE CARD
    ═══════════════════════════════ */
 
-function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSelect: (id: string) => void; index: number }) {
+function ProfileCard({
+  account,
+  onSelect,
+  index,
+}: {
+  account: DemoAccount;
+  onSelect: (id: string) => void;
+  index: number;
+}) {
   const [loading, setLoading] = useState(false);
+  const { tr } = useI18n();
   const modules = account.accessibleModules.filter((m) => m !== '/dashboard');
 
   const handleClick = async () => {
@@ -102,7 +120,9 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
       {/* Top gradient bar */}
       <div
         className="h-1 w-full rounded-t-3xl"
-        style={{ background: `linear-gradient(90deg, ${account.accentColor}, ${account.accentColor}80)` }}
+        style={{
+          background: `linear-gradient(90deg, ${account.accentColor}, ${account.accentColor}80)`,
+        }}
       />
 
       <div className="p-5 flex flex-col flex-1 relative z-10">
@@ -185,7 +205,7 @@ function ProfileCard({ account, onSelect, index }: { account: DemoAccount; onSel
             <span className="animate-spin">⏳</span>
           ) : (
             <>
-              Accéder <ArrowRight size={16} />
+              {tr('demo.access')} <ArrowRight size={16} />
             </>
           )}
         </button>
@@ -203,7 +223,9 @@ function AccessMatrix() {
 
   return (
     <div>
-      <div className={`overflow-x-auto ${!expanded ? 'max-h-[400px] overflow-hidden relative' : ''}`}>
+      <div
+        className={`overflow-x-auto ${!expanded ? 'max-h-[400px] overflow-hidden relative' : ''}`}
+      >
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr>
@@ -211,7 +233,10 @@ function AccessMatrix() {
                 Profil
               </th>
               {MATRIX_MODULES.map((m) => (
-                <th key={m.path} className="text-center py-3.5 px-2.5 text-gray-500 dark:text-gray-400 font-bold border-b border-gray-200/50 dark:border-white/8 whitespace-nowrap text-xs">
+                <th
+                  key={m.path}
+                  className="text-center py-3.5 px-2.5 text-gray-500 dark:text-gray-400 font-bold border-b border-gray-200/50 dark:border-white/8 whitespace-nowrap text-xs"
+                >
                   {m.label}
                 </th>
               ))}
@@ -237,7 +262,10 @@ function AccessMatrix() {
                   </div>
                 </td>
                 {MATRIX_MODULES.map((m) => (
-                  <td key={m.path} className="text-center py-3 px-2.5 border-b border-gray-200/50 dark:border-white/4">
+                  <td
+                    key={m.path}
+                    className="text-center py-3 px-2.5 border-b border-gray-200/50 dark:border-white/4"
+                  >
                     {account.accessibleModules.includes(m.path) ? (
                       <CheckCircle2 size={16} className="inline-block text-emerald-500" />
                     ) : (
@@ -257,7 +285,10 @@ function AccessMatrix() {
         onClick={() => setExpanded(!expanded)}
         className="mt-3 mx-auto flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-100/50 dark:bg-white/4 border border-gray-200/50 dark:border-white/6 hover:bg-gray-200/50 dark:hover:bg-white/8 transition-all"
       >
-        <ChevronDown size={16} className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          size={16}
+          className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+        />
         {expanded ? 'Réduire' : 'Voir tous les profils'}
       </button>
     </div>
@@ -284,21 +315,21 @@ function DemoFooter() {
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3">
                 <MapPin size={20} className="text-emerald-400" />
               </div>
-              <h4 className="text-white font-semibold mb-1 text-sm">Adresse</h4>
+              <h4 className="text-white font-semibold mb-1 text-sm">{tr('demo.footer_address')}</h4>
               <p className="text-gray-400 text-sm">{tr('contact.address')}</p>
             </div>
             <div className="flex flex-col items-center md:items-start">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3">
                 <Phone size={20} className="text-emerald-400" />
               </div>
-              <h4 className="text-white font-semibold mb-1 text-sm">Téléphone</h4>
+              <h4 className="text-white font-semibold mb-1 text-sm">{tr('demo.footer_phone')}</h4>
               <p className="text-gray-400 text-sm">{tr('contact.phone')}</p>
             </div>
             <div className="flex flex-col items-center md:items-start">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3">
                 <Clock size={20} className="text-emerald-400" />
               </div>
-              <h4 className="text-white font-semibold mb-1 text-sm">Horaires</h4>
+              <h4 className="text-white font-semibold mb-1 text-sm">{tr('demo.footer_hours')}</h4>
               <p className="text-gray-400 text-sm">{tr('contact.hours')}</p>
             </div>
           </div>
@@ -316,14 +347,22 @@ function DemoFooter() {
               </span>
             </div>
             <div className="flex gap-6">
-              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">Termes</Link>
-              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">Confidentialité</Link>
-              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">Cookies</Link>
+              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+                {tr('demo.footer_terms')}
+              </Link>
+              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+                {tr('demo.footer_privacy')}
+              </Link>
+              <Link href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+                {tr('demo.footer_cookies')}
+              </Link>
             </div>
           </div>
           <div className="text-center md:text-left mt-6">
             <p className="text-sm text-gray-600">{tr('footer.desc')}</p>
-            <p className="mt-1 text-xs text-gray-700">© 2026 République Gabonaise. {tr('footer.rights')}</p>
+            <p className="mt-1 text-xs text-gray-700">
+              © 2026 République Gabonaise. {tr('footer.rights')}
+            </p>
           </div>
         </div>
       </div>
@@ -338,6 +377,7 @@ function DemoFooter() {
 export default function DemoPageContent() {
   const router = useRouter();
   const { refreshAuth } = useAuth();
+  const { tr } = useI18n();
   const [, setError] = useState('');
 
   const handleSelect = async (accountId: string) => {
@@ -351,7 +391,7 @@ export default function DemoPageContent() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || 'Erreur lors de la connexion');
+        setError(data.error || tr('demo.error_login'));
         return;
       }
 
@@ -359,7 +399,7 @@ export default function DemoPageContent() {
       await refreshAuth();
       router.push('/dashboard');
     } catch {
-      setError('Erreur réseau. Veuillez réessayer.');
+      setError(tr('demo.error_network'));
     }
   };
 
@@ -371,22 +411,59 @@ export default function DemoPageContent() {
       <CompactHero
         badge="Mode Démonstration"
         badgeIcon={<Sparkles size={14} className="text-amber-400" />}
-        title={<>Explorez GABON BIZ{' '}<span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300">en action.</span></>}
-        subtitle={<>Choisissez un profil ci-dessous pour naviguer la plateforme avec des données réalistes. <strong className="text-white/90">Aucun compte requis.</strong></>}
+        title={
+          <>
+            Explorez GABON BIZ{' '}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-300">
+              en action.
+            </span>
+          </>
+        }
+        subtitle={
+          <>
+            Choisissez un profil ci-dessous pour naviguer la plateforme avec des données réalistes.{' '}
+            <strong className="text-white/90">Aucun compte requis.</strong>
+          </>
+        }
         backgroundClasses="bg-linear-to-br from-gray-900 via-emerald-950/60 to-gray-900"
-        overlays={<>
-          <div className="absolute inset-0">
-            <Image src="/images/hero-libreville.png" alt="Libreville" fill className="object-cover opacity-15" sizes="100vw" priority />
-          </div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.15),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(245,158,11,0.10),transparent_50%)]" />
-        </>}
+        overlays={
+          <>
+            <div className="absolute inset-0">
+              <Image
+                src="/images/hero-libreville.png"
+                alt="Libreville"
+                fill
+                className="object-cover opacity-15"
+                sizes="100vw"
+                priority
+              />
+            </div>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.15),transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(245,158,11,0.10),transparent_50%)]" />
+          </>
+        }
         accentColor="#10b981"
         stats={[
-          { value: DEMO_ACCOUNTS.length, label: 'Profils disponibles', icon: <Users size={18} className="text-emerald-400" /> },
-          { value: '2h', label: 'Durée de session', icon: <ShieldCheck size={18} className="text-emerald-400" /> },
-          { value: '11', label: 'Modules accessibles', icon: <Grid3x3 size={18} className="text-emerald-400" /> },
-          { value: '100%', label: 'Données fictives', icon: <Sparkles size={18} className="text-amber-400" /> },
+          {
+            value: DEMO_ACCOUNTS.length,
+            label: 'Profils disponibles',
+            icon: <Users size={18} className="text-emerald-400" />,
+          },
+          {
+            value: '2h',
+            label: 'Durée de session',
+            icon: <ShieldCheck size={18} className="text-emerald-400" />,
+          },
+          {
+            value: '11',
+            label: 'Modules accessibles',
+            icon: <Grid3x3 size={18} className="text-emerald-400" />,
+          },
+          {
+            value: '100%',
+            label: 'Données fictives',
+            icon: <Sparkles size={18} className="text-amber-400" />,
+          },
         ]}
       />
 
@@ -405,10 +482,10 @@ export default function DemoPageContent() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-semibold mb-4">
               <Users size={16} />
-              {DEMO_ACCOUNTS.length} profils disponibles
+              {DEMO_ACCOUNTS.length} {tr('demo.profiles_available')}
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">
-              Choisissez votre rôle
+              {tr('demo.choose_role')}
             </h2>
           </motion.div>
 
@@ -421,12 +498,7 @@ export default function DemoPageContent() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           >
             {DEMO_ACCOUNTS.map((account, i) => (
-              <ProfileCard
-                key={account.id}
-                account={account}
-                onSelect={handleSelect}
-                index={i}
-              />
+              <ProfileCard key={account.id} account={account} onSelect={handleSelect} index={i} />
             ))}
           </motion.div>
         </div>
@@ -443,13 +515,13 @@ export default function DemoPageContent() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-semibold mb-4">
               <Grid3x3 size={16} />
-              Matrice des accès
+              {tr('demo.matrix_badge')}
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-              Accès par profil
+              {tr('demo.matrix_title')}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-lg mx-auto">
-              Chaque profil donne accès à un ensemble de modules adapté à son rôle dans l&apos;écosystème.
+              {tr('demo.matrix_desc')}
             </p>
           </motion.div>
 

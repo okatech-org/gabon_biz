@@ -8,6 +8,7 @@ import { getDemoAccountByNip } from '@/lib/demo-accounts';
 import { type ProfileType } from '@/lib/profiles';
 import { StatsCard } from '@/components/ui';
 import Link from 'next/link';
+import { useI18n } from '@/lib/i18n/i18nContext';
 
 // Profile-specific dashboards
 import MentorDashboard from '@/components/dashboards/MentorDashboard';
@@ -44,10 +45,9 @@ const DEMO_DASHBOARDS: Record<
 };
 
 // Profile type → dashboard component mapping (for real users)
-const PROFILE_TYPE_DASHBOARDS: Partial<Record<
-  ProfileType,
-  React.ComponentType<{ user: Record<string, string | undefined> }>
->> = {
+const PROFILE_TYPE_DASHBOARDS: Partial<
+  Record<ProfileType, React.ComponentType<{ user: Record<string, string | undefined> }>>
+> = {
   PUBLIC: CitoyenDashboard,
   ENTREPRENEUR: EntrepreneurDashboard,
   STARTUP: StartupDashboard,
@@ -139,7 +139,10 @@ function getAlertForProfile(profileId: string): { text: string; color: string } 
     'demo-partenaire': { text: 'Nouveau rapport IDES Q4 2025 disponible', color: '#0ea5e9' },
     'demo-autorite': { text: 'Date limite AO-2026-001 dans 3 jours', color: '#7c3aed' },
     'demo-sysadmin': { text: 'Alerte CPU Cloud Run — pic 87% à 14h32', color: '#ef4444' },
-    'demo-cgi': { text: 'Cohorte INITIA #4 — démarrage dans 5 jours, 89/120 inscrits', color: '#f59e0b' },
+    'demo-cgi': {
+      text: 'Cohorte INITIA #4 — démarrage dans 5 jours, 89/120 inscrits',
+      color: '#f59e0b',
+    },
   };
   return alerts[profileId] || null;
 }
@@ -205,8 +208,18 @@ const QUICK_ACTIONS: Record<
     { icon: '🤝', label: 'Co-investissements', href: '/dashboard/investir', color: '#14b8a6' },
   ],
   'demo-autorite': [
-    { icon: '📋', label: 'Créer un appel d\'offres', href: '/dashboard/marches/autorite', color: '#7c3aed' },
-    { icon: '📨', label: 'Soumissions reçues', href: '/dashboard/marches/autorite', color: '#3b82f6' },
+    {
+      icon: '📋',
+      label: "Créer un appel d'offres",
+      href: '/dashboard/marches/autorite',
+      color: '#7c3aed',
+    },
+    {
+      icon: '📨',
+      label: 'Soumissions reçues',
+      href: '/dashboard/marches/autorite',
+      color: '#3b82f6',
+    },
     { icon: '📒', label: 'Annuaire entreprises', href: '/dashboard/annuaire', color: '#009e49' },
   ],
   'demo-sysadmin': [
@@ -257,7 +270,11 @@ const RECENT_ACTIVITY: Record<string, { icon: string; text: string; time: string
   ],
   'demo-partenaire': [
     { icon: '📄', text: 'Rapport IDES Q4 2025 téléchargé', time: 'Il y a 30min' },
-    { icon: '🤝', text: 'Co-investissement Gabon Digital 2030 — pipeline mis à jour', time: 'Il y a 2h' },
+    {
+      icon: '🤝',
+      text: 'Co-investissement Gabon Digital 2030 — pipeline mis à jour',
+      time: 'Il y a 2h',
+    },
     { icon: '📊', text: 'Score Doing Business actualisé : #132 (+12 places)', time: 'Hier' },
   ],
   'demo-autorite': [
@@ -266,12 +283,20 @@ const RECENT_ACTIVITY: Record<string, { icon: string; text: string; time: string
     { icon: '📝', text: 'Brouillon AO-004 WiFi ZES sauvegardé', time: 'Hier' },
   ],
   'demo-sysadmin': [
-    { icon: '🚀', text: 'Déploiement v2.4.1 réussi — Cloud Run europe-west1', time: 'Il y a 45min' },
+    {
+      icon: '🚀',
+      text: 'Déploiement v2.4.1 réussi — Cloud Run europe-west1',
+      time: 'Il y a 45min',
+    },
     { icon: '⚠️', text: 'Redis — pic latence 45ms (résolu automatiquement)', time: 'Il y a 2h' },
     { icon: '🔧', text: 'Feature flag "Matching IA" activé en production', time: 'Hier' },
   ],
   'demo-cgi': [
-    { icon: '🎓', text: 'Cohorte INITIA #4 — 89 inscrits, ouverture dans 5 jours', time: 'Il y a 1h' },
+    {
+      icon: '🎓',
+      text: 'Cohorte INITIA #4 — 89 inscrits, ouverture dans 5 jours',
+      time: 'Il y a 1h',
+    },
     { icon: '🛠️', text: 'FabLab Moanda — 3 nouveaux prototypes validés', time: 'Il y a 4h' },
     { icon: '🤝', text: 'Smart Africa — convention signée pour 2026', time: 'Hier' },
   ],
@@ -427,6 +452,7 @@ const DEFAULT_MODULES = [
 
 export default function DashboardPage() {
   const { user, activeProfile } = useAuth();
+  const { tr } = useI18n();
   const account = user?.isDemo ? getDemoAccountByNip(user.nip) : null;
 
   // ─── DEMO PROFILE-SPECIFIC DASHBOARD ───
@@ -494,12 +520,12 @@ export default function DashboardPage() {
         }}
       >
         <h1 className="text-xl sm:text-2xl font-bold mb-1">
-          Bienvenue, {user?.name || 'Utilisateur'} 👋
+          {tr('dash.welcome')} {user?.name || tr('dash.default_user')} 👋
         </h1>
         <p className="text-sm opacity-85 m-0">
           {account
             ? `${account.user.title} — ${account.user.organization}`
-            : 'Votre espace économique et entrepreneurial du Gabon'}
+            : tr('dash.default_subtitle')}
         </p>
       </div>
 
@@ -529,7 +555,7 @@ export default function DashboardPage() {
       {quickActions.length > 0 && (
         <>
           <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-            <span>⚡</span> Actions rapides
+            <span>⚡</span> {tr('dash.quick_actions')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
             {quickActions.map((a) => (
@@ -557,7 +583,7 @@ export default function DashboardPage() {
       {recentActivity.length > 0 && (
         <>
           <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-            <span>📝</span> Activité récente
+            <span>📝</span> {tr('dash.recent_activity')}
           </h2>
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 divide-y divide-gray-50 dark:divide-gray-800/50 mb-8">
             {recentActivity.map((act, i) => (
@@ -576,7 +602,9 @@ export default function DashboardPage() {
       )}
 
       {/* Module Grid */}
-      <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Modules</h2>
+      <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">
+        {tr('dash.modules')}
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {modules.map((mod) => (
           <Link

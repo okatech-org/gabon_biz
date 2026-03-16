@@ -4,15 +4,16 @@
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import { useI18n } from '@/lib/i18n/i18nContext';
 
-// ── Error messages mapping ─────────────────────────────────────
-const ERROR_MESSAGES: Record<string, string> = {
-  no_code: "Aucun code d'autorisation reçu. Veuillez réessayer.",
-  state_mismatch: 'Erreur de sécurité (CSRF). Veuillez réessayer.',
-  pkce_missing: 'Session expirée. Veuillez réessayer.',
-  token_exchange_failed: "Échec de l'authentification. Veuillez réessayer.",
-  access_denied: "Vous avez refusé l'accès. Connectez-vous pour continuer.",
-  consent_denied: "Vous avez refusé les permissions. L'accès est nécessaire pour utiliser GABON BIZ.",
+// ── Error keys mapping ─────────────────────────────────────
+const ERROR_KEYS: Record<string, string> = {
+  no_code: 'login.error.no_code',
+  state_mismatch: 'login.error.state_mismatch',
+  pkce_missing: 'login.error.pkce_missing',
+  token_exchange_failed: 'login.error.token_exchange_failed',
+  access_denied: 'login.error.access_denied',
+  consent_denied: 'login.error.consent_denied',
 };
 
 function LoginContent() {
@@ -20,10 +21,9 @@ function LoginContent() {
   const error = searchParams.get('error');
   const redirect = searchParams.get('redirect');
   const [isLoading, setIsLoading] = useState(false);
+  const { tr } = useI18n();
 
-  const errorMessage = error
-    ? ERROR_MESSAGES[error] || 'Erreur de connexion. Veuillez réessayer.'
-    : null;
+  const errorMessage = error ? tr(ERROR_KEYS[error] || 'login.error.default') : null;
 
   const loginHref = `/api/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
 
@@ -42,11 +42,8 @@ function LoginContent() {
           </h1>
         </div>
 
-        <h2 style={styles.title}>Bienvenue</h2>
-        <p style={styles.subtitle}>
-          Accédez à l&apos;écosystème économique numérique du Gabon en vous connectant avec votre
-          identité nationale.
-        </p>
+        <h2 style={styles.title}>{tr('login.welcome')}</h2>
+        <p style={styles.subtitle}>{tr('login.subtitle')}</p>
 
         {/* Error display */}
         {errorMessage && <div style={styles.error}>{errorMessage}</div>}
@@ -54,7 +51,7 @@ function LoginContent() {
         {/* Separator */}
         <div style={styles.separator}>
           <div style={styles.separatorLine} />
-          <span style={styles.separatorText}>Connexion sécurisée</span>
+          <span style={styles.separatorText}>{tr('login.secure')}</span>
           <div style={styles.separatorLine} />
         </div>
 
@@ -74,11 +71,7 @@ function LoginContent() {
                 d="M12 2L3 7v5c0 5.25 3.82 10.17 9 11.38C17.18 22.17 21 17.25 21 12V7L12 2z"
                 fill="#009E49"
               />
-              <path
-                d="M12 2L3 7v5c0 5.25 3.82 10.17 9 11.38V2z"
-                fill="#009E49"
-                opacity="0.8"
-              />
+              <path d="M12 2L3 7v5c0 5.25 3.82 10.17 9 11.38V2z" fill="#009E49" opacity="0.8" />
               <text
                 x="12"
                 y="15"
@@ -94,7 +87,7 @@ function LoginContent() {
           </div>
 
           <div style={styles.idnButtonContent}>
-            <span style={styles.idnButtonLabel}>Se connecter avec</span>
+            <span style={styles.idnButtonLabel}>{tr('login.sign_in_with')}</span>
             <span style={styles.idnButtonBrand}>IDENTITE.GA</span>
           </div>
 
@@ -105,33 +98,33 @@ function LoginContent() {
         <div style={styles.features}>
           <div style={styles.featureItem}>
             <span style={styles.featureIcon}>&#x1F512;</span>
-            <span>Authentification sécurisée par NIP</span>
+            <span>{tr('login.feat_auth')}</span>
           </div>
           <div style={styles.featureItem}>
             <span style={styles.featureIcon}>&#x26A1;</span>
-            <span>Accès à tous les services GABON BIZ</span>
+            <span>{tr('login.feat_access')}</span>
           </div>
           <div style={styles.featureItem}>
             <span style={styles.featureIcon}>&#x1F1EC;&#x1F1E6;</span>
-            <span>Identité nationale vérifiée</span>
+            <span>{tr('login.feat_identity')}</span>
           </div>
         </div>
 
         {/* Footer */}
         <p style={styles.footer}>
-          En vous connectant, vous acceptez les{' '}
+          {tr('login.terms_pre')}{' '}
           <a href="/conditions" style={styles.footerLink}>
-            conditions d&apos;utilisation
+            {tr('login.terms_link')}
           </a>{' '}
-          et la{' '}
+          {tr('login.terms_mid')}{' '}
           <a href="/confidentialite" style={styles.footerLink}>
-            politique de confidentialité
+            {tr('login.privacy_link')}
           </a>{' '}
-          de GABON BIZ.
+          {tr('login.terms_post')}
         </p>
 
         <div style={styles.poweredBy}>
-          <span style={styles.poweredByText}>Propulsé par le MENUDI</span>
+          <span style={styles.poweredByText}>{tr('login.powered')}</span>
         </div>
       </div>
     </div>
@@ -152,7 +145,7 @@ export default function LoginPage() {
             color: 'white',
           }}
         >
-          Chargement...
+          Loading...
         </div>
       }
     >
