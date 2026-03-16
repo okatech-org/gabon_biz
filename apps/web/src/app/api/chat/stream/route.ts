@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { getIAstedPrompt } from '@/lib/iasted/system-prompt';
 import { getOpenAIToolsConfig } from '@/lib/iasted/tools';
 import { rateLimitWithQuota } from '@/lib/iasted/rate-limiter';
+import { IASTED_CONFIG } from '@/lib/iasted/voice-config';
 
 // Use the unified system prompt (text mode = markdown + links)
 const SYSTEM_PROMPT = getIAstedPrompt('text');
@@ -47,12 +48,18 @@ export async function POST(request: NextRequest) {
     const messages: Array<{ role: string; content: string }> = [
       {
         role: 'system',
-        content: SYSTEM_PROMPT + (page ? `\n\n[CONTEXTE] L'utilisateur est actuellement sur la page : ${page}. Adapte ta réponse à ce contexte.` : ''),
+        content:
+          SYSTEM_PROMPT +
+          (page
+            ? `\n\n[CONTEXTE] L'utilisateur est actuellement sur la page : ${page}. Adapte ta réponse à ce contexte.`
+            : ''),
       },
     ];
 
     if (history && Array.isArray(history)) {
-      for (const msg of history) {
+      // Limit history to prevent excessive token usage
+      const recentHistory = history.slice(-IASTED_CONFIG.MAX_CONVERSATION_HISTORY);
+      for (const msg of recentHistory) {
         messages.push({
           role: msg.role === 'model' ? 'assistant' : 'user',
           content: msg.content,
@@ -70,8 +77,9 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
+      signal: AbortSignal.timeout(30_000), // 30s timeout
       body: JSON.stringify({
         model: 'gpt-4.1',
         messages,
@@ -91,8 +99,8 @@ export async function POST(request: NextRequest) {
         start(controller) {
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ text: "Désolé, une erreur s'est produite. Réessaie dans un instant ! 🔄" })}\n\n`
-            )
+              `data: ${JSON.stringify({ text: "Désolé, une erreur s'est produite. Réessaie dans un instant ! 🔄" })}\n\n`,
+            ),
           );
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
@@ -141,7 +149,7 @@ export async function POST(request: NextRequest) {
                 // Forward text chunks
                 if (delta.content) {
                   controller.enqueue(
-                    encoder.encode(`data: ${JSON.stringify({ text: delta.content })}\n\n`)
+                    encoder.encode(`data: ${JSON.stringify({ text: delta.content })}\n\n`),
                   );
                 }
 
@@ -168,12 +176,14 @@ export async function POST(request: NextRequest) {
                     try {
                       const args = JSON.parse(tc.arguments || '{}');
                       controller.enqueue(
-                        encoder.encode(`data: ${JSON.stringify({
-                          functionCall: {
-                            name: tc.name,
-                            args,
-                          },
-                        })}\n\n`)
+                        encoder.encode(
+                          `data: ${JSON.stringify({
+                            functionCall: {
+                              name: tc.name,
+                              args,
+                            },
+                          })}\n\n`,
+                        ),
                       );
                     } catch {
                       // Skip malformed tool call arguments
@@ -208,8 +218,8 @@ export async function POST(request: NextRequest) {
       start(controller) {
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ text: "Oups, erreur technique ! Réessaie 🔄" })}\n\n`
-          )
+            `data: ${JSON.stringify({ text: 'Oups, erreur technique ! Réessaie 🔄' })}\n\n`,
+          ),
         );
         controller.enqueue(encoder.encode('data: [DONE]\n\n'));
         controller.close();
@@ -240,7 +250,11 @@ Il te faut : CNIE, justificatif de domicile, statuts et PV d'AG.
 👉 [Lance-toi sur le Guichet Entrepreneur](/services/guichet-entrepreneur) !`;
   }
 
-  if (q.includes('marché') || (q.includes('appel') && q.includes('offre')) || q.includes('soumission')) {
+  if (
+    q.includes('marché') ||
+    (q.includes('appel') && q.includes('offre')) ||
+    q.includes('soumission')
+  ) {
     return `Il y a **500+ marchés publics** par an sur GABON BIZ, soit 45 milliards XAF ! 📋
 
 Tu peux chercher par secteur, budget ou région, et activer les **alertes J-7** pour ne rien rater.
@@ -250,7 +264,12 @@ Condition : avoir un RCCM valide.
 👉 [Explore les marchés publics](/services/marches-publics)`;
   }
 
-  if (q.includes('incubateur') || q.includes('sing') || q.includes('startup') || q.includes('candidat')) {
+  if (
+    q.includes('incubateur') ||
+    q.includes('sing') ||
+    q.includes('startup') ||
+    q.includes('candidat')
+  ) {
     return `La SING, c'est le **1er incubateur 100% numérique de la CEMAC** ! 🚀
 
 280+ startups incubées, 76% de taux de survie. Tu as le choix entre 7 programmes :

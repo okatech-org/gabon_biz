@@ -31,6 +31,15 @@ import {
   GitBranch,
   Globe,
   ShieldCheck,
+  Bot,
+  Brain,
+  Mic,
+  MessageSquare,
+  Languages,
+  BarChart3,
+  Download,
+  RotateCcw,
+  Trash2,
 } from 'lucide-react';
 
 /* ─── Mock Data ─── */
@@ -282,10 +291,87 @@ const fadeUp = {
 
 /* ─── Component ─── */
 
+/* ─── iAsted Agent Config Defaults ─── */
+
+const IASTED_DEFAULTS = {
+  expertMode: true,
+  localRouter: true,
+  faqCache: true,
+  voiceEnabled: true,
+  learningEnabled: true,
+  maxHistory: 10,
+  maxTokensVoice: 500,
+  maxTokensChat: 1000,
+  idleTimeout: 120,
+  confidenceThreshold: 0.6,
+  temperature: 0.7,
+  voiceGender: 'female' as 'male' | 'female',
+};
+
+type IAstedConfig = typeof IASTED_DEFAULTS;
+
+function loadIastedConfig(): IAstedConfig {
+  if (typeof window === 'undefined') return IASTED_DEFAULTS;
+  try {
+    const raw = localStorage.getItem('iasted_admin_config');
+    return raw ? { ...IASTED_DEFAULTS, ...JSON.parse(raw) } : IASTED_DEFAULTS;
+  } catch {
+    return IASTED_DEFAULTS;
+  }
+}
+
+const IASTED_STATS = {
+  conversationsToday: 47,
+  conversationsTotal: 1_234,
+  voiceCommands: 312,
+  topQuestions: [
+    { q: 'Comment créer une entreprise ?', count: 89 },
+    { q: "C'est quoi la SING ?", count: 67 },
+    { q: 'Marchés publics en cours', count: 52 },
+    { q: 'Coût création SARL', count: 41 },
+    { q: 'Programme KIMBA', count: 38 },
+  ],
+  languages: [
+    { lang: 'Français', pct: 78 },
+    { lang: 'English', pct: 12 },
+    { lang: 'Español', pct: 4 },
+    { lang: '中文', pct: 3 },
+    { lang: 'العربية', pct: 2 },
+    { lang: 'Autre', pct: 1 },
+  ],
+};
+
 export default function AdminDashboardPage() {
   const { user } = useAuth();
   const [logFilter, setLogFilter] = useState<string>('all');
   const [flags, setFlags] = useState(FEATURE_FLAGS);
+  const [iastedConfig, setIastedConfig] = useState<IAstedConfig>(IASTED_DEFAULTS);
+
+  // Load saved config on mount
+  React.useEffect(() => {
+    setIastedConfig(loadIastedConfig());
+  }, []);
+
+  const updateIastedConfig = (patch: Partial<IAstedConfig>) => {
+    setIastedConfig((prev) => {
+      const next = { ...prev, ...patch };
+      try {
+        localStorage.setItem('iasted_admin_config', JSON.stringify(next));
+      } catch {
+        /* noop */
+      }
+      return next;
+    });
+  };
+
+  const resetIastedConfig = () => {
+    setIastedConfig(IASTED_DEFAULTS);
+    try {
+      localStorage.removeItem('iasted_admin_config');
+    } catch {
+      /* noop */
+    }
+  };
 
   const filteredLogs = logFilter === 'all' ? LOGS : LOGS.filter((l) => l.level === logFilter);
   const healthyCount = SERVICES.filter((s) => s.status === 'healthy').length;
@@ -553,6 +639,358 @@ export default function AdminDashboardPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* ═══════ iAsted — Agent IA Configuration ═══════ */}
+      <section aria-label="Configuration iAsted">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+          <Bot size={18} className="text-violet-500" /> iAsted — Agent IA
+        </h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ── Column 1: Toggles ── */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Settings size={12} /> Comportement
+            </h3>
+            {[
+              {
+                key: 'expertMode' as const,
+                label: 'Mode Expert',
+                desc: 'Accompagnement proactif et conseil',
+                icon: Brain,
+              },
+              {
+                key: 'localRouter' as const,
+                label: 'Routeur local',
+                desc: 'Commandes instantanées côté client',
+                icon: Zap,
+              },
+              {
+                key: 'faqCache' as const,
+                label: 'Cache FAQ',
+                desc: 'Réponses fréquentes en cache',
+                icon: Database,
+              },
+              {
+                key: 'voiceEnabled' as const,
+                label: 'Voix activée',
+                desc: 'Synthèse vocale des réponses',
+                icon: Mic,
+              },
+              {
+                key: 'learningEnabled' as const,
+                label: 'Apprentissage',
+                desc: 'Enregistre les interactions',
+                icon: Brain,
+              },
+            ].map((toggle) => {
+              const ToggleIcon = toggle.icon;
+              const isOn = iastedConfig[toggle.key] as boolean;
+              return (
+                <div
+                  key={toggle.key}
+                  className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 mr-3">
+                    <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center shrink-0">
+                      <ToggleIcon size={14} className="text-violet-600 dark:text-violet-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        {toggle.label}
+                      </div>
+                      <div className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                        {toggle.desc}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => updateIastedConfig({ [toggle.key]: !isOn })}
+                    role="switch"
+                    aria-checked={isOn}
+                    aria-label={`${toggle.label}: ${isOn ? 'activé' : 'désactivé'}`}
+                    className={`relative w-11 h-6 rounded-full border-none cursor-pointer transition-colors duration-200 shrink-0 ${
+                      isOn ? 'bg-violet-500' : 'bg-gray-300 dark:bg-gray-700'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 flex items-center justify-center ${
+                        isOn ? 'translate-x-[22px]' : 'translate-x-0.5'
+                      }`}
+                    >
+                      {isOn ? (
+                        <ToggleRight size={10} className="text-violet-600" />
+                      ) : (
+                        <ToggleLeft size={10} className="text-gray-400" />
+                      )}
+                    </span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── Column 2: Sliders ── */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Activity size={12} /> Paramètres
+            </h3>
+            {[
+              {
+                key: 'maxHistory' as const,
+                label: 'Historique max',
+                min: 5,
+                max: 30,
+                step: 1,
+                unit: 'msg',
+                icon: MessageSquare,
+              },
+              {
+                key: 'maxTokensVoice' as const,
+                label: 'Tokens (voix)',
+                min: 100,
+                max: 1000,
+                step: 50,
+                unit: 'tok',
+                icon: Mic,
+              },
+              {
+                key: 'maxTokensChat' as const,
+                label: 'Tokens (chat)',
+                min: 500,
+                max: 2000,
+                step: 100,
+                unit: 'tok',
+                icon: MessageSquare,
+              },
+              {
+                key: 'idleTimeout' as const,
+                label: 'Idle timeout',
+                min: 30,
+                max: 300,
+                step: 15,
+                unit: 's',
+                icon: Clock,
+              },
+              {
+                key: 'confidenceThreshold' as const,
+                label: 'Seuil confiance',
+                min: 0.1,
+                max: 1.0,
+                step: 0.05,
+                unit: '',
+                icon: Brain,
+              },
+              {
+                key: 'temperature' as const,
+                label: 'Température IA',
+                min: 0.0,
+                max: 1.0,
+                step: 0.05,
+                unit: '',
+                icon: Flame,
+              },
+            ].map((slider) => {
+              const SliderIcon = slider.icon;
+              const value = iastedConfig[slider.key] as number;
+              return (
+                <div
+                  key={slider.key}
+                  className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <SliderIcon size={12} className="text-violet-500" />
+                      <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                        {slider.label}
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-violet-600 dark:text-violet-400 tabular-nums">
+                      {slider.step < 1 ? value.toFixed(2) : value}
+                      {slider.unit}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={slider.min}
+                    max={slider.max}
+                    step={slider.step}
+                    value={value}
+                    onChange={(e) =>
+                      updateIastedConfig({ [slider.key]: parseFloat(e.target.value) })
+                    }
+                    className="w-full h-1.5 rounded-full appearance-none bg-gray-200 dark:bg-gray-700 cursor-pointer accent-violet-500"
+                    aria-label={slider.label}
+                  />
+                  <div className="flex justify-between mt-0.5">
+                    <span className="text-[9px] text-gray-400">
+                      {slider.step < 1 ? slider.min.toFixed(1) : slider.min}
+                    </span>
+                    <span className="text-[9px] text-gray-400">
+                      {slider.step < 1 ? slider.max.toFixed(1) : slider.max}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Voice Gender Select */}
+            <div className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Mic size={12} className="text-violet-500" />
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  Genre de voix
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {(['female', 'male'] as const).map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => updateIastedConfig({ voiceGender: g })}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-all ${
+                      iastedConfig.voiceGender === g
+                        ? 'bg-violet-500 text-white border-violet-500'
+                        : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {g === 'female' ? '♀ Femme' : '♂ Homme'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Column 3: Stats + Actions ── */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+              <BarChart3 size={12} /> Statistiques Agent
+            </h3>
+
+            {/* KPIs */}
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: "Aujourd'hui", value: IASTED_STATS.conversationsToday, color: '#8b5cf6' },
+                {
+                  label: 'Total conv.',
+                  value: IASTED_STATS.conversationsTotal.toLocaleString(),
+                  color: '#3b82f6',
+                },
+                { label: 'Cmd vocales', value: IASTED_STATS.voiceCommands, color: '#10b981' },
+                { label: 'Langues', value: IASTED_STATS.languages.length, color: '#f59e0b' },
+              ].map((kpi) => (
+                <div
+                  key={kpi.label}
+                  className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center"
+                >
+                  <div className="text-lg font-extrabold" style={{ color: kpi.color }}>
+                    {kpi.value}
+                  </div>
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400">{kpi.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Top Questions */}
+            <div className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                <MessageSquare size={12} className="text-violet-500" /> Questions fréquentes
+              </div>
+              <div className="space-y-1.5">
+                {IASTED_STATS.topQuestions.map((q, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-violet-500 w-4 text-right shrink-0">
+                      #{i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] text-gray-700 dark:text-gray-300 truncate">
+                        {q.q}
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-400 shrink-0">{q.count}×</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Language Distribution */}
+            <div className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                <Languages size={12} className="text-violet-500" /> Distribution langues
+              </div>
+              <div className="space-y-1">
+                {IASTED_STATS.languages.map((l) => (
+                  <div key={l.lang} className="flex items-center gap-2">
+                    <span className="text-[11px] text-gray-600 dark:text-gray-400 w-14 truncate shrink-0">
+                      {l.lang}
+                    </span>
+                    <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-violet-500"
+                        style={{ width: `${l.pct}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-400 w-7 text-right shrink-0">
+                      {l.pct}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Zap size={12} /> Actions rapides
+              </h3>
+              <button
+                onClick={resetIastedConfig}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <RotateCcw size={12} /> Réinitialiser les paramètres
+              </button>
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('iasted_faq_cache');
+                  } catch {
+                    /* */
+                  }
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <Trash2 size={12} /> Vider le cache FAQ
+              </button>
+              <button
+                onClick={() => {
+                  const blob = new Blob(
+                    [
+                      JSON.stringify(
+                        {
+                          config: iastedConfig,
+                          stats: IASTED_STATS,
+                          exportedAt: new Date().toISOString(),
+                        },
+                        null,
+                        2,
+                      ),
+                    ],
+                    { type: 'application/json' },
+                  );
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'iasted_analytics.json';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-colors cursor-pointer"
+              >
+                <Download size={12} /> Télécharger les analytics
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 

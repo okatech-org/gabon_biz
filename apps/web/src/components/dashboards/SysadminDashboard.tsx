@@ -32,34 +32,110 @@ const STATS = [
 
 const ServiceIcon: Record<string, typeof Server> = {
   'Cloud Run (API)': Server,
-  'PostgreSQL': Database,
-  'Redis': Database,
+  PostgreSQL: Database,
+  Redis: Database,
   'Firebase Hosting': Wifi,
   'OpenAI TTS/STT': Activity,
-  'Gemini API': Activity,
+  'OpenAI API': Activity,
 };
 
 const SERVICES = [
-  { name: 'Cloud Run (API)', status: 'healthy', latency: '12ms', uptime: '99.97%', region: 'europe-west1' },
-  { name: 'PostgreSQL', status: 'healthy', latency: '3ms', uptime: '99.99%', region: 'europe-west1' },
+  {
+    name: 'Cloud Run (API)',
+    status: 'healthy',
+    latency: '12ms',
+    uptime: '99.97%',
+    region: 'europe-west1',
+  },
+  {
+    name: 'PostgreSQL',
+    status: 'healthy',
+    latency: '3ms',
+    uptime: '99.99%',
+    region: 'europe-west1',
+  },
   { name: 'Redis', status: 'warning', latency: '45ms', uptime: '99.91%', region: 'europe-west1' },
-  { name: 'Firebase Hosting', status: 'healthy', latency: '8ms', uptime: '99.98%', region: 'global' },
-  { name: 'OpenAI TTS/STT', status: 'healthy', latency: '320ms', uptime: '99.85%', region: 'us-east' },
-  { name: 'Gemini API', status: 'healthy', latency: '180ms', uptime: '99.92%', region: 'global' },
+  {
+    name: 'Firebase Hosting',
+    status: 'healthy',
+    latency: '8ms',
+    uptime: '99.98%',
+    region: 'global',
+  },
+  {
+    name: 'OpenAI TTS/STT',
+    status: 'healthy',
+    latency: '320ms',
+    uptime: '99.85%',
+    region: 'us-east',
+  },
+  { name: 'OpenAI API', status: 'healthy', latency: '180ms', uptime: '99.92%', region: 'global' },
 ];
 
 const DEPLOYS = [
-  { v: 'v2.4.1', date: '14 mars 14:32', ok: true, msg: 'Fix rate limiter + quotas journaliers', by: 'Rodrigue M.' },
-  { v: 'v2.4.0', date: '13 mars 21:15', ok: true, msg: 'Audit iAsted + function calling Gemini', by: 'Rodrigue M.' },
-  { v: 'v2.3.8', date: '12 mars 19:30', ok: true, msg: 'Fix dashboard gaps + dead buttons', by: 'Rodrigue M.' },
-  { v: 'v2.3.7', date: '11 mars 12:00', ok: false, msg: 'Annuaire redesign (rollback partiel)', by: 'Rodrigue M.' },
+  {
+    v: 'v2.4.1',
+    date: '14 mars 14:32',
+    ok: true,
+    msg: 'Fix rate limiter + quotas journaliers',
+    by: 'Rodrigue M.',
+  },
+  {
+    v: 'v2.4.0',
+    date: '13 mars 21:15',
+    ok: true,
+    msg: 'Audit iAsted + function calling GPT',
+    by: 'Rodrigue M.',
+  },
+  {
+    v: 'v2.3.8',
+    date: '12 mars 19:30',
+    ok: true,
+    msg: 'Fix dashboard gaps + dead buttons',
+    by: 'Rodrigue M.',
+  },
+  {
+    v: 'v2.3.7',
+    date: '11 mars 12:00',
+    ok: false,
+    msg: 'Annuaire redesign (rollback partiel)',
+    by: 'Rodrigue M.',
+  },
 ];
 
 const ALERTS = [
-  { severity: 'warning', msg: 'Redis — pic latence 45ms (seuil: 30ms)', time: 'Il y a 2h', resolved: false, icon: AlertTriangle, color: '#f59e0b' },
-  { severity: 'info', msg: 'Feature flag "Matching IA" activé', time: 'Il y a 4h', resolved: true, icon: Bell, color: '#3b82f6' },
-  { severity: 'error', msg: 'Erreur 500 /api/chat/stream (timeout Gemini)', time: 'Hier 23:15', resolved: true, icon: XCircle, color: '#ef4444' },
-  { severity: 'info', msg: 'Certificat SSL renouvelé — gabon-biz.web.app', time: 'Il y a 2j', resolved: true, icon: Shield, color: '#10b981' },
+  {
+    severity: 'warning',
+    msg: 'Redis — pic latence 45ms (seuil: 30ms)',
+    time: 'Il y a 2h',
+    resolved: false,
+    icon: AlertTriangle,
+    color: '#f59e0b',
+  },
+  {
+    severity: 'info',
+    msg: 'Feature flag "Matching IA" activé',
+    time: 'Il y a 4h',
+    resolved: true,
+    icon: Bell,
+    color: '#3b82f6',
+  },
+  {
+    severity: 'error',
+    msg: 'Erreur 500 /api/chat/stream (timeout GPT)',
+    time: 'Hier 23:15',
+    resolved: true,
+    icon: XCircle,
+    color: '#ef4444',
+  },
+  {
+    severity: 'info',
+    msg: 'Certificat SSL renouvelé — gabon-biz.web.app',
+    time: 'Il y a 2j',
+    resolved: true,
+    icon: Shield,
+    color: '#10b981',
+  },
 ];
 
 const STATUS_DOT: Record<string, string> = {
@@ -110,8 +186,8 @@ export default function SysadminDashboard({
             </div>
           </div>
           <p className="text-sm opacity-60 mt-3 max-w-2xl">
-            Supervisez l&apos;infrastructure, gérez les déploiements et monitorez la performance
-            des services en temps réel.
+            Supervisez l&apos;infrastructure, gérez les déploiements et monitorez la performance des
+            services en temps réel.
           </p>
         </div>
       </motion.section>
@@ -127,7 +203,10 @@ export default function SysadminDashboard({
             className="bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4"
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${s.color}15` }}>
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: `${s.color}15` }}
+              >
                 <s.icon size={16} style={{ color: s.color }} />
               </div>
               <span className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -150,33 +229,56 @@ export default function SysadminDashboard({
             <table className="w-full text-sm" role="table" aria-label="État des services">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-white/5 bg-gray-100/50 dark:bg-white/2">
-                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Service</th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Latence</th>
-                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden md:table-cell">Uptime</th>
-                  <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden lg:table-cell">Région</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Service
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Status
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Latence
+                  </th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden md:table-cell">
+                    Uptime
+                  </th>
+                  <th className="text-right py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden lg:table-cell">
+                    Région
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {SERVICES.map((s) => {
                   const Icon = ServiceIcon[s.name] || Server;
                   return (
-                    <tr key={s.name} className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-100 dark:hover:bg-white/2 transition-colors">
+                    <tr
+                      key={s.name}
+                      className="border-b border-gray-50 dark:border-white/3 hover:bg-gray-100 dark:hover:bg-white/2 transition-colors"
+                    >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <Icon size={14} className="text-gray-400 shrink-0" />
-                          <span className="font-semibold text-gray-900 dark:text-white">{s.name}</span>
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            {s.name}
+                          </span>
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span className="inline-flex items-center gap-1.5">
                           <span className={`w-2 h-2 rounded-full ${STATUS_DOT[s.status] || ''}`} />
-                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">{s.status}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                            {s.status}
+                          </span>
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-center font-mono text-xs text-gray-500 dark:text-gray-400">{s.latency}</td>
-                      <td className="py-3 px-4 text-center font-semibold text-emerald-600 hidden md:table-cell">{s.uptime}</td>
-                      <td className="py-3 px-4 text-right text-xs text-gray-400 hidden lg:table-cell">{s.region}</td>
+                      <td className="py-3 px-4 text-center font-mono text-xs text-gray-500 dark:text-gray-400">
+                        {s.latency}
+                      </td>
+                      <td className="py-3 px-4 text-center font-semibold text-emerald-600 hidden md:table-cell">
+                        {s.uptime}
+                      </td>
+                      <td className="py-3 px-4 text-right text-xs text-gray-400 hidden lg:table-cell">
+                        {s.region}
+                      </td>
                     </tr>
                   );
                 })}
@@ -188,7 +290,9 @@ export default function SysadminDashboard({
             {SERVICES.map((s) => (
               <div key={s.name} className="p-4">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-semibold text-sm text-gray-900 dark:text-white">{s.name}</span>
+                  <span className="font-semibold text-sm text-gray-900 dark:text-white">
+                    {s.name}
+                  </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${STATUS_DOT[s.status] || ''}`} />
                     <span className="text-xs text-gray-500 capitalize">{s.status}</span>
@@ -223,12 +327,20 @@ export default function SysadminDashboard({
                 transition={{ delay: i * 0.05 }}
                 className="flex items-start gap-3 p-3 hover:bg-gray-100 dark:hover:bg-white/3 transition-colors"
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${d.ok ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-amber-50 dark:bg-amber-500/10'}`}>
-                  {d.ok ? <CheckCircle2 size={14} className="text-emerald-600" /> : <AlertTriangle size={14} className="text-amber-600" />}
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${d.ok ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-amber-50 dark:bg-amber-500/10'}`}
+                >
+                  {d.ok ? (
+                    <CheckCircle2 size={14} className="text-emerald-600" />
+                  ) : (
+                    <AlertTriangle size={14} className="text-amber-600" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-bold font-mono text-gray-900 dark:text-white">{d.v}</span>
+                    <span className="text-sm font-bold font-mono text-gray-900 dark:text-white">
+                      {d.v}
+                    </span>
                     <span className="text-[10px] text-gray-400">{d.date}</span>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{d.msg}</p>
@@ -254,7 +366,10 @@ export default function SysadminDashboard({
                   transition={{ delay: 0.3 + i * 0.05 }}
                   className={`flex items-start gap-3 p-3 ${a.resolved ? 'opacity-50' : ''}`}
                 >
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${a.color}15` }}>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: `${a.color}15` }}
+                  >
                     <a.icon size={14} style={{ color: a.color }} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -278,12 +393,36 @@ export default function SysadminDashboard({
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { icon: Settings, title: 'Console', desc: 'Admin panel', href: '/dashboard/admin', color: '#334155' },
-                { icon: Activity, title: 'Monitoring', desc: 'Live metrics', href: '/dashboard/admin', color: '#3b82f6' },
+                {
+                  icon: Settings,
+                  title: 'Console',
+                  desc: 'Admin panel',
+                  href: '/dashboard/admin',
+                  color: '#334155',
+                },
+                {
+                  icon: Activity,
+                  title: 'Monitoring',
+                  desc: 'Live metrics',
+                  href: '/dashboard/admin',
+                  color: '#3b82f6',
+                },
               ].map((mod, i) => (
-                <motion.div key={mod.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.05 }}>
-                  <Link href={mod.href} aria-label={`Accéder ${mod.title}`} className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3" style={{ background: mod.color }}>
+                <motion.div
+                  key={mod.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + i * 0.05 }}
+                >
+                  <Link
+                    href={mod.href}
+                    aria-label={`Accéder ${mod.title}`}
+                    className="block bg-white dark:bg-white/5 rounded-xl border border-gray-200/60 dark:border-white/8 p-4 hover:-translate-y-0.5 transition-all group no-underline"
+                  >
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center text-white mb-3"
+                      style={{ background: mod.color }}
+                    >
                       <mod.icon size={16} />
                     </div>
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-0.5 group-hover:text-slate-500 transition-colors">

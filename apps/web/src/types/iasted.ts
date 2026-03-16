@@ -1,16 +1,20 @@
 // ─── iAsted Voice Agent Types ─────────────────────────────────────
 
-/** 5-state voice machine */
+// Re-export quotas from the single source of truth (rate-limiter.ts)
+// These are server-side enforced values, re-exported for UI display
+export { ROLE_QUOTAS, type RoleQuota } from '@/lib/iasted/rate-limiter';
+
+/** Voice states for the iAsted conversational agent */
 export type VoiceState = 'idle' | 'connecting' | 'listening' | 'thinking' | 'speaking';
 
 /** Local command definition */
 export interface LocalCommand {
-  patterns: RegExp[];          // Regex patterns that match this command
-  keywords: string[][];        // Keyword groups (all in a group must match)
-  action: string;              // Action identifier
+  patterns: RegExp[]; // Regex patterns that match this command
+  keywords: string[][]; // Keyword groups (all in a group must match)
+  action: string; // Action identifier
   params?: Record<string, string>; // Static params for the action
-  silent: boolean;             // Execute without vocal confirmation
-  confidence: number;          // Base confidence for keyword match
+  silent: boolean; // Execute without vocal confirmation
+  confidence: number; // Base confidence for keyword match
 }
 
 /** Command match result */
@@ -21,7 +25,7 @@ export interface CommandMatch {
   silent: boolean;
 }
 
-/** iAsted function-calling tool definition (Gemini format) */
+/** iAsted function-calling tool definition (OpenAI format) */
 export interface IAstedToolParam {
   type: string;
   description: string;
@@ -54,18 +58,3 @@ export interface GreetingSession {
   period: 'morning' | 'afternoon' | 'evening';
   text: string;
 }
-
-/** Quotas per role */
-export interface RoleQuota {
-  voicePerDay: number;
-  textPerDay: number;
-}
-
-export const ROLE_QUOTAS: Record<string, RoleQuota> = {
-  anonymous:     { voicePerDay: 3,   textPerDay: 10 },
-  citoyen:       { voicePerDay: 20,  textPerDay: 50 },
-  entrepreneur:  { voicePerDay: 50,  textPerDay: 100 },
-  investisseur:  { voicePerDay: 50,  textPerDay: 100 },
-  agent_menudi:  { voicePerDay: 100, textPerDay: 200 },
-  admin:         { voicePerDay: 500, textPerDay: 9999 },
-};

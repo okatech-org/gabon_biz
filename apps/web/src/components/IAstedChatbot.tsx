@@ -1,6 +1,19 @@
 'use client';
 
-import { Bot, ExternalLink, Loader2, Send, User, Volume2, VolumeX, X } from 'lucide-react';
+import {
+  Bot,
+  Download,
+  ExternalLink,
+  Loader2,
+  MessageSquarePlus,
+  Send,
+  ThumbsDown,
+  ThumbsUp,
+  User,
+  Volume2,
+  VolumeX,
+  X,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,11 +32,28 @@ import {
   SESSION_GREETING_KEY,
   getTimePeriod,
 } from '@/lib/iasted/voice-config';
+import {
+  loadCurrentConversation,
+  saveConversation,
+  startNewConversation,
+  saveFeedback,
+  isFirstTimeUser,
+  type StoredMessage,
+} from '@/lib/iasted/conversation-store';
+import { generateFollowUps, type FollowUp } from '@/lib/iasted/follow-ups';
+import { exportAsMarkdown } from '@/lib/iasted/export';
+import {
+  ONBOARDING_STEPS,
+  getOnboardingResult,
+  isOnboardingComplete,
+  markOnboardingComplete,
+} from '@/lib/iasted/onboarding';
 
 interface ChatMessage {
   role: 'user' | 'model';
   content: string;
   isStreaming?: boolean;
+  feedback?: 'up' | 'down';
 }
 
 function getWelcomeMessage(): string {
@@ -58,10 +88,15 @@ function unlockAudio() {
       sharedAudioEl.setAttribute('playsinline', 'true');
     }
     // Play silent data URI to unlock (tiny valid MP3)
-    sharedAudioEl.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwRHAAAAAAD/+1DEAAAGAAGn9AAAIUAMK/8wAACKqqKiqioAAAAA0CEfePfhhOE7/ir/+Lv1cJx8Tzv/xd+j7/8XBgGPiYOAgEP/5cPu//////lxMTExcBAIBD///5c//KCYmJi4CAQ/////8uJi4CAAAAATEE//tQxBAADmBnV/z0ACIMDO3/nosePxExBTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+    sharedAudioEl.src =
+      'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwRHAAAAAAD/+1DEAAAGAAGn9AAAIUAMK/8wAACKqqKiqioAAAAA0CEfePfhhOE7/ir/+Lv1cJx8Tzv/xd+j7/8XBgGPiYOAgEP/5cPu//////lxMTExcBAIBD///5c//KCYmJi4CAQ/////8uJi4CAAAAATEE//tQxBAADmBnV/z0ACIMDO3/nosePxExBTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
     sharedAudioEl.volume = 0.01;
     const p = sharedAudioEl.play();
-    if (p) p.then(() => { sharedAudioEl!.pause(); audioUnlocked = true; }).catch(() => {});
+    if (p)
+      p.then(() => {
+        sharedAudioEl!.pause();
+        audioUnlocked = true;
+      }).catch(() => {});
 
     // Also unlock Web Audio API context (for level analysis)
     if (typeof AudioContext !== 'undefined') {
@@ -71,7 +106,6 @@ function unlockAudio() {
     }
 
     // SpeechSynthesis no longer used — no need to poke it
-
 
     audioUnlocked = true;
     console.log('[iAsted] [audio] Mobile audio unlocked');
@@ -140,7 +174,7 @@ export function IAstedChatbot() {
   const pathname = usePathname();
   const router = useRouter();
   const { setTheme, toggleTheme } = useTheme();
-  const { setLang } = useI18n();
+  const { lang, setLang } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -154,8 +188,36 @@ export function IAstedChatbot() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const hasGreetedRef = useRef(false);
   const [voiceOnly, setVoiceOnly] = useState(false); // Autonomous voice mode (no chat window)
+  const [followUps, setFollowUps] = useState<FollowUp[]>([]);
+  const [onboardingStep, setOnboardingStep] = useState(-1); // -1 = not active
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressStartRef = useRef<number>(0);
+  const lastTapRef = useRef<number>(0);
+  const doubleTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleTipCountRef = useRef(0);
+  const saveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ─── Admin check (for export restriction) ───
+  const isAdmin =
+    typeof window !== 'undefined' &&
+    (() => {
+      try {
+        const stored = localStorage.getItem('gabon_biz_user');
+        if (stored) {
+          const user = JSON.parse(stored);
+          return (
+            user.activeProfile === 'ADMIN' ||
+            user.activeProfile === 'SYSADMIN' ||
+            user.profile === 'admin_systeme' ||
+            user.profile === 'admin_menudi'
+          );
+        }
+      } catch {
+        /* ignore */
+      }
+      return false;
+    })();
 
   // ─── Draggable FAB state ───
   const fabRef = useRef<HTMLButtonElement>(null);
@@ -166,14 +228,28 @@ export function IAstedChatbot() {
 
   // ─── Local Command Router (declared first, used by voice hook via ref) ───
   const { tryLocalCommand } = useLocalCommandRouter({
-    closeChat: () => { setIsOpen(false); setVoiceOnly(false); stopSpeaking(); },
-    clearMessages: () => { setMessages([]); setHasInteracted(false); },
-    disconnectVoice: () => { setVoiceOnly(false); },
+    openChat: () => {
+      setIsOpen(true);
+      setVoiceOnly(false);
+    },
+    closeChat: () => {
+      setIsOpen(false);
+      setVoiceOnly(false);
+      stopSpeaking();
+    },
+    clearMessages: () => {
+      handleNewConversation();
+    },
+    disconnectVoice: () => {
+      setVoiceOnly(false);
+    },
     setVoiceEnabled,
   });
 
   const tryLocalCommandRef = useRef(tryLocalCommand);
-  useEffect(() => { tryLocalCommandRef.current = tryLocalCommand; }, [tryLocalCommand]);
+  useEffect(() => {
+    tryLocalCommandRef.current = tryLocalCommand;
+  }, [tryLocalCommand]);
 
   // ─── Realtime Voice Hook ───
   const voice = useRealtimeVoice({
@@ -182,30 +258,34 @@ export function IAstedChatbot() {
       // In voice-only mode: don't add to chat messages
       if (!voiceOnly) {
         setHasInteracted(true);
-        setMessages(prev => [...prev, { role: 'user', content: `🎙️ ${text}` }]);
+        setMessages((prev) => [...prev, { role: 'user', content: `🎙️ ${text}` }]);
       }
     },
     onResponse: (text) => {
       // In voice-only mode: don't add to chat messages
       if (!voiceOnly) {
-        setMessages(prev => [...prev, { role: 'model', content: text }]);
+        setMessages((prev) => [...prev, { role: 'model', content: text }]);
       }
     },
     tryLocalCommand: (text) => tryLocalCommandRef.current(text),
     onFunctionCall: (name, args) => {
       const result = executeFunctionCall(name, args, router, {
-        setTheme, toggleTheme,
+        setTheme,
+        toggleTheme,
         setLang: (l) => setLang(l as 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'ru' | 'ja'),
+        openChat: () => {
+          setIsOpen(true);
+          setVoiceOnly(false);
+        },
         closeChat: () => setIsOpen(false),
-        clearMessages: () => setMessages([]),
+        clearMessages: () => handleNewConversation(),
         disconnectVoice: () => voice.disconnect(),
       });
       if (result.displayText && !voiceOnly) {
-        setMessages(prev => [...prev, { role: 'model', content: result.displayText! }]);
+        setMessages((prev) => [...prev, { role: 'model', content: result.displayText! }]);
       }
     },
   });
-
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -224,6 +304,20 @@ export function IAstedChatbot() {
   const sendMessage = async (text?: string) => {
     const messageText = text || input.trim();
     if (!messageText || isLoading) return;
+
+    // ── Local command interception for typed messages ──
+    // Prevents "mode sombre", "en anglais", etc. from going to GPT
+    const localMatch = tryLocalCommand(messageText);
+    if (localMatch) {
+      setInput('');
+      setHasInteracted(true);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'user', content: messageText },
+        { role: 'model', content: '✅ Commande exécutée.' },
+      ]);
+      return;
+    }
 
     // Cancel any previous streaming request
     if (abortControllerRef.current) {
@@ -293,13 +387,24 @@ export function IAstedChatbot() {
                 return updated;
               });
             }
-            // Handle Gemini function calls
+            // Handle GPT function calls
             if (parsed.functionCall) {
               const result = executeFunctionCall(
                 parsed.functionCall.name,
                 parsed.functionCall.args || {},
                 router,
-                { setTheme, toggleTheme, setLang: (l) => setLang(l as 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'ru' | 'ja'), closeChat: () => setIsOpen(false), clearMessages: () => setMessages([]), disconnectVoice: () => voice.disconnect() }
+                {
+                  setTheme,
+                  toggleTheme,
+                  setLang: (l) => setLang(l as 'fr' | 'en' | 'es' | 'ar' | 'zh' | 'ru' | 'ja'),
+                  openChat: () => {
+                    setIsOpen(true);
+                    setVoiceOnly(false);
+                  },
+                  closeChat: () => setIsOpen(false),
+                  clearMessages: () => handleNewConversation(),
+                  disconnectVoice: () => voice.disconnect(),
+                },
               );
               if (result.displayText) {
                 fullText += (fullText ? '\n\n' : '') + result.displayText;
@@ -342,7 +447,11 @@ export function IAstedChatbot() {
         const updated = [...prev];
         const lastIdx = updated.length - 1;
         if (lastIdx >= 0 && updated[lastIdx].role === 'model') {
-          updated[lastIdx] = { role: 'model', content: "Oups, une erreur s'est produite. Réessaie ! 🔄", isStreaming: false };
+          updated[lastIdx] = {
+            role: 'model',
+            content: "Oups, une erreur s'est produite. Réessaie ! 🔄",
+            isStreaming: false,
+          };
         }
         return updated;
       });
@@ -351,6 +460,138 @@ export function IAstedChatbot() {
       abortControllerRef.current = null;
     }
   };
+
+  // ─── Knowledge base logging ───
+  const logToKnowledge = useCallback(
+    (userMsg: string, agentMsg: string, fns: string[] = []) => {
+      try {
+        fetch('/api/iasted/knowledge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: sessionStorage.getItem('iasted_session_id') || 'anon',
+            userMessage: userMsg,
+            agentResponse: agentMsg,
+            page: pathname,
+            lang,
+            functionsCalled: fns,
+          }),
+        }).catch(() => {}); // fire and forget
+      } catch {
+        /* ignore */
+      }
+    },
+    [pathname, lang],
+  );
+
+  // ─── Persist messages to localStorage (debounced) ───
+  useEffect(() => {
+    if (messages.length === 0) return;
+    if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
+    saveDebounceRef.current = setTimeout(() => {
+      const stored: StoredMessage[] = messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+        timestamp: Date.now(),
+        feedback: m.feedback,
+      }));
+      saveConversation(stored, pathname);
+    }, 1000);
+    return () => {
+      if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
+    };
+  }, [messages, pathname]);
+
+  // ─── Log completed conversations to knowledge base ───
+  useEffect(() => {
+    if (messages.length >= 2) {
+      const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+      const lastModel = messages[messages.length - 1];
+      if (lastModel.role === 'model' && !lastModel.isStreaming && lastUser) {
+        logToKnowledge(lastUser.content, lastModel.content);
+      }
+    }
+  }, [messages.length, logToKnowledge]); // Only log when message count changes
+
+  // ─── Generate follow-ups after AI response ───
+  useEffect(() => {
+    if (messages.length > 0) {
+      const last = messages[messages.length - 1];
+      if (last.role === 'model' && !last.isStreaming && last.content.length > 20) {
+        setFollowUps(generateFollowUps(last.content));
+      }
+    } else {
+      setFollowUps([]);
+    }
+  }, [messages]);
+
+  // ─── Idle re-engagement (60s timeout) ───
+  useEffect(() => {
+    if (!isOpen || voiceOnly) return;
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    idleTimerRef.current = setTimeout(() => {
+      if (idleTipCountRef.current >= 2) return; // Max 2 proactive tips per session
+      const tips = getSuggestions(pathname);
+      if (tips.length > 0) {
+        const tip = tips[Math.floor(Math.random() * tips.length)];
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'model',
+            content: `💡 **Astuce** : ${tip.label}\n\n${tip.message}`,
+            isStreaming: false,
+          },
+        ]);
+        idleTipCountRef.current++;
+      }
+    }, 60_000);
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, [isOpen, voiceOnly, messages.length, pathname]);
+
+  // ─── Feedback handler ───
+  const handleFeedback = useCallback((msgIndex: number, feedback: 'up' | 'down') => {
+    setMessages((prev) => {
+      const updated = [...prev];
+      if (updated[msgIndex]) {
+        updated[msgIndex] = { ...updated[msgIndex], feedback };
+      }
+      return updated;
+    });
+    saveFeedback(msgIndex, feedback);
+  }, []);
+
+  // ─── Onboarding handler ───
+  const handleOnboardingChoice = useCallback(
+    (stepId: number, value: string) => {
+      if (stepId === 0) {
+        // Role selected — show next step
+        setMessages((prev) => [...prev, { role: 'user', content: value }]);
+        setOnboardingStep(1);
+      } else if (stepId === 1) {
+        // Goal selected — show result
+        setMessages((prev) => [...prev, { role: 'user', content: value }]);
+        const roleMsg = messages.find((m) => m.role === 'user');
+        const role = roleMsg?.content || 'curieux';
+        const result = getOnboardingResult(role, value);
+        setMessages((prev) => [...prev, { role: 'model', content: result.message }]);
+        markOnboardingComplete();
+        setOnboardingStep(-1);
+        setHasInteracted(true);
+      }
+    },
+    [messages],
+  );
+
+  // ─── New conversation handler ───
+  const handleNewConversation = useCallback(() => {
+    startNewConversation();
+    setMessages([]);
+    setFollowUps([]);
+    setHasInteracted(false);
+    idleTipCountRef.current = 0;
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -372,15 +613,20 @@ export function IAstedChatbot() {
         }
         // Different period but same session — reuse stored text if available
         if (text && elapsed < 2 * 60 * 60 * 1000) return text;
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     // First greeting of session — generate and store
     const text = getVocalGreeting();
-    sessionStorage.setItem(SESSION_GREETING_KEY, JSON.stringify({
-      timestamp: Date.now(),
-      period: getTimePeriod(),
-      text,
-    }));
+    sessionStorage.setItem(
+      SESSION_GREETING_KEY,
+      JSON.stringify({
+        timestamp: Date.now(),
+        period: getTimePeriod(),
+        text,
+      }),
+    );
     return text;
   }, []);
 
@@ -396,6 +642,26 @@ export function IAstedChatbot() {
   const openChat = async () => {
     setIsOpen(true);
     setVoiceOnly(false);
+
+    // Load persisted conversation on open
+    if (messages.length === 0) {
+      const stored = loadCurrentConversation();
+      if (stored.length > 0) {
+        setMessages(
+          stored.map((m) => ({
+            role: m.role,
+            content: m.content,
+            isStreaming: false,
+            feedback: m.feedback,
+          })),
+        );
+        setHasInteracted(true);
+      } else if (isFirstTimeUser() && !isOnboardingComplete()) {
+        // Trigger onboarding for first-time users
+        setOnboardingStep(0);
+      }
+    }
+
     if (!hasGreetedRef.current && voiceEnabled) {
       hasGreetedRef.current = true;
       setTimeout(async () => {
@@ -466,9 +732,7 @@ export function IAstedChatbot() {
     ol: ({ children }: { children?: React.ReactNode }) => (
       <ol className="list-decimal list-inside space-y-1 my-2">{children}</ol>
     ),
-    li: ({ children }: { children?: React.ReactNode }) => (
-      <li className="text-sm">{children}</li>
-    ),
+    li: ({ children }: { children?: React.ReactNode }) => <li className="text-sm">{children}</li>,
     h2: ({ children }: { children?: React.ReactNode }) => (
       <h2 className="text-base font-bold mt-3 mb-1">{children}</h2>
     ),
@@ -486,12 +750,12 @@ export function IAstedChatbot() {
         <div
           className="fixed z-50 flex flex-col overflow-hidden chatbot-window inset-0 rounded-none sm:inset-auto sm:bottom-24 sm:right-6 sm:w-[420px] sm:max-h-[75vh] sm:rounded-2xl border border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl"
           style={{
-            boxShadow:
-              '0 8px 40px rgba(0,0,0,0.15), 0 0 60px rgba(16,185,129,0.06)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.15), 0 0 60px rgba(16,185,129,0.06)',
           }}
         >
           {/* ── Header ── */}
-          <div className="flex items-center justify-between px-5 py-4 shrink-0"
+          <div
+            className="flex items-center justify-between px-5 py-4 shrink-0"
             style={{
               background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
               color: 'white',
@@ -506,8 +770,8 @@ export function IAstedChatbot() {
                 <p className="text-xs opacity-80">
                   {voice.voiceState === 'listening' ? (
                     <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse" />
-                      à l&apos;écoute…
+                      <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse" />à
+                      l&apos;écoute…
                     </span>
                   ) : voice.voiceState === 'thinking' ? (
                     <span className="flex items-center gap-1">
@@ -531,12 +795,48 @@ export function IAstedChatbot() {
               </div>
             </div>
             <div className="flex items-center gap-1">
+              {/* New conversation */}
+              <button
+                type="button"
+                onClick={handleNewConversation}
+                className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                aria-label="Nouvelle conversation"
+                title="Nouvelle conversation"
+              >
+                <MessageSquarePlus className="w-4 h-4" />
+              </button>
+
+              {/* Export (admin only) */}
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const stored: StoredMessage[] = messages.map((m) => ({
+                      role: m.role,
+                      content: m.content,
+                      timestamp: Date.now(),
+                      feedback: m.feedback,
+                    }));
+                    exportAsMarkdown(stored, pathname);
+                  }}
+                  className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                  aria-label="Exporter la conversation"
+                  title="Exporter (admin)"
+                  disabled={messages.length === 0}
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              )}
+
               {/* Voice toggle (TTS) */}
               <button
                 type="button"
                 onClick={() => {
                   setVoiceEnabled(!voiceEnabled);
-                  if (isSpeaking) { stopSpeaking(); setIsSpeaking(false); }
+                  if (isSpeaking) {
+                    stopSpeaking();
+                    setIsSpeaking(false);
+                  }
                 }}
                 className={`p-2 rounded-full transition-colors ${voiceEnabled ? 'bg-white/20 hover:bg-white/30' : 'hover:bg-white/20 opacity-60'}`}
                 aria-label={voiceEnabled ? 'Désactiver la voix' : 'Activer la voix'}
@@ -581,9 +881,7 @@ export function IAstedChatbot() {
                 <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div className="bg-gray-100/80 dark:bg-white/10 border border-gray-200/50 dark:border-white/10 px-4 py-3 rounded-2xl rounded-tl-md max-w-[85%] text-sm leading-relaxed text-gray-800 dark:text-gray-100 chatbot-message">
-                <ReactMarkdown components={markdownComponents}>
-                  {getWelcomeMessage()}
-                </ReactMarkdown>
+                <ReactMarkdown components={markdownComponents}>{getWelcomeMessage()}</ReactMarkdown>
               </div>
             </div>
 
@@ -595,9 +893,7 @@ export function IAstedChatbot() {
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1 ${
-                    msg.role === 'user'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-500/10'
+                    msg.role === 'user' ? 'bg-emerald-600 text-white' : 'bg-emerald-500/10'
                   }`}
                 >
                   {msg.role === 'user' ? (
@@ -615,11 +911,30 @@ export function IAstedChatbot() {
                 >
                   {msg.role === 'model' ? (
                     <>
-                      <ReactMarkdown components={markdownComponents}>
-                        {msg.content}
-                      </ReactMarkdown>
+                      <ReactMarkdown components={markdownComponents}>{msg.content}</ReactMarkdown>
                       {msg.isStreaming && (
                         <span className="inline-block w-0.5 h-4 bg-emerald-500 animate-pulse ml-0.5 align-text-bottom" />
+                      )}
+                      {/* Feedback buttons */}
+                      {!msg.isStreaming && msg.content.length > 10 && (
+                        <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-gray-200/30 dark:border-white/5">
+                          <button
+                            type="button"
+                            onClick={() => handleFeedback(idx, 'up')}
+                            className={`p-1 rounded transition-all ${msg.feedback === 'up' ? 'text-emerald-600 dark:text-emerald-400 scale-110' : 'text-gray-400 dark:text-gray-500 hover:text-emerald-500'}`}
+                            aria-label="Bonne réponse"
+                          >
+                            <ThumbsUp className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleFeedback(idx, 'down')}
+                            className={`p-1 rounded transition-all ${msg.feedback === 'down' ? 'text-red-500 scale-110' : 'text-gray-400 dark:text-gray-500 hover:text-red-400'}`}
+                            aria-label="Mauvaise réponse"
+                          >
+                            <ThumbsDown className="w-3 h-3" />
+                          </button>
+                        </div>
                       )}
                     </>
                   ) : (
@@ -630,33 +945,67 @@ export function IAstedChatbot() {
             ))}
 
             {/* Indicateur de chargement initial (avant le premier chunk) */}
-            {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'model' && messages[messages.length - 1].content === '' && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-1">
-                  <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div className="bg-gray-100/80 dark:bg-white/10 border border-gray-200/50 dark:border-white/10 px-4 py-3 rounded-2xl rounded-tl-md">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>iAsted réfléchit…</span>
+            {isLoading &&
+              messages.length > 0 &&
+              messages[messages.length - 1].role === 'model' &&
+              messages[messages.length - 1].content === '' && (
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-1">
+                    <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="bg-gray-100/80 dark:bg-white/10 border border-gray-200/50 dark:border-white/10 px-4 py-3 rounded-2xl rounded-tl-md">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>iAsted réfléchit…</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div ref={messagesEndRef} />
           </div>
 
           {/* ── Zone de saisie ── */}
           <div className="border-t border-gray-200/50 dark:border-white/10 px-4 py-3 shrink-0 safe-area-bottom">
-            {/* Suggestion chips (only when no messages yet) */}
-            {messages.length === 0 && (
+            {/* Onboarding wizard */}
+            {onboardingStep >= 0 && onboardingStep < ONBOARDING_STEPS.length && (
+              <div className="mb-3">
+                <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
+                  <ReactMarkdown components={markdownComponents}>
+                    {ONBOARDING_STEPS[onboardingStep].question}
+                  </ReactMarkdown>
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {ONBOARDING_STEPS[onboardingStep].options.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => handleOnboardingChoice(onboardingStep, opt.value)}
+                      className="text-xs px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-700/30 hover:bg-emerald-100 dark:hover:bg-emerald-800/40 transition-all cursor-pointer"
+                    >
+                      {opt.emoji} {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Suggestion chips (initial) OR Follow-up chips (after response) */}
+            {onboardingStep < 0 && (
               <div className="flex flex-wrap gap-1.5 mb-3">
-                {getSuggestions(pathname).map((s, i) => (
+                {(followUps.length > 0
+                  ? followUps.map((f) => ({ label: `${f.emoji} ${f.label}`, message: f.message }))
+                  : messages.length === 0
+                    ? getSuggestions(pathname)
+                    : []
+                ).map((s, i) => (
                   <button
                     key={i}
                     type="button"
-                    onClick={() => { setInput(s.message); setTimeout(() => sendMessage(s.message), 50); }}
+                    onClick={() => {
+                      setInput(s.message);
+                      setTimeout(() => sendMessage(s.message), 50);
+                    }}
                     className="text-xs px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-700/30 hover:bg-emerald-100 dark:hover:bg-emerald-800/40 transition-all cursor-pointer"
                   >
                     {s.label}
@@ -686,7 +1035,7 @@ export function IAstedChatbot() {
               </button>
             </div>
             <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">
-              Propulsé par Gemini — GABON BIZ
+              Propulsé par GPT — GABON BIZ
             </p>
           </div>
         </div>
@@ -707,8 +1056,10 @@ export function IAstedChatbot() {
             const rect = fabRef.current?.getBoundingClientRect();
             if (!rect) return;
             dragStartRef.current = {
-              px: e.clientX, py: e.clientY,
-              sx: rect.left, sy: rect.top,
+              px: e.clientX,
+              py: e.clientY,
+              sx: rect.left,
+              sy: rect.top,
             };
             hasDraggedRef.current = false;
             isDraggingRef.current = false;
@@ -718,7 +1069,11 @@ export function IAstedChatbot() {
             longPressTimerRef.current = setTimeout(() => {
               if (!hasDraggedRef.current) {
                 // Haptic feedback if available (not on iOS Safari)
-                try { navigator?.vibrate?.(30); } catch { /* unsupported */ }
+                try {
+                  navigator?.vibrate?.(30);
+                } catch {
+                  /* unsupported */
+                }
               }
             }, 400);
           }}
@@ -729,18 +1084,30 @@ export function IAstedChatbot() {
             if (!isDraggingRef.current && Math.abs(dx) + Math.abs(dy) < 5) return;
             isDraggingRef.current = true;
             hasDraggedRef.current = true;
-            if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+            if (longPressTimerRef.current) {
+              clearTimeout(longPressTimerRef.current);
+              longPressTimerRef.current = null;
+            }
             e.preventDefault();
             const fabSize = fabRef.current?.offsetWidth || 84;
-            const newX = Math.max(0, Math.min(window.innerWidth - fabSize, dragStartRef.current.sx + dx));
-            const newY = Math.max(0, Math.min(window.innerHeight - fabSize, dragStartRef.current.sy + dy));
+            const newX = Math.max(
+              0,
+              Math.min(window.innerWidth - fabSize, dragStartRef.current.sx + dx),
+            );
+            const newY = Math.max(
+              0,
+              Math.min(window.innerHeight - fabSize, dragStartRef.current.sy + dy),
+            );
             setFabPos({ x: newX, y: newY });
           }}
           onPointerUp={(e) => {
             (e.target as HTMLElement).releasePointerCapture(e.pointerId);
             isDraggingRef.current = false;
             dragStartRef.current = null;
-            if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+            if (longPressTimerRef.current) {
+              clearTimeout(longPressTimerRef.current);
+              longPressTimerRef.current = null;
+            }
             if (hasDraggedRef.current) return; // Was a drag, not a click
 
             // If in voice-only mode, clicking stops voice
@@ -751,12 +1118,29 @@ export function IAstedChatbot() {
               return;
             }
 
-            // Long-press (>400ms) = chat, Short tap (<400ms) = voice
+            // Long-press (>400ms) = chat, Double-tap (<350ms) = chat, Single tap = voice
             const pressDuration = Date.now() - pressStartRef.current;
             if (pressDuration > 400) {
               openChat(); // Long press → open chat
             } else {
-              startVoiceOnly(); // Short tap → voice only
+              // Double-tap detection
+              const now = Date.now();
+              const timeSinceLastTap = now - lastTapRef.current;
+              lastTapRef.current = now;
+
+              if (timeSinceLastTap < 350) {
+                // Double-tap → open chat
+                if (doubleTapTimerRef.current) {
+                  clearTimeout(doubleTapTimerRef.current);
+                  doubleTapTimerRef.current = null;
+                }
+                openChat();
+              } else {
+                // Single tap → wait 350ms then start voice (allows time for double-tap)
+                doubleTapTimerRef.current = setTimeout(() => {
+                  startVoiceOnly();
+                }, 350);
+              }
             }
           }}
           className="fixed z-50 flex items-center justify-center text-white touch-none select-none"
@@ -764,9 +1148,7 @@ export function IAstedChatbot() {
             width: 84,
             height: 84,
             borderRadius: '50%',
-            ...(fabPos
-              ? { left: fabPos.x, top: fabPos.y }
-              : { bottom: 24, right: 16 }),
+            ...(fabPos ? { left: fabPos.x, top: fabPos.y } : { bottom: 24, right: 16 }),
             background: voiceOnly
               ? voice.voiceState === 'listening'
                 ? 'linear-gradient(135deg, #10b981 0%, #34d399 100%)'
@@ -785,26 +1167,30 @@ export function IAstedChatbot() {
                     ? '0 0 30px rgba(16, 185, 129, 0.5), 0 0 60px rgba(6, 182, 212, 0.15)'
                     : '0 6px 30px rgba(245, 158, 11, 0.4)'
               : '0 6px 30px rgba(231, 76, 60, 0.4), 0 0 50px rgba(234, 179, 8, 0.2)',
-            transition: isDraggingRef.current ? 'none' : 'background 0.4s ease, box-shadow 0.3s ease',
+            transition: isDraggingRef.current
+              ? 'none'
+              : 'background 0.4s ease, box-shadow 0.3s ease',
             cursor: 'grab',
             // Heartbeat animation — distinct names per state force browser to restart animation
             animation: voiceOnly
               ? voice.voiceState === 'listening'
-                ? 'iasted-hb-listen 1200ms ease-in-out infinite'   // ~50 BPM
+                ? 'iasted-hb-listen 1200ms ease-in-out infinite' // ~50 BPM
                 : voice.voiceState === 'thinking'
-                  ? 'iasted-hb-think 800ms ease-in-out infinite'   // ~75 BPM
+                  ? 'iasted-hb-think 800ms ease-in-out infinite' // ~75 BPM
                   : voice.voiceState === 'speaking'
-                    ? 'iasted-hb-speak 545ms ease-in-out infinite'  // ~110 BPM
-                    : 'iasted-hb-idle 1500ms ease-in-out infinite'  // ~40 BPM
+                    ? 'iasted-hb-speak 545ms ease-in-out infinite' // ~110 BPM
+                    : 'iasted-hb-idle 1500ms ease-in-out infinite' // ~40 BPM
               : 'iasted-hb-idle 1500ms ease-in-out infinite',
           }}
-          aria-label={voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : 'Tap = parler, Appui long = chat'}
+          aria-label={
+            voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : 'Tap = parler, Appui long = chat'
+          }
         >
           {voiceOnly ? (
             voice.voiceState === 'listening' ? (
               /* 🎙️ Écoute — barres STATIQUES réactives au niveau audio réel */
               <span className="pointer-events-none flex items-center justify-center gap-[3px]">
-                {[0,1,2,3,4].map(i => {
+                {[0, 1, 2, 3, 4].map((i) => {
                   // Each bar reacts to audioLevel with slight per-bar variation
                   const barLevel = Math.min(1, voice.audioLevel * (0.7 + i * 0.15));
                   const minH = 4;
@@ -828,13 +1214,22 @@ export function IAstedChatbot() {
               /* 🤔 Réfléchit — spinner */
               <span className="pointer-events-none animate-spin">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" strokeDasharray="31.4" strokeDashoffset="10" strokeLinecap="round" />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeDasharray="31.4"
+                    strokeDashoffset="10"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </span>
             ) : voice.voiceState === 'speaking' ? (
               /* 🗣️ Parle — barres ANIMÉES rapides, plus larges/hautes = énergie visible */
               <span className="pointer-events-none flex items-center justify-center gap-[3px]">
-                {[0,1,2,3,4].map(i => (
+                {[0, 1, 2, 3, 4].map((i) => (
                   <span
                     key={i}
                     className="bg-white rounded-full"
