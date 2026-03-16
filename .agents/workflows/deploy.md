@@ -29,3 +29,10 @@ pnpm run deploy:firebase
 - The Firebase project is `gabon-biz`. Do **NOT** deploy to `digitalium-ga` or any other project.
 - The app uses Next.js `standalone` output mode, served by Cloud Run.
 - Firebase Hosting acts as a reverse proxy, routing all traffic to the Cloud Run service.
+- The `deploy:cloudrun` script automatically reads `OPENAI_API_KEY` from `apps/web/.env.local` and passes it to Cloud Run.
+
+4. Verify env vars are set (optional):
+
+```bash
+gcloud run services describe gabon-biz-web --region europe-west1 --project gabon-biz --format='get(spec.template.spec.containers[0].env)'
+```

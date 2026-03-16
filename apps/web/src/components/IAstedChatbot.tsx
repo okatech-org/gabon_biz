@@ -152,7 +152,6 @@ async function speak(text: string, onEnd?: () => void): Promise<boolean> {
         onEnd?.();
         return false; // Audio blocked
       }
-      return true;
     }
   } catch (err) {
     console.warn('[iAsted] [TTS] OpenAI TTS failed, staying silent:', err);
@@ -640,9 +639,16 @@ export function IAstedChatbot() {
   // ─── VOICE-ONLY MODE: tap = speak greeting + listen (no chat window) ───
   const startVoiceOnly = async () => {
     setVoiceOnly(true);
-    const greetingText = getSessionGreeting();
-    await speak(greetingText);
-    voice.connect();
+    try {
+      const greetingText = getSessionGreeting();
+      await speak(greetingText);
+      voice.connect();
+    } catch (err) {
+      console.warn('[iAsted] Voice-only start failed:', err);
+      // Fall back to opening chat window instead of freezing
+      setVoiceOnly(false);
+      setIsOpen(true);
+    }
   };
 
   // ─── CHAT MODE: long-press = open chat window (text mode) ───
@@ -672,9 +678,14 @@ export function IAstedChatbot() {
     if (!hasGreetedRef.current && voiceEnabled) {
       hasGreetedRef.current = true;
       setTimeout(async () => {
-        setIsSpeaking(true);
-        await speak(getSessionGreeting());
-        setIsSpeaking(false);
+        try {
+          setIsSpeaking(true);
+          await speak(getSessionGreeting());
+        } catch {
+          console.warn('[iAsted] Chat greeting TTS failed');
+        } finally {
+          setIsSpeaking(false);
+        }
       }, 300);
     }
   };
