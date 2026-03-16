@@ -1,6 +1,10 @@
 {
-  "totalInteractions": 14,
+  "totalInteractions": 30,
   "topQuestions": [
+    {
+      "question": "🎙️ ha",
+      "count": 6
+    },
     {
       "question": "convertis 1000 euros en xaf",
       "count": 3
@@ -14,6 +18,14 @@
       "count": 3
     },
     {
+      "question": "🎙️ melo mɔt sombre",
+      "count": 3
+    },
+    {
+      "question": "🎙️ mais le citan anglais",
+      "count": 3
+    },
+    {
       "question": "🎙️ ouvre la fenêtre de chat",
       "count": 2
     },
@@ -22,17 +34,41 @@
       "count": 2
     },
     {
+      "question": "🎙️ hi",
+      "count": 2
+    },
+    {
       "question": "bonjour",
+      "count": 1
+    },
+    {
+      "question": "🎙️ leve modsom",
+      "count": 1
+    },
+    {
+      "question": "🎙️ habeas",
       "count": 1
     }
   ],
   "topPages": [
     {
       "page": "/",
-      "count": 13
+      "count": 24
+    },
+    {
+      "page": "/login",
+      "count": 2
+    },
+    {
+      "page": "/dashboard",
+      "count": 2
     },
     {
       "page": "/services/cgi",
+      "count": 1
+    },
+    {
+      "page": "/demo",
       "count": 1
     }
   ],
@@ -40,11 +76,11 @@
   "feedbackStats": {
     "up": 0,
     "down": 0,
-    "total": 14
+    "total": 30
   },
   "languageDistribution": {
-    "fr": 14
+    "fr": 30
   },
-  "hourlyDistribution": [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  "lastUpdated": "2026-03-16T10:59:28.938Z"
+  "hourlyDistribution": [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 3, 0, 0, 0, 0, 6, 0, 0, 0, 10, 0, 0, 0],
+  "lastUpdated": "2026-03-16T19:41:16.614Z"
 }

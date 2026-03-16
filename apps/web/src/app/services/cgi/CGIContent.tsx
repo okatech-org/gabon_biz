@@ -321,7 +321,7 @@ export default function CGIContent() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <FabLabPanel accentColor={accentColor} />
+                  <FabLabPanel />
                 </div>
               </div>
             </motion.div>
@@ -369,7 +369,7 @@ export default function CGIContent() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <MediaLabPanel accentColor={accentColor} />
+                  <MediaLabPanel />
                 </div>
               </div>
             </motion.div>
@@ -665,7 +665,7 @@ function FormationsPanel({ accentColor }: { accentColor: string }) {
 }
 
 /* ─── FabLab Panel ─── */
-function FabLabPanel({ accentColor: _accentColor }: { accentColor: string }) {
+function FabLabPanel() {
   const { isAuthenticated } = useAuth();
   const { toasts, showToast, dismissToast } = useServiceToast();
   const [modal, setModal] = useState<(typeof CGI_PROJETS_FABLAB)[0] | null>(null);
@@ -753,7 +753,7 @@ function FabLabPanel({ accentColor: _accentColor }: { accentColor: string }) {
 }
 
 /* ─── MediaLab Panel ─── */
-function MediaLabPanel({ accentColor: _accentColor }: { accentColor: string }) {
+function MediaLabPanel() {
   const { isAuthenticated } = useAuth();
   const { toasts, showToast, dismissToast } = useServiceToast();
   const [modal, setModal] = useState<(typeof CGI_PRODUCTIONS_MEDIALAB)[0] | null>(null);
