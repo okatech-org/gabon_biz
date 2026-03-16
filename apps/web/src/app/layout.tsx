@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {/* Prevent flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{

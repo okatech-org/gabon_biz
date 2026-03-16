@@ -57,17 +57,17 @@ interface ChatMessage {
 }
 
 function getWelcomeMessage(): string {
-  return `${getTimeGreeting()} ! 👋 Je suis **iAsted**, ton assistant IA sur **GABON BIZ**.
+  return `${getTimeGreeting()} ! 👋 Je suis **iAsted**, votre assistant IA sur **GABON BIZ**.
 
 Je connais tous les services de la plateforme :
-- 🏢 **Créer ton entreprise** en ligne
+- 🏢 **Créer votre entreprise** en ligne
 - 📋 Trouver des **marchés publics**
 - 🚀 Candidater à l'**Incubateur SING**
 - 💰 Explorer les **opportunités d'investissement**
 - 🎓 Découvrir les **formations du CGI**
 - 🔍 Trouver des **solutions numériques** (KIMBA)
 
-Dis-moi ce dont tu as besoin !`;
+Dites-moi ce dont vous avez besoin !`;
 }
 
 // ─── TTS Helpers (OpenAI TTS with browser fallback) ───
@@ -114,7 +114,7 @@ function unlockAudio() {
   }
 }
 
-async function speak(text: string, onEnd?: () => void) {
+async function speak(text: string, onEnd?: () => void): Promise<boolean> {
   try {
     // OpenAI TTS (echo = neutral francophone masculine voice)
     // NO browser fallback — consistent voice or silence
@@ -144,13 +144,15 @@ async function speak(text: string, onEnd?: () => void) {
 
       try {
         await audio.play();
+        return true; // Audio played successfully
       } catch {
         // Auto-play blocked — silent rather than different voice
         URL.revokeObjectURL(audioUrl);
         console.warn('[iAsted] [TTS] Auto-play blocked, staying silent');
         onEnd?.();
+        return false; // Audio blocked
       }
-      return;
+      return true;
     }
   } catch (err) {
     console.warn('[iAsted] [TTS] OpenAI TTS failed, staying silent:', err);
@@ -158,6 +160,7 @@ async function speak(text: string, onEnd?: () => void) {
 
   // No browser fallback — consistent voice identity
   onEnd?.();
+  return false; // TTS failed
 }
 
 function stopSpeaking() {
@@ -435,11 +438,15 @@ export function IAstedChatbot() {
         return updated;
       });
 
-      // Read the response aloud
+      // Read the response aloud (Fix #3: show visible feedback if TTS fails)
       if (voiceEnabled && finalText) {
         const ttsText = stripMarkdownForTTS(finalText);
         setIsSpeaking(true);
-        speak(ttsText, () => setIsSpeaking(false));
+        const played = await speak(ttsText, () => setIsSpeaking(false));
+        if (!played) {
+          // TTS failed or was blocked — show a brief visual indicator
+          setIsSpeaking(false);
+        }
       }
     } catch (err) {
       if ((err as Error).name === 'AbortError') return; // Cancelled, ignore
@@ -1118,7 +1125,9 @@ export function IAstedChatbot() {
               return;
             }
 
-            // Long-press (>400ms) = chat, Double-tap (<350ms) = chat, Single tap = voice
+            // Gesture spec:
+            // 1 tap = voice-only (iAsted speaks, user taps again to stop)
+            // 2 taps (<300ms) or long-press (>400ms) = open chat window
             const pressDuration = Date.now() - pressStartRef.current;
             if (pressDuration > 400) {
               openChat(); // Long press → open chat
@@ -1128,7 +1137,7 @@ export function IAstedChatbot() {
               const timeSinceLastTap = now - lastTapRef.current;
               lastTapRef.current = now;
 
-              if (timeSinceLastTap < 350) {
+              if (timeSinceLastTap < 300) {
                 // Double-tap → open chat
                 if (doubleTapTimerRef.current) {
                   clearTimeout(doubleTapTimerRef.current);
@@ -1136,10 +1145,10 @@ export function IAstedChatbot() {
                 }
                 openChat();
               } else {
-                // Single tap → wait 350ms then start voice (allows time for double-tap)
+                // Single tap → wait 300ms then start voice (allows time for double-tap)
                 doubleTapTimerRef.current = setTimeout(() => {
                   startVoiceOnly();
-                }, 350);
+                }, 300);
               }
             }
           }}
@@ -1183,7 +1192,9 @@ export function IAstedChatbot() {
               : 'iasted-hb-idle 1500ms ease-in-out infinite',
           }}
           aria-label={
-            voiceOnly ? 'iAsted écoute — cliquer pour arrêter' : 'Tap = parler, Appui long = chat'
+            voiceOnly
+              ? 'iAsted écoute — cliquer pour arrêter'
+              : 'Tap = parler, Double-tap ou appui long = chat'
           }
         >
           {voiceOnly ? (

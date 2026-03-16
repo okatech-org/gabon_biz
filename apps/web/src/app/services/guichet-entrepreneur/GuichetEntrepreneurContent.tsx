@@ -112,7 +112,7 @@ export default function GuichetEntrepreneurContent() {
             viewport={{ once: true }}
             variants={fadeIn}
             custom={0}
-            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
+            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-4/3"
           >
             <Image
               src="/images/services/guichet-registration.png"
@@ -121,7 +121,7 @@ export default function GuichetEntrepreneurContent() {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center gap-2">
               <span className="px-3 py-1.5 rounded-full bg-emerald-500/90 text-white text-xs font-bold backdrop-blur-sm">
                 🏛️ Guichet Unique — ANPI
@@ -223,7 +223,7 @@ export default function GuichetEntrepreneurContent() {
               </p>
 
               {/* Tracking image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[16/10]">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-16/10">
                 <Image
                   src="/images/services/guichet-tracking.png"
                   alt="Suivi de dossier d'immatriculation en ligne"
@@ -231,7 +231,7 @@ export default function GuichetEntrepreneurContent() {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 45vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex gap-2">
                   <span className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-white text-[10px] font-semibold">
                     📊 Suivi en temps réel
@@ -343,7 +343,7 @@ function ImmatriculerPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-8 text-center max-w-lg mx-auto">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-8 text-center max-w-lg mx-auto">
         <FileText size={36} className="mx-auto mb-3 text-gray-400" />
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour démarrer l&apos;immatriculation de votre entreprise.
@@ -590,7 +590,7 @@ function SuiviDossierPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.02] p-6 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/2 p-6 text-center">
         <Search size={32} className="mx-auto mb-3 text-gray-400" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour consulter l&apos;état de vos dossiers.
@@ -689,7 +689,7 @@ function DocumentsPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-8 text-center max-w-lg mx-auto">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-8 text-center max-w-lg mx-auto">
         <ClipboardList size={36} className="mx-auto mb-3 text-gray-400" />
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour gérer vos documents.
@@ -778,7 +778,7 @@ function RendezVousPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-8 text-center max-w-lg mx-auto">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-8 text-center max-w-lg mx-auto">
         <Calendar size={36} className="mx-auto mb-3 text-gray-400" />
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour prendre rendez-vous avec un agent.

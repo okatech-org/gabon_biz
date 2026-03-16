@@ -115,7 +115,7 @@ export default function CGIContent() {
             viewport={{ once: true }}
             variants={fadeIn}
             custom={0}
-            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
+            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-4/3"
           >
             <Image
               src="/images/services/cgi-innovation-hub.png"
@@ -124,7 +124,7 @@ export default function CGIContent() {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <span className="px-3 py-1.5 rounded-full bg-amber-500/90 text-white text-xs font-bold backdrop-blur-sm">
                 📍 FabLab — CGI Libreville
@@ -211,7 +211,7 @@ export default function CGIContent() {
                 prochaines sessions.
               </p>
               {/* Training image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[16/10]">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-16/10">
                 <Image
                   src="/images/services/cgi-training-workshop.png"
                   alt="Atelier de formation numérique au CGI — Data Analytics Workshop"
@@ -219,7 +219,7 @@ export default function CGIContent() {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 45vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex gap-2">
                   <span className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-white text-[10px] font-semibold">
                     🎓 3 420+ formés
@@ -285,8 +285,8 @@ export default function CGIContent() {
               variants={fadeIn}
               custom={0}
             >
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-white/[0.02]">
-                <div className="p-5 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-white/2">
+                <div className="p-5 border-b border-gray-200 dark:border-gray-800 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                       <Wrench size={20} className="text-emerald-600 dark:text-emerald-400" />
@@ -334,8 +334,8 @@ export default function CGIContent() {
               variants={fadeIn}
               custom={1}
             >
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-white/[0.02]">
-                <div className="p-5 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30">
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-white/2">
+                <div className="p-5 border-b border-gray-200 dark:border-gray-800 bg-linear-to-r from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
                       <Video size={20} className="text-purple-600 dark:text-purple-400" />
@@ -378,7 +378,7 @@ export default function CGIContent() {
       </section>
 
       {/* ─── §4: SADA — Smart Africa ─── */}
-      <section className="py-20 bg-gradient-to-br from-amber-600 via-orange-500 to-yellow-600 dark:from-amber-900 dark:via-orange-800 dark:to-yellow-900 text-white relative overflow-hidden">
+      <section className="py-20 bg-linear-to-br from-amber-600 via-orange-500 to-yellow-600 dark:from-amber-900 dark:via-orange-800 dark:to-yellow-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.08),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.06),transparent_60%)]" />
         <div className="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -527,7 +527,7 @@ export default function CGIContent() {
             viewport={{ once: true }}
             variants={fadeIn}
             custom={1}
-            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
+            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-4/3"
           >
             <Image
               src="/images/services/cgi-innovation-hub.png"
@@ -536,7 +536,7 @@ export default function CGIContent() {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
               <span className="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-bold">
                 🌍 3 sites — 7 provinces
@@ -582,7 +582,7 @@ function FormationsPanel({ accentColor }: { accentColor: string }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.02] p-6 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/2 p-6 text-center">
         <GraduationCap size={32} className="mx-auto mb-3 text-gray-400" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour vous inscrire aux formations et événements du CGI.
@@ -895,7 +895,7 @@ function ReservationPanel({ accentColor }: { accentColor: string }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-8 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-8 text-center">
         <Calendar size={36} className="mx-auto mb-3 text-gray-400" />
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour réserver un espace au CGI.

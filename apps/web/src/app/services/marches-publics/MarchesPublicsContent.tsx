@@ -108,7 +108,7 @@ export default function MarchesPublicsContent() {
             viewport={{ once: true }}
             variants={fadeIn}
             custom={0}
-            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
+            className="relative rounded-3xl overflow-hidden shadow-2xl aspect-4/3"
           >
             <Image
               src="/images/services/marches-bidding.png"
@@ -117,7 +117,7 @@ export default function MarchesPublicsContent() {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center gap-2">
               <span className="px-3 py-1.5 rounded-full bg-blue-500/90 text-white text-xs font-bold backdrop-blur-sm">
                 🏛️ Commission des Marchés Publics
@@ -236,7 +236,7 @@ export default function MarchesPublicsContent() {
               </p>
 
               {/* Infrastructure image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[16/10]">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-16/10">
                 <Image
                   src="/images/services/marches-infrastructure.png"
                   alt="Projet d'infrastructure — Suivi numérique des chantiers au Gabon"
@@ -244,7 +244,7 @@ export default function MarchesPublicsContent() {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 45vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex gap-2">
                   <span className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-white text-[10px] font-semibold">
                     🏗️ Infrastructure
@@ -537,7 +537,7 @@ function SoumissionPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.02] p-8 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/2 p-8 text-center">
         <Send size={36} className="mx-auto mb-3 text-gray-400" />
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour déposer une soumission.
@@ -657,7 +657,7 @@ function AlertesPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-6 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-6 text-center">
         <Bell size={32} className="mx-auto mb-3 text-gray-400" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour configurer vos alertes.
@@ -733,7 +733,7 @@ function DashboardPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.02] p-6 text-center">
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/2 p-6 text-center">
         <BarChart3 size={32} className="mx-auto mb-3 text-gray-400" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Connectez-vous pour voir vos soumissions.

@@ -31,26 +31,26 @@ export function getTimeGreeting(): string {
   return 'Bonsoir';
 }
 
-/** Build voice greeting text — varied per time period */
+/** Build voice greeting text — varied per time period, formal (vouvoiement) */
 export function getVocalGreeting(): string {
   const greetings: Record<string, string[]> = {
     morning: [
-      "Bonjour ! Je suis iAsted, ton assistant IA. Comment puis-je t'aider ce matin ?",
-      "Bonjour ! Que puis-je faire pour toi aujourd'hui ?",
-      "Bonjour et bienvenue sur GABON BIZ ! Je suis iAsted, à ton service.",
-      "Salut ! C'est iAsted. Dis-moi ce dont tu as besoin.",
+      'Bonjour ! Je suis iAsted, votre assistant IA sur GABON BIZ. Comment puis-je vous aider ce matin ?',
+      "Bonjour ! Que puis-je faire pour vous aujourd'hui ?",
+      'Bonjour et bienvenue sur GABON BIZ ! Je suis iAsted, à votre service.',
+      "Bonjour ! C'est iAsted. Dites-moi ce dont vous avez besoin.",
     ],
     afternoon: [
-      "Bon après-midi ! Je suis iAsted, ton assistant. Comment puis-je t'aider ?",
-      "Hello ! iAsted à ton service. Que cherches-tu ?",
-      "Bon après-midi ! Dis-moi comment je peux t'assister.",
-      "Salut ! Prêt à t'aider. Qu'est-ce que je peux faire pour toi ?",
+      'Bon après-midi ! Je suis iAsted, votre assistant. Comment puis-je vous aider ?',
+      'Bon après-midi ! iAsted à votre service. Que recherchez-vous ?',
+      'Bon après-midi ! Dites-moi comment je peux vous assister.',
+      "Bon après-midi ! Je suis prêt à vous aider. Qu'est-ce que je peux faire pour vous ?",
     ],
     evening: [
-      "Bonsoir ! Je suis iAsted, votre assistant IA gabonais. Comment puis-je vous aider ?",
-      "Bonsoir ! Qu'est-ce que je peux faire pour toi ce soir ?",
-      "Bonsoir et bienvenue ! iAsted à ton écoute.",
-      "Bonsoir ! Dis-moi ce dont tu as besoin, je suis là pour ça.",
+      'Bonsoir ! Je suis iAsted, votre assistant IA gabonais. Comment puis-je vous aider ?',
+      "Bonsoir ! Qu'est-ce que je peux faire pour vous ce soir ?",
+      'Bonsoir et bienvenue ! iAsted à votre écoute.',
+      'Bonsoir ! Dites-moi ce dont vous avez besoin, je suis là pour ça.',
     ],
   };
   const period = getTimePeriod();

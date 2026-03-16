@@ -239,15 +239,15 @@ function getFallbackResponse(message: string): string {
   const q = message.toLowerCase();
 
   if (q.includes('créer') && (q.includes('entreprise') || q.includes('société'))) {
-    return `Super question ! 🏢 Créer ton entreprise sur GABON BIZ, c'est **100% en ligne et en 48h** :
+    return `Excellente question ! 🏢 Créer votre entreprise sur GABON BIZ, c'est **100% en ligne et en 48h** :
 
 - **EI** : ~50 000 XAF
 - **SARL** : ~150 000 XAF  
 - **SA** : ~300 000 XAF
 
-Il te faut : CNIE, justificatif de domicile, statuts et PV d'AG.
+Il vous faut : CNIE, justificatif de domicile, statuts et PV d'AG.
 
-👉 [Lance-toi sur le Guichet Entrepreneur](/services/guichet-entrepreneur) !`;
+👉 [Lancez-vous sur le Guichet Entrepreneur](/services/guichet-entrepreneur) !`;
   }
 
   if (
@@ -257,11 +257,11 @@ Il te faut : CNIE, justificatif de domicile, statuts et PV d'AG.
   ) {
     return `Il y a **500+ marchés publics** par an sur GABON BIZ, soit 45 milliards XAF ! 📋
 
-Tu peux chercher par secteur, budget ou région, et activer les **alertes J-7** pour ne rien rater.
+Vous pouvez chercher par secteur, budget ou région, et activer les **alertes J-7** pour ne rien rater.
 
 Condition : avoir un RCCM valide.
 
-👉 [Explore les marchés publics](/services/marches-publics)`;
+👉 [Explorez les marchés publics](/services/marches-publics)`;
   }
 
   if (
@@ -272,12 +272,12 @@ Condition : avoir un RCCM valide.
   ) {
     return `La SING, c'est le **1er incubateur 100% numérique de la CEMAC** ! 🚀
 
-280+ startups incubées, 76% de taux de survie. Tu as le choix entre 7 programmes :
+280+ startups incubées, 76% de taux de survie. Vous avez le choix entre 7 programmes :
 - **Cohorte Innovation 4.0** (7 places restantes, Avril 2026)
 - **VISA Startup** (label officiel MENUDI)
 - **SING Capital** (financement 500K à 15M FCFA)
 
-👉 [Découvre les programmes](/services/incubateur)`;
+👉 [Découvrez les programmes](/services/incubateur)`;
   }
 
   if (q.includes('investir') || q.includes('investissement')) {
@@ -287,7 +287,7 @@ Condition : avoir un RCCM valide.
 - FCFA arrimé à l'Euro (zéro risque de change)
 - 3 ans d'exonération d'IS
 
-👉 [Explore les opportunités](/services/investir)`;
+👉 [Explorez les opportunités](/services/investir)`;
   }
 
   if (q.includes('cgi') || q.includes('formation') || q.includes('sada') || q.includes('fablab')) {
@@ -295,17 +295,17 @@ Condition : avoir un RCCM valide.
 
 3 420+ personnes formées, 1 247 certifiés internationaux. Les 4 pôles : Acculturation, Certification SADA, FabLab et MediaLab.
 
-👉 [Découvre le CGI](/services/cgi)`;
+👉 [Découvrez le CGI](/services/cgi)`;
   }
 
-  return `Hey ! 👋 Je suis **iAsted**, ton assistant IA sur GABON BIZ.
+  return `Bonjour ! 👋 Je suis **iAsted**, votre assistant IA sur GABON BIZ.
 
-Je peux t'aider à :
-- 🏢 Créer ton entreprise
+Je peux vous aider à :
+- 🏢 Créer votre entreprise
 - 📋 Trouver des marchés publics
 - 🚀 Candidater à la SING
 - 💰 Investir au Gabon
 - 🎓 Accéder aux formations CGI
 
-Dis-moi ce dont tu as besoin !`;
+Dites-moi ce dont vous avez besoin !`;
 }

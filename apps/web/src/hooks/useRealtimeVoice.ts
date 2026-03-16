@@ -78,27 +78,44 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     frameRef.current = requestAnimationFrame(updateAudioLevel);
   }, []);
 
+  // ─── Lazy playback AudioContext (Fix #1/#6 — mobile audio unlock) ──
+  const getPlaybackContext = useCallback((): AudioContext | null => {
+    try {
+      if (!playbackContextRef.current || playbackContextRef.current.state === 'closed') {
+        playbackContextRef.current = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
+      }
+      if (playbackContextRef.current.state === 'suspended') {
+        playbackContextRef.current.resume().catch(() => {});
+      }
+      return playbackContextRef.current;
+    } catch (e) {
+      console.error('[iAsted] [Realtime] Failed to create playback AudioContext:', e);
+      return null;
+    }
+  }, []);
+
   // ─── Audio playback (PCM16 queue) ──────────────────────────────
   const playNextChunk = useCallback(() => {
-    if (!playbackContextRef.current || playbackQueueRef.current.length === 0) {
+    const ctx = getPlaybackContext();
+    if (!ctx || playbackQueueRef.current.length === 0) {
       isPlayingRef.current = false;
       currentSourceRef.current = null;
       return;
     }
     isPlayingRef.current = true;
     const chunk = playbackQueueRef.current.shift()!;
-    const buffer = playbackContextRef.current.createBuffer(1, chunk.length, TARGET_SAMPLE_RATE);
+    const buffer = ctx.createBuffer(1, chunk.length, TARGET_SAMPLE_RATE);
     buffer.getChannelData(0).set(chunk);
-    const source = playbackContextRef.current.createBufferSource();
+    const source = ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(playbackContextRef.current.destination);
+    source.connect(ctx.destination);
     source.onended = () => {
       if (currentSourceRef.current === source) currentSourceRef.current = null;
       playNextChunk();
     };
     currentSourceRef.current = source;
     source.start();
-  }, []);
+  }, [getPlaybackContext]);
 
   const enqueuePlayback = useCallback(
     (float32Data: Float32Array) => {
@@ -325,7 +342,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
         const err = await tokenRes.json().catch(() => ({}));
         throw new Error((err as Record<string, string>).error || `HTTP ${tokenRes.status}`);
       }
-      const { client_secret } = await tokenRes.json();
+      const { client_secret, session_config } = await tokenRes.json();
       const ephemeralKey = client_secret?.value;
       if (!ephemeralKey) throw new Error('No ephemeral key received');
 
@@ -352,8 +369,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       const source = audioCtx.createMediaStreamSource(stream);
       source.connect(analyser);
 
-      // 4. Set up playback context
-      playbackContextRef.current = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
+      // 4. Playback context is now created lazily in getPlaybackContext()
+      //    to avoid iOS/Android blocking audio created outside user gesture
 
       // 5. Open WebSocket to OpenAI Realtime API
       const ws = new WebSocket(REALTIME_URL, [
@@ -365,6 +382,25 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       ws.onopen = async () => {
         console.log('[iAsted] [Realtime] WebSocket connected');
         setIsConnected(true);
+
+        // ★ Fix #2: Send session.update to configure the model
+        // The ephemeral token session may not inherit all config on mobile
+        if (session_config) {
+          try {
+            ws.send(
+              JSON.stringify({
+                type: 'session.update',
+                session: session_config,
+              }),
+            );
+            console.log('[iAsted] [Realtime] session.update sent');
+          } catch (e) {
+            console.warn('[iAsted] [Realtime] Failed to send session.update:', e);
+          }
+        }
+
+        // ★ Fix #6: Pre-warm playback AudioContext now (inside user gesture chain)
+        getPlaybackContext();
 
         // 6. Set up AudioWorklet for mic streaming
         try {
@@ -478,7 +514,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     } finally {
       connectingRef.current = false;
     }
-  }, [handleRealtimeEvent, updateAudioLevel]);
+  }, [handleRealtimeEvent, updateAudioLevel, getPlaybackContext]);
 
   // ─── Disconnect ────────────────────────────────────────────────
   const disconnect = useCallback(() => {

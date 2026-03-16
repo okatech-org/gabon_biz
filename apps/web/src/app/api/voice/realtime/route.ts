@@ -71,9 +71,30 @@ export async function POST(request: NextRequest) {
 
     const session = await response.json();
 
+    // Return session config so the client can send session.update after WS connect
+    // This is critical for mobile — the WS doesn't always inherit the session config
+    const sessionConfig = {
+      instructions: getIAstedPrompt('vocal'),
+      voice: 'echo',
+      input_audio_format: 'pcm16',
+      output_audio_format: 'pcm16',
+      input_audio_transcription: { model: 'gpt-4o-transcribe' },
+      turn_detection: {
+        type: 'server_vad',
+        threshold: 0.5,
+        prefix_padding_ms: 300,
+        silence_duration_ms: 500,
+        create_response: true,
+      },
+      tools,
+      temperature: 0.8,
+      max_response_output_tokens: 1024,
+    };
+
     return NextResponse.json({
       client_secret: session.client_secret,
       session_id: session.id,
+      session_config: sessionConfig,
     });
   } catch (error) {
     console.error('[Realtime] Server error:', error);

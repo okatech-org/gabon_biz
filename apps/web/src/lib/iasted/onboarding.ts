@@ -13,7 +13,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 1,
     question:
-      'Bienvenue sur GABON BIZ ! 👋 Je suis **iAsted**, ton assistant IA. Dis-moi, tu es plutôt… ?',
+      'Bienvenue sur GABON BIZ ! 👋 Je suis **iAsted**, votre assistant IA. Dites-moi, vous êtes plutôt… ?',
     options: [
       { label: 'Entrepreneur', value: 'entrepreneur', emoji: '🏢' },
       { label: 'Investisseur', value: 'investisseur', emoji: '💰' },
@@ -25,7 +25,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     id: 2,
-    question: "Parfait ! Et aujourd'hui, tu cherches à… ?",
+    question: "Parfait ! Et aujourd'hui, vous cherchez à… ?",
     options: [
       { label: 'Créer une entreprise', value: 'creer', emoji: '📝' },
       { label: 'Trouver des marchés publics', value: 'marches', emoji: '📋' },
@@ -48,7 +48,7 @@ export function getOnboardingResult(
     creer: {
       path: '/services/guichet-entrepreneur',
       label: '🏢 Aller au Guichet Entrepreneur',
-      tip: 'Créer ton entreprise en 48h max, 100% en ligne ! EI à 50 000 XAF, SARL à 150 000 XAF.',
+      tip: 'Créer votre entreprise en 48h max, 100% en ligne ! EI à 50 000 XAF, SARL à 150 000 XAF.',
     },
     marches: {
       path: '/services/marches-publics',
@@ -73,7 +73,7 @@ export function getOnboardingResult(
     explorer: {
       path: '/',
       label: '🗺️ Explorer GABON BIZ',
-      tip: 'GABON BIZ regroupe 8 services numériques. Je te fais faire le tour ?',
+      tip: 'GABON BIZ regroupe 8 services numériques. Je vous fais faire le tour ?',
     },
   };
 
@@ -91,7 +91,7 @@ export function getOnboardingResult(
   const rolePrefix = roleLabels[role] || '';
 
   return {
-    message: `${rolePrefix}, voilà ce que je te recommande :\n\n💡 **${route.tip}**\n\nJe peux t'aider à naviguer, rechercher des informations, comparer des options, calculer des coûts, et bien plus. Demande-moi n'importe quoi ! 🤖`,
+    message: `${rolePrefix}, voilà ce que je vous recommande :\n\n💡 **${route.tip}**\n\nJe peux vous aider à naviguer, rechercher des informations, comparer des options, calculer des coûts, et bien plus. Demandez-moi n'importe quoi ! 🤖`,
     suggestedPath: route.path,
     suggestedLabel: route.label,
   };
