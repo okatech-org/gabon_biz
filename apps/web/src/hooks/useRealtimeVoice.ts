@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { VoiceState, UseRealtimeVoiceReturn } from '@/types/iasted';
+import type { LocalCommandResult } from '@/hooks/useLocalCommandRouter';
 import {
   floatTo16BitPCM,
   base64EncodeAudio,
@@ -28,10 +29,12 @@ interface UseRealtimeVoiceOptions {
   onResponse: (text: string) => void;
   /** Whether voice TTS output is enabled */
   voiceEnabled: boolean;
-  /** Try to match and execute a local command. Returns true if handled. */
-  tryLocalCommand?: (transcript: string) => boolean;
+  /** Try to match and execute a local command. Returns result with confirmation. */
+  tryLocalCommand?: (transcript: string) => LocalCommandResult;
   /** Called when GPT returns a function call (e.g. navigate, search) */
   onFunctionCall?: (name: string, args: Record<string, string>) => void;
+  /** Called when a local command has a vocal confirmation to speak */
+  onLocalCommandConfirm?: (text: string) => void;
 }
 
 export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeVoiceReturn {
@@ -58,6 +61,8 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   const pendingFnCallRef = useRef<{ name: string; arguments: string; call_id: string } | null>(
     null,
   );
+  // Track whether a GPT response is actively in-flight (for safe cancellation)
+  const activeResponseRef = useRef(false);
 
   // Audio playback queue
   const playbackQueueRef = useRef<Float32Array[]>([]);
@@ -172,12 +177,17 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
             optionsRef.current.onTranscript(userTranscript);
 
             // Try local command — if matched, CANCEL the Realtime model's response
-            if (optionsRef.current.tryLocalCommand?.(userTranscript)) {
+            const localResult = optionsRef.current.tryLocalCommand?.(userTranscript);
+            if (localResult?.matched) {
               console.log('[iAsted] [Realtime] Local command handled — cancelling AI response');
 
-              // 1. Cancel any in-flight Realtime model response
-              if (wsRef.current?.readyState === WebSocket.OPEN) {
-                wsRef.current.send(JSON.stringify({ type: 'response.cancel' }));
+              // 1. Cancel any in-flight Realtime model response (only if one is active)
+              if (activeResponseRef.current && wsRef.current?.readyState === WebSocket.OPEN) {
+                try {
+                  wsRef.current.send(JSON.stringify({ type: 'response.cancel' }));
+                } catch {
+                  /* ignore send errors */
+                }
               }
 
               // 2. Stop current audio playback immediately
@@ -191,8 +201,14 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
               }
               playbackQueueRef.current = [];
               isPlayingRef.current = false;
+              activeResponseRef.current = false;
 
-              // 3. Reset state to listening
+              // 3. If the command has a vocal confirmation, trigger it
+              if (localResult.confirmationText && !localResult.silent) {
+                optionsRef.current.onLocalCommandConfirm?.(localResult.confirmationText);
+              }
+
+              // 4. Reset state to listening
               setVoiceState('listening');
             }
           } else if (userTranscript) {
@@ -205,6 +221,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
         case 'response.created':
           setVoiceState('speaking');
           responseTextRef.current = '';
+          activeResponseRef.current = true;
           break;
 
         // Audio chunk from AI
@@ -254,15 +271,36 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
           const fnCall = pendingFnCallRef.current;
           if (fnCall) {
             const fnName = fnCall.name || (event.name as string) || '';
-            const fnArgsStr = (event.arguments as string) || fnCall.arguments;
+            // Prefer the accumulated args, fall back to event.arguments
+            const fnArgsStr = fnCall.arguments || (event.arguments as string) || '{}';
             console.log('[iAsted] [Realtime] Function call:', fnName, fnArgsStr);
 
+            let args: Record<string, string> = {};
             try {
-              const args = JSON.parse(fnArgsStr || '{}');
-              optionsRef.current.onFunctionCall?.(fnName, args);
+              args = JSON.parse(fnArgsStr);
+            } catch (e) {
+              // Truncated JSON — try to recover by closing the string/object
+              console.warn(
+                '[iAsted] [Realtime] Function call parse error, attempting recovery:',
+                e,
+              );
+              try {
+                // Common truncation: {"action": "set_theme_dark   (missing closing quote/brace)
+                const recovered = fnArgsStr.replace(/,\s*$/, '') + '"}';
+                args = JSON.parse(recovered);
+                console.log('[iAsted] [Realtime] Recovered args:', args);
+              } catch {
+                console.error(
+                  '[iAsted] [Realtime] Function call recovery failed, using empty args',
+                );
+              }
+            }
 
-              // Send enriched function call output back to the model
-              if (wsRef.current?.readyState === WebSocket.OPEN && fnCall.call_id) {
+            optionsRef.current.onFunctionCall?.(fnName, args);
+
+            // Send enriched function call output back to the model
+            if (wsRef.current?.readyState === WebSocket.OPEN && fnCall.call_id) {
+              try {
                 const outputDetail = {
                   success: true,
                   action: fnName,
@@ -272,7 +310,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
                       : fnName === 'search_ecosystem'
                         ? `Recherche lancée pour "${args.query || ''}"`
                         : fnName === 'control_ui'
-                          ? `Action UI exécutée : ${args.action || ''}`
+                          ? `Action UI exécutée avec succès : ${args.action || ''} ${args.value || ''}`
                           : `Fonction ${fnName} exécutée avec succès`,
                 };
                 wsRef.current.send(
@@ -291,9 +329,9 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
                     type: 'response.create',
                   }),
                 );
+              } catch {
+                console.warn('[iAsted] [Realtime] Failed to send function call output');
               }
-            } catch (e) {
-              console.error('[iAsted] [Realtime] Function call parse error:', e);
             }
             pendingFnCallRef.current = null;
           }
@@ -302,6 +340,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
         // Response complete — return to listening
         case 'response.done':
+          activeResponseRef.current = false;
           setVoiceState('listening');
           break;
 
@@ -311,9 +350,16 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
           // Stale tool-call IDs after reconnect are benign — downgrade to warn
           if (errorMsg.includes('not found in conversation')) {
             console.warn('[iAsted] [Realtime] Ignored stale tool-call error:', errorMsg);
+          } else if (
+            errorMsg.includes('Cancellation failed') ||
+            errorMsg.includes('no active response')
+          ) {
+            // Benign: cancel sent when no response was active
+            console.debug('[iAsted] [Realtime] Ignored cancellation timing error');
           } else {
             console.error('[iAsted] [Realtime] Error:', errorMsg);
           }
+          activeResponseRef.current = false;
           break;
         }
 

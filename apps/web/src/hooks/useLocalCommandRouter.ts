@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/lib/theme-provider';
 import { useI18n } from '@/lib/i18n/i18nContext';
-import { matchCommand, SILENT_ACTIONS } from '@/lib/iasted/commands';
+import { matchCommand } from '@/lib/iasted/commands';
 import type { CommandMatch } from '@/types/iasted';
 import type { Lang } from '@/lib/i18n/translations';
 
@@ -16,11 +16,32 @@ interface LocalCommandActions {
   setVoiceEnabled: (enabled: boolean) => void;
 }
 
+/** Map of language codes to display names for vocal confirmation */
+const LANG_NAMES: Record<string, string> = {
+  fr: 'français',
+  en: 'anglais',
+  es: 'espagnol',
+  ar: 'arabe',
+  zh: 'chinois',
+  ru: 'russe',
+  ja: 'japonais',
+};
+
+/** Result of executing a local command */
+export interface LocalCommandResult {
+  /** Whether a command was matched and executed */
+  matched: boolean;
+  /** Confirmation message for vocal/visual feedback */
+  confirmationText?: string;
+  /** Whether this command is silent (no vocal feedback expected) */
+  silent?: boolean;
+}
+
 /**
  * Hook that matches voice transcripts against 60+ local commands
  * and executes them directly (zero cost, no AI call needed).
  *
- * Returns `tryLocalCommand` which returns true if a local command was matched and executed.
+ * Returns `tryLocalCommand` which returns a result object with match status and confirmation text.
  */
 export function useLocalCommandRouter(actions: LocalCommandActions) {
   const router = useRouter();
@@ -28,7 +49,7 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
   const { setLang } = useI18n();
 
   const executeCommand = useCallback(
-    (match: CommandMatch) => {
+    (match: CommandMatch): LocalCommandResult => {
       console.log(
         `[iAsted] [local] Executing: ${match.action}`,
         match.params,
@@ -41,43 +62,77 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
           const path = match.params.path || '/';
           const section = match.params.section || '';
           router.push(path + section);
-          break;
+          return { matched: true, confirmationText: undefined, silent: true };
         }
 
         // ── Theme ──
-        case 'setTheme':
-          setTheme(match.params.theme as 'light' | 'dark');
-          break;
-        case 'toggleTheme':
+        case 'setTheme': {
+          const theme = match.params.theme as 'light' | 'dark';
+          setTheme(theme);
+          const label = theme === 'dark' ? 'sombre' : 'clair';
+          console.log(`[iAsted] [local] Theme set to: ${theme}`);
+          return {
+            matched: true,
+            confirmationText: `Le mode ${label} est activé.`,
+            silent: match.silent,
+          };
+        }
+        case 'toggleTheme': {
           toggleTheme();
-          break;
+          console.log('[iAsted] [local] Theme toggled');
+          return {
+            matched: true,
+            confirmationText: 'Le thème a été changé.',
+            silent: match.silent,
+          };
+        }
 
         // ── Language ──
-        case 'setLocale':
-          setLang(match.params.lang as Lang);
-          break;
+        case 'setLocale': {
+          const lang = match.params.lang as Lang;
+          setLang(lang);
+          const langName = LANG_NAMES[lang] || lang;
+          console.log(`[iAsted] [local] Locale set to: ${lang}`);
+          return {
+            matched: true,
+            confirmationText: `L'interface est maintenant en ${langName}.`,
+            silent: match.silent,
+          };
+        }
 
         // ── Voice ──
         case 'muteVoice':
           actions.setVoiceEnabled(false);
-          break;
+          return {
+            matched: true,
+            confirmationText: 'La voix est coupée.',
+            silent: false,
+          };
         case 'unmuteVoice':
           actions.setVoiceEnabled(true);
-          break;
+          return {
+            matched: true,
+            confirmationText: 'La voix est activée.',
+            silent: false,
+          };
         case 'changeVoice':
           // Voice change handled at the component level
-          break;
+          return { matched: true, confirmationText: undefined, silent: true };
 
         // ── Chat ──
         case 'openChat':
           actions.openChat();
-          break;
+          return { matched: true, confirmationText: undefined, silent: true };
         case 'closeChat':
           actions.closeChat();
-          break;
+          return { matched: true, confirmationText: undefined, silent: true };
         case 'clearMessages':
           actions.clearMessages();
-          break;
+          return {
+            matched: true,
+            confirmationText: 'La conversation a été effacée.',
+            silent: false,
+          };
 
         // ── Disconnect (with farewell via OpenAI TTS for voice consistency) ──
         case 'disconnectVoice': {
@@ -99,8 +154,11 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
               }
             })
             .catch(() => actions.disconnectVoice());
-          break;
+          return { matched: true, confirmationText: undefined, silent: true };
         }
+
+        default:
+          return { matched: false };
       }
     },
     [router, setTheme, toggleTheme, setLang, actions],
@@ -108,17 +166,14 @@ export function useLocalCommandRouter(actions: LocalCommandActions) {
 
   /**
    * Try to match and execute a local command.
-   * @returns true if a command was matched and executed, false otherwise
+   * @returns LocalCommandResult with match status and optional confirmation text
    */
   const tryLocalCommand = useCallback(
-    (transcript: string): boolean => {
+    (transcript: string): LocalCommandResult => {
       const match = matchCommand(transcript);
-      if (!match) return false;
+      if (!match) return { matched: false };
 
-      executeCommand(match);
-
-      // Always return true when a command was matched — prevents sending to GPT
-      return true;
+      return executeCommand(match);
     },
     [executeCommand],
   );

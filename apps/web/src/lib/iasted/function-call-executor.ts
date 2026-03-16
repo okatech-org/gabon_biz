@@ -90,17 +90,35 @@ export function executeFunctionCall(
       const action = args.action;
       switch (action) {
         case 'set_theme_dark':
+          console.log('[iAsted] [functionCall] Calling setTheme("dark")');
           uiActions.setTheme?.('dark');
           return { executed: true, displayText: '🌙 Thème sombre activé' };
         case 'set_theme_light':
+          console.log('[iAsted] [functionCall] Calling setTheme("light")');
           uiActions.setTheme?.('light');
           return { executed: true, displayText: '☀️ Thème clair activé' };
         case 'toggle_theme':
+          console.log('[iAsted] [functionCall] Calling toggleTheme()');
           uiActions.toggleTheme?.();
           return { executed: true, displayText: '🔄 Thème basculé' };
-        case 'set_locale':
-          uiActions.setLang?.(args.value || 'fr');
-          return { executed: true, displayText: `🌐 Langue → ${args.value || 'fr'}` };
+        case 'set_locale': {
+          const locale = args.value || 'fr';
+          console.log(`[iAsted] [functionCall] Calling setLang("${locale}")`);
+          uiActions.setLang?.(locale);
+          const langNames: Record<string, string> = {
+            fr: 'Français',
+            en: 'English',
+            es: 'Español',
+            ar: 'العربية',
+            zh: '中文',
+            ru: 'Русский',
+            ja: '日本語',
+          };
+          return {
+            executed: true,
+            displayText: `🌐 Langue de l'interface → ${langNames[locale] || locale}`,
+          };
+        }
         case 'close_chat':
           uiActions.closeChat?.();
           return { executed: true };

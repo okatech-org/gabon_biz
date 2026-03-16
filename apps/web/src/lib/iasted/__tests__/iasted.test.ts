@@ -132,12 +132,108 @@ describe('matchCommand', () => {
     expect(result?.params?.path).toBe('/services/marches-publics');
   });
 
-  it('matches theme toggle', () => {
+  // ── Theme commands (expanded patterns for voice transcription) ──
+
+  it('matches "mode sombre"', () => {
     const result = matchCommand('mode sombre');
     expect(result).not.toBeNull();
     expect(result?.action).toBe('setTheme');
     expect(result?.params?.theme).toBe('dark');
   });
+
+  it('matches "le mode sombre" (voice transcript with article)', () => {
+    const result = matchCommand('le mode sombre');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('dark');
+  });
+
+  it('matches "mets le mode sombre"', () => {
+    const result = matchCommand('mets le mode sombre');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('dark');
+  });
+
+  it('matches "active le mode sombre"', () => {
+    const result = matchCommand('active le mode sombre');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('dark');
+  });
+
+  it('matches "passe en mode sombre"', () => {
+    const result = matchCommand('passe en mode sombre');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('dark');
+  });
+
+  it('matches "dark mode" (English)', () => {
+    const result = matchCommand('dark mode');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('dark');
+  });
+
+  it('matches "mode clair"', () => {
+    const result = matchCommand('mode clair');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('light');
+  });
+
+  it('matches "passe en mode clair"', () => {
+    const result = matchCommand('passe en mode clair');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('light');
+  });
+
+  it('matches "light mode" (English)', () => {
+    const result = matchCommand('light mode');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setTheme');
+    expect(result?.params?.theme).toBe('light');
+  });
+
+  it('matches "change le thème"', () => {
+    const result = matchCommand('change le thème');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('toggleTheme');
+  });
+
+  // ── Language commands (interface locale) ──
+
+  it('matches "en anglais"', () => {
+    const result = matchCommand('en anglais');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setLocale');
+    expect(result?.params?.lang).toBe('en');
+  });
+
+  it('matches "mets le site en anglais"', () => {
+    const result = matchCommand('mets le site en anglais');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setLocale');
+    expect(result?.params?.lang).toBe('en');
+  });
+
+  it('matches "change la langue en français"', () => {
+    const result = matchCommand('change la langue en français');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setLocale');
+    expect(result?.params?.lang).toBe('fr');
+  });
+
+  it('matches "switch to english"', () => {
+    const result = matchCommand('switch to english');
+    expect(result).not.toBeNull();
+    expect(result?.action).toBe('setLocale');
+    expect(result?.params?.lang).toBe('en');
+  });
+
+  // ── Disconnect commands ──
 
   it('matches disconnect commands', () => {
     const result = matchCommand('stop');

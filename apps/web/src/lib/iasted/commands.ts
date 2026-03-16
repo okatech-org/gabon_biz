@@ -487,101 +487,167 @@ export const GABON_BIZ_COMMANDS: LocalCommand[] = [
   // ═══ THEME ════════════════════════════════════════════════════
 
   {
-    patterns: [/mode\s+sombre/i, /th[èe]me\s+(sombre|noir)/i],
+    patterns: [
+      /mode\s+sombre/i,
+      /th[èe]me\s+(sombre|noir|dark)/i,
+      /met(s|tre)?\s+(le\s+)?(mode|th[èe]me)\s+(sombre|noir)/i,
+      /active(r|z)?\s+(le\s+)?(mode|th[èe]me)\s+(sombre|noir)/i,
+      /passe(r|z)?\s+(en\s+)?(mode\s+)?(sombre|noir)/i,
+      /^le\s+mode\s+sombre$/i,
+      /dark\s*mode/i,
+      /activer?\s+le\s+dark/i,
+    ],
     keywords: [
       ['mode', 'sombre'],
       ['thème', 'sombre'],
       ['thème', 'noir'],
+      ['dark', 'mode'],
+      ['activer', 'sombre'],
     ],
     action: 'setTheme',
     params: { theme: 'dark' },
-    silent: true,
-    confidence: 0.9,
+    silent: false,
+    confidence: 0.95,
   },
 
   {
-    patterns: [/mode\s+clair/i, /th[èe]me\s+clair/i],
+    patterns: [
+      /mode\s+clair/i,
+      /th[èe]me\s+(clair|light)/i,
+      /met(s|tre)?\s+(le\s+)?(mode|th[èe]me)\s+(clair|light)/i,
+      /active(r|z)?\s+(le\s+)?(mode|th[èe]me)\s+(clair|light)/i,
+      /passe(r|z)?\s+(en\s+)?(mode\s+)?(clair|light)/i,
+      /^le\s+mode\s+clair$/i,
+      /light\s*mode/i,
+      /activer?\s+le\s+light/i,
+    ],
     keywords: [
       ['mode', 'clair'],
       ['thème', 'clair'],
+      ['light', 'mode'],
+      ['activer', 'clair'],
     ],
     action: 'setTheme',
     params: { theme: 'light' },
-    silent: true,
-    confidence: 0.9,
+    silent: false,
+    confidence: 0.95,
   },
 
   {
-    patterns: [/change\s+(le\s+)?th[èe]me/i],
-    keywords: [['change', 'thème']],
+    patterns: [
+      /change(r|z)?\s+(le\s+)?th[èe]me/i,
+      /bascule(r|z)?\s+(le\s+)?th[èe]me/i,
+      /toggle\s*theme/i,
+    ],
+    keywords: [
+      ['change', 'thème'],
+      ['bascule', 'thème'],
+    ],
     action: 'toggleTheme',
     params: {},
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
-  // ═══ LANGUAGE ═════════════════════════════════════════════════
+  // ═══ INTERFACE LANGUAGE (changes the website's displayed language) ════
 
   {
-    patterns: [/en\s+anglais/i, /switch\s+to\s+english/i],
-    keywords: [['anglais'], ['english']],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?anglais/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?anglais/i,
+      /passe(r|z)?\s+(le\s+site\s+|l'?\s*interface\s+)?(en\s+)?anglais/i,
+      /switch\s+to\s+english/i,
+      /english\s+please/i,
+      /^en\s+anglais$/i,
+      /interface\s+(en\s+)?anglais/i,
+      /langue\s+anglais/i,
+    ],
+    keywords: [['anglais'], ['english'], ['langue', 'anglais']],
     action: 'setLocale',
     params: { lang: 'en' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+fran[çc]ais/i],
-    keywords: [['français']],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?fran[çc]ais/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?fran[çc]ais/i,
+      /passe(r|z)?\s+(le\s+site\s+|l'?\s*interface\s+)?(en\s+)?fran[çc]ais/i,
+      /^en\s+fran[çc]ais$/i,
+      /interface\s+(en\s+)?fran[çc]ais/i,
+      /langue\s+fran[çc]ais/i,
+    ],
+    keywords: [['français'], ['langue', 'français']],
     action: 'setLocale',
     params: { lang: 'fr' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+espagnol/i],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?espagnol/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?espagnol/i,
+      /passe(r|z)?\s+(le\s+site\s+|l'?\s*interface\s+)?(en\s+)?espagnol/i,
+      /^en\s+espagnol$/i,
+    ],
     keywords: [['espagnol']],
     action: 'setLocale',
     params: { lang: 'es' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+arabe/i],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?arabe/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?arabe/i,
+      /^en\s+arabe$/i,
+    ],
     keywords: [['arabe']],
     action: 'setLocale',
     params: { lang: 'ar' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+chinois/i],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?chinois/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?chinois/i,
+      /^en\s+chinois$/i,
+    ],
     keywords: [['chinois']],
     action: 'setLocale',
     params: { lang: 'zh' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+russe/i],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?russe/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?russe/i,
+      /^en\s+russe$/i,
+    ],
     keywords: [['russe']],
     action: 'setLocale',
     params: { lang: 'ru' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 
   {
-    patterns: [/en\s+japonais/i],
+    patterns: [
+      /met(s|tre)?\s+(le\s+)?(site|interface|page|la\s+langue)\s+(en\s+)?japonais/i,
+      /change(r|z)?\s+(la\s+)?langue\s+(du\s+site\s+)?(en\s+)?japonais/i,
+      /^en\s+japonais$/i,
+    ],
     keywords: [['japonais']],
     action: 'setLocale',
     params: { lang: 'ja' },
-    silent: true,
+    silent: false,
     confidence: 0.9,
   },
 

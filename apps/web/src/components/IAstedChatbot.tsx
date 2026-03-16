@@ -253,6 +253,33 @@ export function IAstedChatbot() {
     tryLocalCommandRef.current = tryLocalCommand;
   }, [tryLocalCommand]);
 
+  // ─── TTS for local command vocal confirmations ───
+  const speakLocalConfirmation = useCallback(
+    async (text: string) => {
+      if (!voiceEnabled) return;
+      try {
+        const response = await fetch('/api/voice/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, voice: 'echo' }),
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const audio = sharedAudioEl || new Audio();
+          audio.src = url;
+          audio.volume = 1.0;
+          audio.onended = () => URL.revokeObjectURL(url);
+          audio.onerror = () => URL.revokeObjectURL(url);
+          audio.play().catch(() => URL.revokeObjectURL(url));
+        }
+      } catch {
+        console.warn('[iAsted] [TTS] Local confirmation TTS failed');
+      }
+    },
+    [voiceEnabled],
+  );
+
   // ─── Realtime Voice Hook ───
   const voice = useRealtimeVoice({
     voiceEnabled,
@@ -270,6 +297,7 @@ export function IAstedChatbot() {
       }
     },
     tryLocalCommand: (text) => tryLocalCommandRef.current(text),
+    onLocalCommandConfirm: (text) => speakLocalConfirmation(text),
     onFunctionCall: (name, args) => {
       const result = executeFunctionCall(name, args, router, {
         setTheme,
@@ -309,14 +337,14 @@ export function IAstedChatbot() {
 
     // ── Local command interception for typed messages ──
     // Prevents "mode sombre", "en anglais", etc. from going to GPT
-    const localMatch = tryLocalCommand(messageText);
-    if (localMatch) {
+    const localResult = tryLocalCommand(messageText);
+    if (localResult.matched) {
       setInput('');
       setHasInteracted(true);
       setMessages((prev) => [
         ...prev,
         { role: 'user', content: messageText },
-        { role: 'model', content: '✅ Commande exécutée.' },
+        { role: 'model', content: localResult.confirmationText || '✅ Commande exécutée.' },
       ]);
       return;
     }
