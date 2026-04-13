@@ -17,7 +17,9 @@ export async function GET(request: NextRequest) {
   const sessionValue = request.cookies.get('__session')?.value;
 
   if (!sessionValue) {
-    return NextResponse.json({ user: null }, { status: 401 });
+    // Return 200 with null user (not 401) to avoid browser console errors.
+    // This endpoint is a "check" not a "protected resource".
+    return NextResponse.json({ user: null });
   }
 
   // ── Demo token flow ──────────────────────────────────────────
@@ -42,7 +44,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch {
-      return NextResponse.json({ user: null, expired: true }, { status: 401 });
+      return NextResponse.json({ user: null, expired: true });
     }
   }
 
@@ -72,18 +74,18 @@ export async function GET(request: NextRequest) {
   // ── Token expired? Try silent refresh ────────────────────────
   const refreshToken = request.cookies.get('gabon-biz-refresh')?.value;
   if (!refreshToken) {
-    return NextResponse.json({ user: null, expired: true }, { status: 401 });
+    return NextResponse.json({ user: null, expired: true });
   }
 
   const newTokens = await refreshAccessToken(refreshToken);
   if (!newTokens) {
-    return NextResponse.json({ user: null, expired: true }, { status: 401 });
+    return NextResponse.json({ user: null, expired: true });
   }
 
   // Fetch user info with the new access token
   user = await getUserInfo(newTokens.access_token);
   if (!user) {
-    return NextResponse.json({ user: null }, { status: 401 });
+    return NextResponse.json({ user: null });
   }
 
   // Build response with refreshed cookies

@@ -42,6 +42,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
   const [transcript, setTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Refs for WebSocket + audio pipeline
   const wsRef = useRef<WebSocket | null>(null);
@@ -356,6 +357,20 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
           ) {
             // Benign: cancel sent when no response was active
             console.debug('[iAsted] [Realtime] Ignored cancellation timing error');
+          } else if (
+            errorMsg.includes('exceeded your current quota') ||
+            errorMsg.includes('billing') ||
+            errorMsg.includes('insufficient_quota')
+          ) {
+            // Fatal: API quota exceeded — stop reconnecting, surface error
+            console.error('[iAsted] [Realtime] Quota exceeded — disabling voice');
+            shouldConnectRef.current = false;
+            setError('Service vocal temporairement indisponible (quota API dépassé)');
+            setVoiceState('idle');
+            // Force-close the WebSocket to prevent further attempts
+            if (wsRef.current?.readyState === WebSocket.OPEN) {
+              wsRef.current.close(1000, 'quota_exceeded');
+            }
           } else {
             console.error('[iAsted] [Realtime] Error:', errorMsg);
           }
@@ -379,6 +394,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
 
     console.log('[iAsted] [Realtime] Connecting...');
     setVoiceState('connecting');
+    setError(null);
     shouldConnectRef.current = true;
 
     try {
@@ -554,7 +570,12 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
       wsRef.current = ws;
       reconnectAttemptRef.current = 0; // Reset on successful connection setup
     } catch (err) {
-      console.error('[iAsted] [Realtime] Connection failed:', err);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error('[iAsted] [Realtime] Connection failed:', errMsg);
+      // Detect quota errors from the session endpoint (502 from our API)
+      if (errMsg.includes('502') || errMsg.includes('quota') || errMsg.includes('indisponible')) {
+        setError('Service vocal temporairement indisponible');
+      }
       setVoiceState('idle');
       shouldConnectRef.current = false;
     } finally {
@@ -626,6 +647,7 @@ export function useRealtimeVoice(options: UseRealtimeVoiceOptions): UseRealtimeV
     audioLevel,
     transcript,
     isConnected,
+    error,
     connect,
     disconnect,
   };

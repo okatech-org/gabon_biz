@@ -74,6 +74,8 @@ Dites-moi ce dont vous avez besoin !`;
 // Mobile fix: reuse a single pre-warmed <audio> element to bypass iOS/Android auto-play restrictions
 let sharedAudioEl: HTMLAudioElement | null = null;
 let audioUnlocked = false;
+/** Circuit-breaker: once TTS gets a quota/fatal error, skip all further calls this session */
+let ttsDisabled = false;
 
 /**
  * Must be called INSIDE a user gesture (click/touchend) to unlock
@@ -115,6 +117,12 @@ function unlockAudio() {
 }
 
 async function speak(text: string, onEnd?: () => void): Promise<boolean> {
+  // Circuit-breaker: skip TTS if a previous call hit quota/fatal error
+  if (ttsDisabled) {
+    onEnd?.();
+    return false;
+  }
+
   try {
     // OpenAI TTS (echo = neutral francophone masculine voice)
     // NO browser fallback — consistent voice or silence
@@ -124,34 +132,42 @@ async function speak(text: string, onEnd?: () => void): Promise<boolean> {
       body: JSON.stringify({ text, voice: 'echo' }),
     });
 
-    if (response.ok) {
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      // Reuse the pre-warmed audio element on mobile, or create new
-      const audio = sharedAudioEl || new Audio();
-      audio.src = audioUrl;
-      audio.volume = 1.0;
-
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        onEnd?.();
-      };
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl);
-        onEnd?.();
-      };
-
-      try {
-        await audio.play();
-        return true; // Audio played successfully
-      } catch {
-        // Auto-play blocked — silent rather than different voice
-        URL.revokeObjectURL(audioUrl);
-        console.warn('[iAsted] [TTS] Auto-play blocked, staying silent');
-        onEnd?.();
-        return false; // Audio blocked
+    if (!response.ok) {
+      // Quota exceeded or server error — disable TTS for this session
+      if (response.status === 429 || response.status === 503) {
+        ttsDisabled = true;
+        console.warn('[iAsted] [TTS] Disabled for this session (quota/service error)');
       }
+      onEnd?.();
+      return false;
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    // Reuse the pre-warmed audio element on mobile, or create new
+    const audio = sharedAudioEl || new Audio();
+    audio.src = audioUrl;
+    audio.volume = 1.0;
+
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      onEnd?.();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      onEnd?.();
+    };
+
+    try {
+      await audio.play();
+      return true; // Audio played successfully
+    } catch {
+      // Auto-play blocked — silent rather than different voice
+      URL.revokeObjectURL(audioUrl);
+      console.warn('[iAsted] [TTS] Auto-play blocked, staying silent');
+      onEnd?.();
+      return false; // Audio blocked
     }
   } catch (err) {
     console.warn('[iAsted] [TTS] OpenAI TTS failed, staying silent:', err);
@@ -910,6 +926,14 @@ export function IAstedChatbot() {
               </button>
             </div>
           </div>
+
+          {/* ── Voice error banner ── */}
+          {voice.error && (
+            <div className="px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200/50 dark:border-amber-800/30 text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
+              <span className="shrink-0">⚠️</span>
+              <span>{voice.error}. Le chat texte reste disponible.</span>
+            </div>
+          )}
 
           {/* ── Voice transcript bar ── */}
           {voice.voiceState !== 'idle' && voice.transcript && (

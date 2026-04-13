@@ -63,9 +63,21 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('[Realtime] Session creation failed:', response.status, errorText);
+
+      const isQuotaError =
+        errorText.includes('exceeded') ||
+        errorText.includes('quota') ||
+        errorText.includes('insufficient_quota') ||
+        response.status === 429;
+
       return NextResponse.json(
-        { error: 'Impossible de démarrer la session vocale' },
-        { status: 502 },
+        {
+          error: isQuotaError
+            ? 'Quota API dépassé — service vocal indisponible'
+            : 'Impossible de démarrer la session vocale',
+          code: isQuotaError ? 'QUOTA_EXCEEDED' : 'SESSION_ERROR',
+        },
+        { status: isQuotaError ? 429 : 502 },
       );
     }
 

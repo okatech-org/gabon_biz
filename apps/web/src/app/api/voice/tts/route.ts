@@ -15,20 +15,14 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Service vocal indisponible' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: 'Service vocal indisponible' }, { status: 503 });
     }
 
     const body = await request.json();
     const { text, voice = 'echo' } = body; // 'echo' = neutral francophone masculine voice
 
     if (!text || typeof text !== 'string') {
-      return NextResponse.json(
-        { error: 'Texte requis' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Texte requis' }, { status: 400 });
     }
 
     // Truncate for TTS (max ~4096 chars)
@@ -38,12 +32,12 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'tts-1',        // tts-1 = fast, tts-1-hd = higher quality
+        model: 'tts-1', // tts-1 = fast, tts-1-hd = higher quality
         input: truncated,
-        voice,                  // onyx = deep masculine, alloy = neutral
+        voice, // onyx = deep masculine, alloy = neutral
         speed: 1.0,
         response_format: 'mp3',
       }),
@@ -52,9 +46,22 @@ export async function POST(request: NextRequest) {
     if (!response.ok || !response.body) {
       const errorText = await response.text();
       console.error('[OpenAI TTS] API error:', response.status, errorText);
+
+      // Detect quota exceeded for clearer client-side handling
+      const isQuotaError =
+        errorText.includes('exceeded') ||
+        errorText.includes('quota') ||
+        errorText.includes('insufficient_quota') ||
+        response.status === 429;
+
       return NextResponse.json(
-        { error: 'Erreur de synthèse vocale' },
-        { status: 502 }
+        {
+          error: isQuotaError
+            ? 'Quota API dépassé — synthèse vocale indisponible'
+            : 'Erreur de synthèse vocale',
+          code: isQuotaError ? 'QUOTA_EXCEEDED' : 'TTS_ERROR',
+        },
+        { status: isQuotaError ? 429 : 502 },
       );
     }
 
@@ -67,9 +74,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[OpenAI TTS] Server error:', error);
-    return NextResponse.json(
-      { error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

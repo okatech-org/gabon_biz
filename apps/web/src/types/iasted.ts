@@ -48,6 +48,8 @@ export interface UseRealtimeVoiceReturn {
   audioLevel: number;
   transcript: string;
   isConnected: boolean;
+  /** Non-null when a fatal error prevents voice (e.g. quota exceeded) */
+  error: string | null;
   connect: () => void;
   disconnect: () => void;
 }

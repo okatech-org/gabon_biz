@@ -60,9 +60,18 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenAI API error:', errorText);
+
+      // Quota exceeded: serve the static fallback response
+      const isQuotaError =
+        errorText.includes('exceeded') ||
+        errorText.includes('quota') ||
+        errorText.includes('insufficient_quota') ||
+        response.status === 429;
+
       return NextResponse.json({
-        response:
-          "Désolé, une erreur s'est produite avec le service IA. Veuillez réessayer dans quelques instants.",
+        response: isQuotaError
+          ? getFallbackResponse(message)
+          : "Désolé, une erreur s'est produite avec le service IA. Veuillez réessayer dans quelques instants.",
       });
     }
 

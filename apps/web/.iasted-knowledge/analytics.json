@@ -1,8 +1,12 @@
 {
-  "totalInteractions": 30,
+  "totalInteractions": 55,
   "topQuestions": [
     {
       "question": "🎙️ ha",
+      "count": 6
+    },
+    {
+      "question": "🎙️ c'est bon pour moi je veux savoir maintenant on a innovation et hub kimba va dessus",
       "count": 6
     },
     {
@@ -26,6 +30,14 @@
       "count": 3
     },
     {
+      "question": "🎙️ d'accord amène-moi dans la nuée",
+      "count": 3
+    },
+    {
+      "question": "🎙️ qui sont dans la technologie",
+      "count": 3
+    },
+    {
       "question": "🎙️ ouvre la fenêtre de chat",
       "count": 2
     },
@@ -35,6 +47,22 @@
     },
     {
       "question": "🎙️ hi",
+      "count": 2
+    },
+    {
+      "question": "🎙️ normalement le ministère souhaite que ça soit un hub pour les startups gabonaises est-ce que là ",
+      "count": 2
+    },
+    {
+      "question": "🎙️ d'accord tu m'as amené sur sync je vois qu'il y a quoi sur sync pourquoi tu m'as amené sur sync",
+      "count": 2
+    },
+    {
+      "question": "🎙️ d'accord je veux le tri technologie de l'information",
+      "count": 2
+    },
+    {
+      "question": "🎙️ explique-moi de quoi parle cette page",
       "count": 2
     },
     {
@@ -48,12 +76,44 @@
     {
       "question": "🎙️ habeas",
       "count": 1
+    },
+    {
+      "question": "🎙️ ok là c'est l'ia qui est en train de parler avec moi qui me dit je t'écoute bon je veux savoir d",
+      "count": 1
+    },
+    {
+      "question": "🎙️ d'accord est-ce que tu es là",
+      "count": 1
+    },
+    {
+      "question": "🎙️ d'accord qu'est-ce que les entreprises peuvent faire quels sont les services qu'ils ont sur cett",
+      "count": 1
+    },
+    {
+      "question": "🎙️ je vais aller par exemple sur investir au gabon de quoi ça parle",
+      "count": 1
+    },
+    {
+      "question": "🎙️ vas-y",
+      "count": 1
     }
   ],
   "topPages": [
     {
       "page": "/",
-      "count": 24
+      "count": 28
+    },
+    {
+      "page": "/annuaire",
+      "count": 8
+    },
+    {
+      "page": "/services/investir",
+      "count": 6
+    },
+    {
+      "page": "/services/incubateur",
+      "count": 4
     },
     {
       "page": "/login",
@@ -64,11 +124,19 @@
       "count": 2
     },
     {
+      "page": "/services/innovation-hub",
+      "count": 2
+    },
+    {
       "page": "/services/cgi",
       "count": 1
     },
     {
       "page": "/demo",
+      "count": 1
+    },
+    {
+      "page": "/services/marches-publics",
       "count": 1
     }
   ],
@@ -76,11 +144,11 @@
   "feedbackStats": {
     "up": 0,
     "down": 0,
-    "total": 30
+    "total": 55
   },
   "languageDistribution": {
-    "fr": 30
+    "fr": 55
   },
-  "hourlyDistribution": [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 3, 0, 0, 0, 0, 6, 0, 0, 0, 10, 0, 0, 0],
-  "lastUpdated": "2026-03-16T19:41:16.614Z"
+  "hourlyDistribution": [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 25, 3, 0, 0, 0, 0, 6, 0, 0, 0, 10, 0, 0, 0],
+  "lastUpdated": "2026-04-13T08:51:48.748Z"
 }

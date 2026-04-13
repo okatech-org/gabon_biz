@@ -94,14 +94,22 @@ export async function POST(request: NextRequest) {
     if (!response.ok || !response.body) {
       const errorText = await response.text();
       console.error('OpenAI streaming error:', errorText);
+
+      const isQuotaError =
+        errorText.includes('exceeded') ||
+        errorText.includes('quota') ||
+        errorText.includes('insufficient_quota') ||
+        response.status === 429;
+
+      // Quota exceeded: use the static fallback instead of a generic error
+      const fallbackText = isQuotaError
+        ? getFallbackResponse(message)
+        : "Désolé, une erreur s'est produite. Réessaie dans un instant ! 🔄";
+
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         start(controller) {
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({ text: "Désolé, une erreur s'est produite. Réessaie dans un instant ! 🔄" })}\n\n`,
-            ),
-          );
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: fallbackText })}\n\n`));
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         },
